@@ -1,0 +1,462 @@
+openapi: 3.0.4
+info:
+  title: Scenic Spots API
+  description: |-
+    The “Scenic Spots API” project aims to enable intuitive communication with a client
+    application by providing data about picturesque locations in a selected area — such as viewpoints, lakes, rivers, trails, and routes with beautiful scenery, as well as other types of “hidden natural gems.”
+  contact:
+    email: czxxxrny@gmail.com
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.1
+servers:
+  - url: https://google.com
+tags:
+  - name: spot
+    description: All of the methods for the spots
+  - name: review
+    description: Methods for posting and getting reviews
+  - name: user
+    description: In development – endpoints for user management will be added soon
+  
+paths:
+##################################################################################
+  /spot:
+    post:
+      tags:
+        - spot
+      summary: Add a new spot.
+      description: Adds a new spot. Requires longitude, latitude and a category of the spot. New spot is indexed automatically. Photos can be added later.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewSpot'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Spot'
+        '400':
+          description: Invalid ID supplied
+        '409':
+          description: Spot already exists in the database 
+        '422':
+          description: Validation exception
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    ##################################################################################
+    get:
+      tags:
+        - spot
+      summary: Get spots by the query parameters.
+      description: Get all spots that match the criteria. No query parameters return all of the existing spots.
+      parameters:
+        - name: latitude
+          in: query
+          description: Latitude of the spot. Required if longitude is provided.
+          schema:
+            type: number
+            format: float
+        - name: longitude
+          in: query
+          description: Longitude of the spot. Required if latitude is provided.
+          schema:
+            type: number
+            format: float
+        - name: category
+          in: query
+          description: Category of the spot (optional).
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Spot'
+        '400':
+          description: Invalid parameters.
+        '404':
+          description: No spots found.
+        '422':
+          description: Validation exception
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+##################################################################################
+  /spot/{id}:
+    put:
+        tags:
+          - spot
+        summary: Update an existing spot.
+        description: Update an existing spot by Id.
+        parameters:
+        - name: id
+          in: path
+          required: true
+          description: The unique ID of the spot to retrieve.
+          schema:
+            type: integer
+            format: int64
+        requestBody:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Spot'
+          required: true
+        responses:
+          '200':
+            description: Successful operation
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/Spot'
+              application/xml:
+                schema:
+                  $ref: '#/components/schemas/Spot'
+          '400':
+            description: Invalid ID supplied
+          '404':
+            description: Spot not found
+          '422':
+            description: Validation exception
+          default:
+            description: Unexpected error
+            content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/Error"
+    ##################################################################################
+    get:
+      tags:
+        - spot
+      summary: Get a spot by its ID
+      description: Retrieve details of a specific spot using its unique ID.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The unique ID of the spot to retrieve.
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successfully retrieved the spot
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Spot'
+        '404':
+          description: Spot not found
+        '400':
+          description: Invalid ID supplied
+        '500':
+          description: Internal server error
+    ##################################################################################
+    delete:
+      tags:
+        - spot
+      summary: Delete a spot
+      description: Deletes a specific spot by its ID, deleting all of the images and reviews connected to it.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The ID of the spot to delete.
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Spot successfully deleted (no content)
+        '404':
+          description: Spot not found
+        '400':
+          description: Invalid ID supplied
+        '500':
+          description: Internal server error
+##################################################################################
+  /spot/{id}/addPhoto:
+    put:
+      tags:
+        - spot
+      summary: Add photos to a spot.
+      description: Add up to three photos to an existing spot.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The ID of the spot to which photos are added.
+          schema:
+            type: string
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                photos:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+                  maxItems: 3
+      responses:
+        '200':
+          description: Successfully added photos to the spot.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  photos:
+                    type: array
+                    items:
+                      type: string
+                      format: uri
+                    description: List of URLs to the uploaded photos.
+        '400':
+          description: Invalid ID or photo format
+        '404':
+          description: Spot not found
+        '500':
+          description: Internal server error
+################################################################################## 
+  /spot/{id}/review:
+    post:
+      tags:
+        - review
+      summary: Add a review for a spot
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewReview'
+      responses:
+        '201':
+          description: Review created
+    get:
+      tags:
+        - review
+      summary: Get reviews for a specific spot
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+          description: Number of reviews to return (default 5)
+      responses:
+        '200':
+          description: A list of reviews
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Review'
+################################################################################## 
+  /spot/{spotId}/review/{reviewId}:
+    delete:
+      tags:
+        - review
+      summary: Delete a review for a specific spot
+      description: Deletes a review identified by review ID for a given spot.
+      parameters:
+        - name: spotId
+          in: path
+          required: true
+          description: The ID of the spot to which the review belongs.
+          schema:
+            type: string
+        - name: reviewId
+          in: path
+          required: true
+          description: The ID of the review to delete.
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Review successfully deleted (no content)
+        '404':
+          description: Review or spot not found
+        '400':
+          description: Invalid ID(s) supplied
+        '500':
+          description: Internal server error
+################################################################################## 
+
+components:
+  schemas:
+  ##################################################################################
+    Spot:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 10
+        name:
+          type: string
+          description: Posting users name for the spot.
+          example: My special place.
+        latitude:
+          type: number
+          format: float
+          example: 52.2297
+        longitude:
+          type: number
+          format: float
+          example: 21.0122
+        category:
+          type: string
+          description: Specifies the type of the spot
+          example: Lake
+        photos:
+          type: array
+          description: List of image URLs associated with this spot
+          items:
+            type: string
+            format: uri
+            example: "https://example.com/photo1.jpg"
+        addedBy:
+          type: string
+          description: User ID of the person who added the spot
+          example: "user_abc123"
+        createdAt:
+          type: string
+          format: date-time
+          example: "2025-04-23T12:00:00Z"
+      required:
+        - name
+        - latitude
+        - longitude
+        - category
+        - addedBy
+  ##################################################################################
+    NewSpot:
+      type: object
+      description: Used for adding new spots. Includes the same information as the Spot, excluding the ID as it is generated automatically by the API, photos - as they are added after the "raw" information, and addedBy (userID). Note that NewSpot is also used for updatin datag.
+      properties:
+        name:
+          type: string
+          description: Posting users name for the spot.
+          example: My special place.
+        latitude:
+          type: number
+          format: float
+          example: 52.2297
+        longitude:
+          type: number
+          format: float
+          example: 21.0122
+        category:
+          type: string
+          description: Specifies the type of the spot
+          example: Lake
+      required: 
+        - name
+        - latitude
+        - longitude
+        - category
+  ##################################################################################
+    User:
+          type: object
+          properties:
+            id:
+              type: integer
+              format: int64
+              example: 10
+            username:
+              type: string
+              example: theUser
+            email:
+              type: string
+              example: john@email.com
+            password:
+              type: string
+              example: '12345'
+            spotsPosted:
+              type: integer
+              description: Amount of spots that were posted in the database by the user.
+              format: int32
+              example: 1
+  ##################################################################################
+    Review:
+      type: object
+      properties:
+        reviewId:
+          type: string
+          example: "rev_abc123"
+        spotId:
+          type: string
+          example: "spot_001"
+        userId:
+          type: string
+          example: "user_42"
+        rating:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 5
+          example: 4.5
+        comment:
+          type: string
+          example: "Piękne miejsce z super widokiem!"
+        createdAt:
+          type: string
+          format: date-time
+          example: "2025-04-23T12:00:00Z"
+  ##################################################################################
+    NewReview:
+      type: object
+      required:
+        - rating
+        - comment
+      properties:
+        rating:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 5
+          example: 4.0
+        comment:
+          type: string
+          example: "Naprawdę warto tu przyjść!"
+  ##################################################################################
+    Error:
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+      required:
+        - code
+        - message
+##################################################################################
