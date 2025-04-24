@@ -1,7 +1,11 @@
 package main
 
-import "fmt"
+import (
+	"scenic-spots-api/app"
+)
 
 func main() {
-	fmt.Print("Hello world!")
+	var port string = "8080"
+
+	app.Start(port)
 }
