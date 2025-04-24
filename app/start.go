@@ -1,9 +1,9 @@
 package app
 
 import (
-	"fmt"
 	"net/http"
 	"scenic-spots-api/app/handlers"
+	"scenic-spots-api/app/logger"
 )
 
 func Start(port string) error {
@@ -17,11 +17,11 @@ func initializeHandlers() {
 }
 
 func startTheServer(port string) error {
-	fmt.Printf("Starting server on port %s", port)
+	logger.Info("Starting server on port " + port)
 	err := http.ListenAndServe(":"+port, nil)
 	if err != nil {
+		logger.Error(err.Error())
 		return err
 	}
-	fmt.Printf("Server started successfully")
 	return nil
 }

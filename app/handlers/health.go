@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"math/rand"
 	"net/http"
+	"scenic-spots-api/app/logger"
 	"time"
 )
 
@@ -20,5 +21,5 @@ func Health(response http.ResponseWriter, request *http.Request) {
 
 	response.Header().Set("Content-Type", "application/json")
 	fmt.Fprintf(response, `{"status": "ok, is alive!", "uptime": "%s", "would really like some": "%s :)"}`, uptime, meals[decision])
-	fmt.Println("Health request")
+	logger.Info("Health request")
 }
