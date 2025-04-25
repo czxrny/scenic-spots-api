@@ -17,6 +17,8 @@ tags:
     description: All of the methods for the spots
   - name: review
     description: Methods for posting and getting reviews
+  - name: photo
+    description: Methods for spots photos
   - name: user
     description: In development – endpoints for user management will be added soon
   
@@ -191,10 +193,43 @@ paths:
         '500':
           description: Internal server error
 ##################################################################################
-  /spot/{id}/addPhoto:
+  /spot/{id}/photo:
+    get:
+      tags:
+        - photo
+      summary: Get photos for the spot.
+      description: Get URLs of all of the photos of an existing spot.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The ID of the spot.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of photos URLs for the spot.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  photos:
+                    type: array
+                    items:
+                      type: string
+                      format: uri
+                    description: List of URLs to the uploaded photos.
+        '400':
+          description: Invalid ID
+        '404':
+          description: Spot not found
+        '500':
+          description: Internal server error
+    ##################################################################################
     put:
       tags:
-        - spot
+        - photo
       summary: Add photos to a spot.
       description: Add up to three photos to an existing spot.
       parameters:
@@ -236,6 +271,44 @@ paths:
           description: Spot not found
         '500':
           description: Internal server error
+    ##################################################################################
+    delete:
+        tags:
+          - photo
+        summary: Delete photos from a spot.
+        description: Deletes specified photos from the spot. If no query parameters get passed, all of the photos get deleted.
+        parameters:
+          - name: id
+            in: path
+            required: true
+            description: The ID of the spot of which photos get deleted.
+            schema:
+              type: string
+          - name: photoId
+            in: query
+            required: false
+            description: If specified, deletes only this photo. If omitted, deletes all photos for the given spot.
+            schema:
+              type: string
+        responses:
+          '200':
+            description: Successfully deleted the photos.
+            content:
+              application/json:
+                schema:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        description: ID of the deleted photo.
+          '400':
+            description: Invalid ID or photo format
+          '404':
+            description: Spot not found
+          '500':
+            description: Internal server error
 ################################################################################## 
   /spot/{id}/review:
     post:
@@ -256,6 +329,7 @@ paths:
       responses:
         '201':
           description: Review created
+    ##################################################################################
     get:
       tags:
         - review
@@ -280,8 +354,7 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Review'
-################################################################################## 
-  /spot/{spotId}/review/{reviewId}:
+    ################################################################################## 
     delete:
       tags:
         - review
@@ -295,14 +368,22 @@ paths:
           schema:
             type: string
         - name: reviewId
-          in: path
+          in: query
           required: true
           description: The ID of the review to delete.
           schema:
             type: string
       responses:
         '204':
-          description: Review successfully deleted (no content)
+          description: Review successfully deleted
+          content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                      description: ID of the deleted review.
         '404':
           description: Review or spot not found
         '400':
@@ -449,6 +530,19 @@ components:
           type: string
           example: "Naprawdę warto tu przyjść!"
   ##################################################################################
+    Photos:
+      type: object
+      required:
+        - id
+        - url
+      properties:
+        id:
+          type: string
+          example: 1
+        url:
+          type: string
+          example: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/Google_Chrome_icon_%28February_2022%29.svg/1200px-Google_Chrome_icon_%28February_2022%29.svg.png"
+    ##################################################################################
     Error:
       type: object
       properties:
