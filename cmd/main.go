@@ -6,9 +6,7 @@ import (
 )
 
 func main() {
-	var port string = "8080"
-
-	if err := app.Start(port); err != nil {
+	if err := app.Start(); err != nil {
 		os.Exit(1)
 	}
 }
