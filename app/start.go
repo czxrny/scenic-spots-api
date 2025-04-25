@@ -29,6 +29,8 @@ func loadEnv() error {
 func initializeHandlers() {
 	http.HandleFunc("/ping", handlers.Ping)
 	http.HandleFunc("/health", handlers.Health)
+	http.HandleFunc("/spot", handlers.Spot)
+	http.HandleFunc("/spot/", handlers.SpotById)
 }
 
 func startTheServer() error {
