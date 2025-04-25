@@ -3,6 +3,7 @@ package app
 import (
 	"net/http"
 	"os"
+	"scenic-spots-api/app/database"
 	"scenic-spots-api/app/handlers"
 	"scenic-spots-api/app/logger"
 
@@ -11,8 +12,10 @@ import (
 
 func Start() error {
 	if err := loadEnv(); err != nil {
+		logger.Error(err.Error())
 		return err
 	}
+	database.InitializeFirestoreClient()
 	initializeHandlers()
 	return startTheServer()
 }

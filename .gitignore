@@ -1,2 +1,13 @@
+# Secrets!
 .env
 /keys/
+
+# Firebase emulator files
+/firebase-debug.log
+/firebase-emulator/
+/storage-emulator/
+/firebase_ui/
+
+# Firebase config
+.firebaserc
+.firebase.json
