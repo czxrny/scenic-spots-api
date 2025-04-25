@@ -26,7 +26,7 @@ func Error(msg string) {
 
 func logWithColor(prefix, msg, color string) {
 	fmt.Printf("[%s] %s%s%s: %s\n",
-		time.Now().Format("22:02:02"),
+		time.Now().Format("15:04:05"),
 		color, prefix, reset,
 		msg,
 	)
