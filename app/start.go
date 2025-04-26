@@ -15,7 +15,9 @@ func Start() error {
 		logger.Error(err.Error())
 		return err
 	}
-	database.InitializeFirestoreClient()
+	if err := database.InitializeFirestoreClient(); err != nil {
+		return err
+	}
 	initializeHandlers()
 	return startTheServer()
 }
