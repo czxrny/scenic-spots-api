@@ -3,8 +3,8 @@ package database
 import (
 	"context"
 	"fmt"
-	"os"
 	"scenic-spots-api/app/logger"
+	"scenic-spots-api/config"
 
 	"cloud.google.com/go/firestore"
 	"google.golang.org/api/option"
@@ -12,10 +12,9 @@ import (
 
 var firestoreClient *firestore.Client
 
-func InitializeFirestoreClient() error {
+func InitializeFirestoreClient(ctx context.Context) error {
 	var err error
-	ctx := context.Background()
-	mode := os.Getenv("FIRESTORE_MODE")
+	mode := config.Env.FirestoreMode
 
 	var connectFunc func(ctx context.Context) (*firestore.Client, error)
 	if mode == "cloud" {
@@ -23,7 +22,7 @@ func InitializeFirestoreClient() error {
 	} else if mode == "emulator" {
 		connectFunc = connectToEmulator
 	} else {
-		err = fmt.Errorf("invalid firestore mode - check .env file")
+		err = fmt.Errorf("invalid firestore mode - check config.go file")
 		logger.Error(err.Error())
 		return err
 	}
@@ -43,10 +42,16 @@ func GetFirestoreClient() *firestore.Client {
 }
 
 func connectToFirestoreCloud(ctx context.Context) (*firestore.Client, error) {
-	pathToJson := os.Getenv("FIRESTORE_CREDENTIALS_PATH")
-	projectId := os.Getenv("FIRESTORE_PROJECT_ID")
-	clientOption := option.WithCredentialsFile(pathToJson)
+	pathToJson := config.Env.GoogleApplicationCredentials
+	projectId := config.Env.FirestoreProjectID
+	if pathToJson == "" {
+		return nil, fmt.Errorf("GOOGLE_APPLICATION_CREDENTIALS is not set - check config.go file")
+	}
+	if projectId == "" {
+		return nil, fmt.Errorf("FIRESTORE_PROJECT_ID is not set - check config.go file")
+	}
 
+	clientOption := option.WithCredentialsFile(pathToJson)
 	client, err := firestore.NewClient(ctx, projectId, clientOption)
 	if err != nil {
 		return nil, err

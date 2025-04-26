@@ -1,34 +1,21 @@
 package app
 
 import (
+	"context"
 	"net/http"
-	"os"
 	"scenic-spots-api/app/database"
 	"scenic-spots-api/app/handlers"
 	"scenic-spots-api/app/logger"
-
-	"github.com/joho/godotenv"
+	"scenic-spots-api/config"
 )
 
-func Start() error {
-	if err := loadEnv(); err != nil {
-		logger.Error(err.Error())
-		return err
-	}
-	if err := database.InitializeFirestoreClient(); err != nil {
+func Start(ctx context.Context) error {
+	config.InitializeVariables()
+	if err := database.InitializeFirestoreClient(ctx); err != nil {
 		return err
 	}
 	initializeHandlers()
 	return startTheServer()
-}
-
-func loadEnv() error {
-	err := godotenv.Load()
-	if err != nil {
-		logger.Error("Couldn't load the .env file.")
-		return err
-	}
-	return nil
 }
 
 func initializeHandlers() {
@@ -39,7 +26,7 @@ func initializeHandlers() {
 }
 
 func startTheServer() error {
-	port := os.Getenv("PORT")
+	port := config.Env.Port
 	logger.Info("Starting server on port " + port)
 	err := http.ListenAndServe(":"+port, nil)
 	if err != nil {
