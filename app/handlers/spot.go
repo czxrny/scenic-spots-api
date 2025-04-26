@@ -1,14 +1,33 @@
 package handlers
 
 import (
+	"encoding/json"
 	"net/http"
+	"scenic-spots-api/app/database/repositories"
 	"scenic-spots-api/app/logger"
+	"scenic-spots-api/models"
 	"strconv"
 	"strings"
 )
 
 func getSpot(response http.ResponseWriter, request *http.Request) {
-	logger.Info("Get all the spots that match the query.")
+	queryParams := models.SpotQueryParams{
+		Name:      request.URL.Query().Get("name"),
+		Latitude:  request.URL.Query().Get("latitude"),
+		Longitude: request.URL.Query().Get("longitude"),
+		Radius:    request.URL.Query().Get("radius"),
+		Category:  request.URL.Query().Get("category"),
+	}
+
+	found, err := repositories.FindSpotsByQueryParams(queryParams, request.Context())
+	if err != nil {
+		ErrorResponse(response, "500", err.Error(), http.StatusInternalServerError)
+	}
+	response.Header().Set("Content-Type", "application/json")
+	if err := json.NewEncoder(response).Encode(found); err != nil {
+		ErrorResponse(response, "500", "Error while JSON encoding", http.StatusInternalServerError)
+		return
+	}
 }
 
 func addSpot(response http.ResponseWriter, request *http.Request) {
