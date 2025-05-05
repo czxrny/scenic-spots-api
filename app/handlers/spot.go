@@ -31,7 +31,28 @@ func getSpot(response http.ResponseWriter, request *http.Request) {
 }
 
 func addSpot(response http.ResponseWriter, request *http.Request) {
-	logger.Info("Add a new spot.")
+	var spot models.NewSpot
+	if err := json.NewDecoder(request.Body).Decode(&spot); err != nil {
+		response.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	ctx := request.Context()
+	spotsAdded, err := repositories.AddSpot(spot, ctx)
+	if err != nil {
+		if strings.Contains(err.Error(), "already exists") {
+			response.WriteHeader(http.StatusConflict)
+			return
+		}
+		ErrorResponse(response, "500", "Error while adding the spot to database: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	response.Header().Set("Content-Type", "application/json")
+	if err = json.NewEncoder(response).Encode(spotsAdded); err != nil {
+		ErrorResponse(response, "500", "Error while JSON encoding", http.StatusInternalServerError)
+		return
+	}
 }
 
 func getSpotById(response http.ResponseWriter, request *http.Request, id string) {
@@ -70,6 +91,8 @@ func SpotById(response http.ResponseWriter, request *http.Request) {
 		switch method {
 		case "GET":
 			getSpotById(response, request, spotId)
+		case "POST":
+			addSpot(response, request)
 		case "PUT":
 			updateSpotById(response, request, spotId)
 		case "DELETE":
