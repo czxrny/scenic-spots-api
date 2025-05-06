@@ -8,6 +8,7 @@ import (
 	"scenic-spots-api/models"
 	"scenic-spots-api/utils/calc"
 	"strconv"
+	"strings"
 	"time"
 
 	"cloud.google.com/go/firestore"
@@ -18,7 +19,7 @@ func buildQuery(collectionRef *firestore.CollectionRef, params models.SpotQueryP
 	query := collectionRef.Query
 
 	if params.Name != "" {
-		query = query.Where("name", "==", params.Name)
+		query = query.Where("name", "==", strings.ToLower(params.Name))
 	}
 	if params.Latitude != "" || params.Longitude != "" || params.Radius != "" {
 		if params.Latitude == "" || params.Longitude == "" || params.Radius == "" {
@@ -35,7 +36,7 @@ func buildQuery(collectionRef *firestore.CollectionRef, params models.SpotQueryP
 			Where("longitude", ">=", coordinates.MinLon)
 	}
 	if params.Category != "" {
-		query = query.Where("category", "==", params.Category)
+		query = query.Where("category", "==", strings.ToLower(params.Category))
 	}
 
 	return &query, nil
@@ -92,10 +93,10 @@ func AddSpot(spotInfo models.NewSpot, ctx context.Context) (models.SpotMap, erro
 	}
 
 	spot := models.Spot{
-		Name:      spotInfo.Name,
+		Name:      strings.ToLower(spotInfo.Name),
 		Latitude:  spotInfo.Latitude,
 		Longitude: spotInfo.Longitude,
-		Category:  spotInfo.Category,
+		Category:  strings.ToLower(spotInfo.Category),
 		Photos:    []string{},
 		AddedBy:   "test user", /* TODO */
 		CreatedAt: time.Now(),
