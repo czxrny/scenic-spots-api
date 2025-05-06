@@ -149,3 +149,29 @@ func checkIfAlreadyExists(ctx context.Context, collectionRef *firestore.Collecti
 
 	return nil
 }
+
+func FindById(ctx context.Context, id string) (models.SpotMap, error) {
+	client := database.GetFirestoreClient()
+	docRef, err := client.Collection("spots").Doc(id).Get(ctx)
+	if err != nil {
+		return models.SpotMap{}, err
+	}
+
+	var spot models.Spot
+	if err := docRef.DataTo(&spot); err != nil {
+		return models.SpotMap{}, err
+	}
+
+	// Name should won't ever be empty - unless no doc was found.
+	if spot.Name == "" {
+		return models.SpotMap{}, fmt.Errorf("Spot with ID: %v does not exist", id)
+	}
+
+	result := models.SpotMap{
+		Spots: make(map[string]models.Spot),
+	}
+
+	result.Spots[id] = spot
+
+	return result, nil
+}

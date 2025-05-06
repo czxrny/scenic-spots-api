@@ -56,6 +56,22 @@ func addSpot(response http.ResponseWriter, request *http.Request) {
 
 func getSpotById(response http.ResponseWriter, request *http.Request, id string) {
 	logger.Info("Get spot by ID " + id)
+	ctx := request.Context()
+
+	spot, err := repositories.FindById(ctx, id)
+	if err != nil {
+		if strings.Contains(err.Error(), "does not exist") {
+			response.WriteHeader(http.StatusNotFound)
+			return
+		}
+		ErrorResponse(response, "500", err.Error(), http.StatusInternalServerError)
+	}
+
+	response.Header().Set("Content-Type", "application/json")
+	if err = json.NewEncoder(response).Encode(spot); err != nil {
+		ErrorResponse(response, "500", "Error while JSON encoding", http.StatusInternalServerError)
+		return
+	}
 }
 
 func updateSpotById(response http.ResponseWriter, request *http.Request, id string) {
