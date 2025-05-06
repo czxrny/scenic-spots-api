@@ -6,7 +6,6 @@ import (
 	"scenic-spots-api/app/database/repositories"
 	"scenic-spots-api/app/logger"
 	"scenic-spots-api/models"
-	"strconv"
 	"strings"
 )
 
@@ -81,10 +80,6 @@ func SpotById(response http.ResponseWriter, request *http.Request) {
 	parts := strings.Split(request.URL.Path, "/")
 	numberOfParts := len(parts)
 	method := request.Method
-	if _, err := strconv.Atoi(parts[2]); err != nil {
-		response.WriteHeader(http.StatusBadRequest)
-		return
-	}
 	spotId := parts[2]
 
 	if numberOfParts == 3 {
