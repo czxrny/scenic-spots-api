@@ -55,7 +55,6 @@ func addSpot(response http.ResponseWriter, request *http.Request) {
 }
 
 func getSpotById(response http.ResponseWriter, request *http.Request, id string) {
-	logger.Info("Get spot by ID " + id)
 	ctx := request.Context()
 
 	spot, err := repositories.FindById(ctx, id)
@@ -79,7 +78,18 @@ func updateSpotById(response http.ResponseWriter, request *http.Request, id stri
 }
 
 func deleteSpotById(response http.ResponseWriter, request *http.Request, id string) {
-	logger.Info("Delete spot by ID " + id)
+	ctx := request.Context()
+
+	err := repositories.DeleteById(ctx, id)
+	if err != nil {
+		if strings.Contains(err.Error(), "does not exist") {
+			response.WriteHeader(http.StatusNotFound)
+			return
+		}
+		ErrorResponse(response, "500", err.Error(), http.StatusInternalServerError)
+	}
+
+	response.WriteHeader(http.StatusNoContent)
 }
 
 func Spot(response http.ResponseWriter, request *http.Request) {

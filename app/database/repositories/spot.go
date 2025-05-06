@@ -175,3 +175,15 @@ func FindById(ctx context.Context, id string) (models.SpotMap, error) {
 
 	return result, nil
 }
+
+func DeleteById(ctx context.Context, id string) error {
+	client := database.GetFirestoreClient()
+	docRef := client.Collection("spots").Doc(id)
+
+	_, err := docRef.Delete(ctx)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
