@@ -101,7 +101,18 @@ func AddSpot(spotInfo models.NewSpot, ctx context.Context) (models.SpotMap, erro
 		CreatedAt: time.Now(),
 	}
 
-	docRef, _, err := collectionRef.Add(ctx, spot)
+	// Casting to a json to avoid capitalized words in database.
+	spotData := map[string]interface{}{
+		"name":      spot.Name,
+		"latitude":  spot.Latitude,
+		"longitude": spot.Longitude,
+		"category":  spot.Category,
+		"photos":    spot.Photos,
+		"addedBy":   spot.AddedBy,
+		"createdAt": spot.CreatedAt, // <-- nadal time.Time
+	}
+
+	docRef, _, err := collectionRef.Add(ctx, spotData)
 
 	if err != nil {
 		return models.SpotMap{}, err
