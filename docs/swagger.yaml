@@ -44,7 +44,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Spot'
         '400':
-          description: Invalid ID supplied
+          description: Invalid parameters
         '409':
           description: Spot already exists in the database 
         '422':
@@ -62,6 +62,11 @@ paths:
       summary: Get spots by the query parameters.
       description: Get all spots that match the criteria. No query parameters return all of the existing spots.
       parameters:
+        - name: Name
+          in: query
+          description: Name of the spot (optional).
+          schema:
+            type: string
         - name: latitude
           in: query
           description: Latitude of the spot. Required if longitude is provided.
@@ -74,6 +79,12 @@ paths:
           schema:
             type: number
             format: float
+        - name: radius
+          in: query
+          description: Radius in kilometers around in specified latitude and longitude. Required if longitude and latitude are provided.
+          schema:
+            type: number
+            format: float    
         - name: category
           in: query
           description: Category of the spot (optional).
@@ -89,9 +100,9 @@ paths:
                 items:
                   $ref: '#/components/schemas/Spot'
         '400':
-          description: Invalid parameters.
+          description: Invalid parameters
         '404':
-          description: No spots found.
+          description: No spots found
         '422':
           description: Validation exception
         default:
@@ -102,7 +113,7 @@ paths:
                 $ref: "#/components/schemas/Error"
 ##################################################################################
   /spot/{id}:
-    put:
+    patch:
         tags:
           - spot
         summary: Update an existing spot.
@@ -147,7 +158,7 @@ paths:
     get:
       tags:
         - spot
-      summary: Get a spot by its ID
+      summary: Get a spot by its ID.
       description: Retrieve details of a specific spot using its unique ID.
       parameters:
         - name: id
@@ -174,7 +185,7 @@ paths:
     delete:
       tags:
         - spot
-      summary: Delete a spot
+      summary: Delete a spot.
       description: Deletes a specific spot by its ID, deleting all of the images and reviews connected to it.
       parameters:
         - name: id
@@ -188,8 +199,6 @@ paths:
           description: Spot successfully deleted (no content)
         '404':
           description: Spot not found
-        '400':
-          description: Invalid ID supplied
         '500':
           description: Internal server error
 ##################################################################################
@@ -314,7 +323,7 @@ paths:
     post:
       tags:
         - review
-      summary: Add a review for a spot
+      summary: Add a review for a spot.
       parameters:
         - name: id
           in: path
@@ -333,7 +342,7 @@ paths:
     get:
       tags:
         - review
-      summary: Get reviews for a specific spot
+      summary: Get reviews for a specific spot.
       parameters:
         - name: id
           in: path
@@ -344,7 +353,7 @@ paths:
           in: query
           schema:
             type: integer
-          description: Number of reviews to return (default 5)
+          description: Number of reviews to return (default 5).
       responses:
         '200':
           description: A list of reviews
@@ -406,6 +415,10 @@ components:
           type: string
           description: Posting users name for the spot.
           example: My special place.
+        description:
+          type: string
+          description: Posting users description for the spot.
+          example: Wonderfull spot near a river.
         latitude:
           type: number
           format: float
@@ -416,18 +429,18 @@ components:
           example: 21.0122
         category:
           type: string
-          description: Specifies the type of the spot
+          description: Specifies the type of the spot.
           example: Lake
         photos:
           type: array
-          description: List of image URLs associated with this spot
+          description: List of image URLs associated with this spot.
           items:
             type: string
             format: uri
             example: "https://example.com/photo1.jpg"
         addedBy:
           type: string
-          description: User ID of the person who added the spot
+          description: User ID of the person who added the spot.
           example: "user_abc123"
         createdAt:
           type: string
@@ -439,6 +452,7 @@ components:
         - longitude
         - category
         - addedBy
+        - createdAt
   ##################################################################################
     NewSpot:
       type: object
@@ -448,6 +462,10 @@ components:
           type: string
           description: Posting users name for the spot.
           example: My special place.
+        description:
+          type: string
+          description: Posting users description for the spot.
+          example: Wonderfull spot near a river.
         latitude:
           type: number
           format: float
@@ -458,7 +476,7 @@ components:
           example: 21.0122
         category:
           type: string
-          description: Specifies the type of the spot
+          description: Specifies the type of the spot.
           example: Lake
       required: 
         - name
@@ -508,7 +526,7 @@ components:
           example: 4.5
         comment:
           type: string
-          example: "Piękne miejsce z super widokiem!"
+          example: "Wonderfull place!"
         createdAt:
           type: string
           format: date-time
@@ -528,7 +546,7 @@ components:
           example: 4.0
         comment:
           type: string
-          example: "Naprawdę warto tu przyjść!"
+          example: "Worth visiting!"
   ##################################################################################
     Photos:
       type: object
