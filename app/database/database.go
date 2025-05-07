@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 	"scenic-spots-api/app/logger"
-	"scenic-spots-api/config"
+	"scenic-spots-api/configs"
 
 	"cloud.google.com/go/firestore"
 	"google.golang.org/api/option"
@@ -14,7 +14,7 @@ var firestoreClient *firestore.Client
 
 func InitializeFirestoreClient(ctx context.Context) error {
 	var err error
-	mode := config.Env.FirestoreMode
+	mode := configs.Env.FirestoreMode
 
 	var connectFunc func(ctx context.Context) (*firestore.Client, error)
 	if mode == "cloud" {
@@ -42,8 +42,8 @@ func GetFirestoreClient() *firestore.Client {
 }
 
 func connectToFirestoreCloud(ctx context.Context) (*firestore.Client, error) {
-	pathToJson := config.Env.GoogleApplicationCredentials
-	projectId := config.Env.FirestoreProjectID
+	pathToJson := configs.Env.GoogleApplicationCredentials
+	projectId := configs.Env.FirestoreProjectID
 	if pathToJson == "" {
 		return nil, fmt.Errorf("GOOGLE_APPLICATION_CREDENTIALS is not set - check config.go file")
 	}

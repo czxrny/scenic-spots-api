@@ -1,0 +1,27 @@
+/*
+	PLEASE CONFIGURE THE FILE IN ORDER TO RUN THE API!
+*/
+
+package configs
+
+// All of the needed application variables
+type EnvVars struct {
+	Port                         string
+	FirestoreMode                string
+	FirestoreEmulatorHost        string
+	FirestoreProjectID           string
+	GoogleApplicationCredentials string
+}
+
+var Env EnvVars
+
+// Initialize the variables - CHANGE ACCORDINGLY!
+func InitializeVariables() {
+	Env = EnvVars{
+		Port:                         "8080",            // HTTP Server port
+		FirestoreMode:                "cloud",           // Select between [cloud / emulator] for the firestore mode.
+		FirestoreEmulatorHost:        "localhost:8081",  // If [emulator] was selected, set appropiate hostname with port.
+		FirestoreProjectID:           "your-project-id", // This is the project ID visible on the main page of Firebase Console.
+		GoogleApplicationCredentials: "path-to-key",     // Generated at: Project Overview > Service Accounts > Generate new private key
+	}
+}

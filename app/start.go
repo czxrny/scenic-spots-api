@@ -6,11 +6,11 @@ import (
 	"scenic-spots-api/app/database"
 	"scenic-spots-api/app/handlers"
 	"scenic-spots-api/app/logger"
-	"scenic-spots-api/config"
+	"scenic-spots-api/configs"
 )
 
 func Start(ctx context.Context) error {
-	config.InitializeVariables()
+	configs.InitializeVariables()
 	if err := database.InitializeFirestoreClient(ctx); err != nil {
 		return err
 	}
@@ -26,7 +26,7 @@ func initializeHandlers() {
 }
 
 func startTheServer() error {
-	port := config.Env.Port
+	port := configs.Env.Port
 	logger.Info("Starting server on port " + port)
 	err := http.ListenAndServe(":"+port, nil)
 	if err != nil {
