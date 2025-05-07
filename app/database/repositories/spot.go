@@ -90,7 +90,7 @@ func AddSpot(spotInfo models.NewSpot, ctx context.Context) ([]models.Spot, error
 	client := database.GetFirestoreClient()
 	collectionRef := client.Collection(collectionName)
 
-	if err := checkIfAlreadyExists(ctx, collectionRef, strconv.FormatFloat(spotInfo.Latitude, 'f', -1, 64), strconv.FormatFloat(spotInfo.Longitude, 'f', -1, 64)); err != nil {
+	if err := checkIfAlreadyExists(ctx, spotInfo.Latitude, spotInfo.Longitude); err != nil {
 		return []models.Spot{}, err
 	}
 
@@ -129,28 +129,6 @@ func AddSpot(spotInfo models.NewSpot, ctx context.Context) ([]models.Spot, error
 	result = append(result, spot)
 
 	return result, nil
-}
-
-// Checking if any spot in 100meter radius exists!
-func checkIfAlreadyExists(ctx context.Context, collectionRef *firestore.CollectionRef, latitude string, longitude string) error {
-	query, err := buildQuery(collectionRef, models.SpotQueryParams{
-		Name:      "",
-		Latitude:  latitude,
-		Longitude: longitude,
-		Radius:    "0.1",
-	})
-
-	if err != nil {
-		return err
-	}
-
-	docs := query.Documents(ctx)
-	results, _ := docs.GetAll()
-	if len(results) != 0 {
-		return fmt.Errorf("The spot already exists in the database: %s", results[0].Ref.ID)
-	}
-
-	return nil
 }
 
 func FindById(ctx context.Context, id string) ([]models.Spot, error) {
@@ -194,6 +172,11 @@ func UpdateSpot(ctx context.Context, id string, newValues models.NewSpot) ([]mod
 	if newValues.Description != "" {
 		spotToUpdate.Description = newValues.Description
 	}
+	if newValues.Latitude != 0 && newValues.Longitude != 0 {
+		if err := checkIfAlreadyExists(ctx, newValues.Latitude, newValues.Longitude); err != nil {
+			return []models.Spot{}, err
+		}
+	}
 	if newValues.Latitude != 0 {
 		spotToUpdate.Latitude = newValues.Latitude
 	}
@@ -228,6 +211,31 @@ func DeleteById(ctx context.Context, id string) error {
 	_, err := docRef.Delete(ctx)
 	if err != nil {
 		return err
+	}
+
+	return nil
+}
+
+// Checking if any spot in 100meter radius exists!
+func checkIfAlreadyExists(ctx context.Context, latitude float64, longitude float64) error {
+	client := database.GetFirestoreClient()
+	collectionRef := client.Collection(collectionName)
+
+	query, err := buildQuery(collectionRef, models.SpotQueryParams{
+		Name:      "",
+		Latitude:  strconv.FormatFloat(latitude, 'f', -1, 64),
+		Longitude: strconv.FormatFloat(longitude, 'f', -1, 64),
+		Radius:    "0.1",
+	})
+
+	if err != nil {
+		return err
+	}
+
+	docs := query.Documents(ctx)
+	results, _ := docs.GetAll()
+	if len(results) != 0 {
+		return fmt.Errorf("The spot already exists in the database: %s", results[0].Ref.ID)
 	}
 
 	return nil
