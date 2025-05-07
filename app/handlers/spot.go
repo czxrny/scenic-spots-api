@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"net/http"
 	"scenic-spots-api/app/database/repositories"
-	"scenic-spots-api/app/logger"
 	"scenic-spots-api/models"
 	"strings"
 )
@@ -37,7 +36,7 @@ func addSpot(response http.ResponseWriter, request *http.Request) {
 	}
 
 	ctx := request.Context()
-	spotsAdded, err := repositories.AddSpot(spot, ctx)
+	addedSpot, err := repositories.AddSpot(spot, ctx)
 	if err != nil {
 		if strings.Contains(err.Error(), "already exists") {
 			response.WriteHeader(http.StatusConflict)
@@ -48,7 +47,7 @@ func addSpot(response http.ResponseWriter, request *http.Request) {
 	}
 
 	response.Header().Set("Content-Type", "application/json")
-	if err = json.NewEncoder(response).Encode(spotsAdded); err != nil {
+	if err = json.NewEncoder(response).Encode(addedSpot); err != nil {
 		ErrorResponse(response, "500", "Error while JSON encoding", http.StatusInternalServerError)
 		return
 	}
@@ -74,7 +73,28 @@ func getSpotById(response http.ResponseWriter, request *http.Request, id string)
 }
 
 func updateSpotById(response http.ResponseWriter, request *http.Request, id string) {
-	logger.Info("Update spot by ID " + id)
+	var spot models.NewSpot
+	if err := json.NewDecoder(request.Body).Decode(&spot); err != nil {
+		response.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	ctx := request.Context()
+	updatedSpot, err := repositories.UpdateSpot(ctx, id, spot)
+	if err != nil {
+		if strings.Contains(err.Error(), "does not exist") {
+			response.WriteHeader(http.StatusConflict)
+			return
+		}
+		ErrorResponse(response, "500", "Error while adding the spot to database: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	response.Header().Set("Content-Type", "application/json")
+	if err = json.NewEncoder(response).Encode(updatedSpot); err != nil {
+		ErrorResponse(response, "500", "Error while JSON encoding", http.StatusInternalServerError)
+		return
+	}
 }
 
 func deleteSpotById(response http.ResponseWriter, request *http.Request, id string) {
@@ -112,9 +132,7 @@ func SpotById(response http.ResponseWriter, request *http.Request) {
 		switch method {
 		case "GET":
 			getSpotById(response, request, spotId)
-		case "POST":
-			addSpot(response, request)
-		case "PUT":
+		case "PATCH":
 			updateSpotById(response, request, spotId)
 		case "DELETE":
 			deleteSpotById(response, request, spotId)
