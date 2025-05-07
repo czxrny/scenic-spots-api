@@ -4,6 +4,14 @@ The “Scenic Spots API” project aims to enable intuitive communication with a
 
 ### ❗Please check /doc/swagger.yaml for endpoint documentation❗
 
+## 📁 Project structure
+
+- `cmd/` – main app entrance (`main.go`)
+- `app/` - initialization, handlers, database connection + functions, and logger
+- `docs/` – documentation
+- `models/` - structures used in api
+- `utils` - reusable tools
+
 # ✅ TODO – Scenic Spots API (Project Roadmap)
 
 > A structured development plan for the REST API project written in Go, using Swagger for documentation and Firebase (Firestore + Storage) for data and media management.
@@ -43,10 +51,12 @@ The “Scenic Spots API” project aims to enable intuitive communication with a
 
 ## 🧠 Backend Implementation (Go)
 
-- [ ] App entrypoint (`main.go`), router and API handler setup
-- [ ] Firestore integration for data storage:
-  - [ ] Collections: `spots`, `reviews`, `users`
+- [x] App entrypoint (`main.go`), router and API handler setup
+- [x] Firestore integration for data storage
+- [x] Spot related endpoints implementation
+- [ ] Review related endpoints implementation
 - [ ] Firebase Storage integration for image hosting
+- [ ] Photos related endpoints implementation
 - [ ] Data validation and error handling (400, 404, 500, etc.)
 
 ---
@@ -54,9 +64,9 @@ The “Scenic Spots API” project aims to enable intuitive communication with a
 ## 🔐 Authentication & User Management
 
 - [ ] Plan and define `User` model
-- [ ] Choose authentication method (e.g. Firebase Auth or JWT)
+- [ ] Implement JWT
 - [ ] Add security schemes to Swagger (`securitySchemes`)
-- [ ] Design user-related endpoints (login, register, user info)
+- [ ] Design user-related endpoints (login, register, etc.)
 
 ---
 
@@ -68,4 +78,4 @@ The “Scenic Spots API” project aims to enable intuitive communication with a
 
 ---
 
-**🔄 Status**: API structure and documentation in progress. Core endpoints drafted. Backend development ongoing.
+**🔄 Status**: Currently working on Reviews endpoints.
