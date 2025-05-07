@@ -8,21 +8,23 @@ type SpotMap struct {
 
 // Used for returning complete info about a spot in "GET" /spot method.
 type Spot struct {
-	Name      string    `json:"name"`
-	Latitude  float64   `json:"latitude"`
-	Longitude float64   `json:"longitude"`
-	Category  string    `json:"category"`
-	Photos    []string  `json:"photos"`
-	AddedBy   string    `json:"addedBy"`
-	CreatedAt time.Time `json:"createdAt"`
+	Name        string    `json:"name"`
+	Description string    `json:"description"`
+	Latitude    float64   `json:"latitude"`
+	Longitude   float64   `json:"longitude"`
+	Category    string    `json:"category"`
+	Photos      []string  `json:"photos"`
+	AddedBy     string    `json:"addedBy"`
+	CreatedAt   time.Time `json:"createdAt"`
 }
 
 // Used for adding a new spot in "POST" /spot method.
 type NewSpot struct {
-	Name      string  `json:"name"`
-	Latitude  float64 `json:"latitude"`
-	Longitude float64 `json:"longitude"`
-	Category  string  `json:"category"`
+	Name        string  `json:"name"`
+	Description string  `json:"description"`
+	Latitude    float64 `json:"latitude"`
+	Longitude   float64 `json:"longitude"`
+	Category    string  `json:"category"`
 }
 
 type SpotQueryParams struct {

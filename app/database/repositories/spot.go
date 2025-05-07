@@ -74,13 +74,14 @@ func FindSpotsByQueryParams(params models.SpotQueryParams, ctx context.Context) 
 		}
 
 		found.Spots[doc.Ref.ID] = models.Spot{
-			Name:      spot.Name,
-			Latitude:  spot.Latitude,
-			Longitude: spot.Longitude,
-			Category:  spot.Category,
-			Photos:    spot.Photos,
-			AddedBy:   spot.AddedBy,
-			CreatedAt: spot.CreatedAt,
+			Name:        spot.Name,
+			Description: spot.Description,
+			Latitude:    spot.Latitude,
+			Longitude:   spot.Longitude,
+			Category:    spot.Category,
+			Photos:      spot.Photos,
+			AddedBy:     spot.AddedBy,
+			CreatedAt:   spot.CreatedAt,
 		}
 	}
 	return found, nil
@@ -95,24 +96,26 @@ func AddSpot(spotInfo models.NewSpot, ctx context.Context) (models.SpotMap, erro
 	}
 
 	spot := models.Spot{
-		Name:      strings.ToLower(spotInfo.Name),
-		Latitude:  spotInfo.Latitude,
-		Longitude: spotInfo.Longitude,
-		Category:  strings.ToLower(spotInfo.Category),
-		Photos:    []string{},
-		AddedBy:   "test user", /* TODO */
-		CreatedAt: time.Now(),
+		Name:        strings.ToLower(spotInfo.Name),
+		Description: spotInfo.Description,
+		Latitude:    spotInfo.Latitude,
+		Longitude:   spotInfo.Longitude,
+		Category:    strings.ToLower(spotInfo.Category),
+		Photos:      []string{},
+		AddedBy:     "test user", /* TODO */
+		CreatedAt:   time.Now(),
 	}
 
 	// Casting to a json to avoid capitalized words in database.
 	spotData := map[string]interface{}{
-		"name":      spot.Name,
-		"latitude":  spot.Latitude,
-		"longitude": spot.Longitude,
-		"category":  spot.Category,
-		"photos":    spot.Photos,
-		"addedBy":   spot.AddedBy,
-		"createdAt": spot.CreatedAt,
+		"name":        spot.Name,
+		"description": spot.Description,
+		"latitude":    spot.Latitude,
+		"longitude":   spot.Longitude,
+		"category":    spot.Category,
+		"photos":      spot.Photos,
+		"addedBy":     spot.AddedBy,
+		"createdAt":   spot.CreatedAt,
 	}
 
 	docRef, _, err := collectionRef.Add(ctx, spotData)
@@ -193,6 +196,9 @@ func UpdateSpot(ctx context.Context, id string, newValues models.NewSpot) (model
 	if newValues.Name != "" {
 		spotToUpdate.Name = newValues.Name
 	}
+	if newValues.Description != "" {
+		spotToUpdate.Description = newValues.Description
+	}
 	if newValues.Latitude != 0 {
 		spotToUpdate.Latitude = newValues.Latitude
 	}
@@ -206,6 +212,7 @@ func UpdateSpot(ctx context.Context, id string, newValues models.NewSpot) (model
 	client := database.GetFirestoreClient()
 	_, err = client.Collection(collectionName).Doc(id).Update(ctx, []firestore.Update{
 		{Path: "name", Value: spotToUpdate.Name},
+		{Path: "description", Value: spotToUpdate.Description},
 		{Path: "latitude", Value: spotToUpdate.Latitude},
 		{Path: "longitude", Value: spotToUpdate.Longitude},
 		{Path: "category", Value: spotToUpdate.Category},
