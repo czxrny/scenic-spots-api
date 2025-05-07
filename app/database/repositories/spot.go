@@ -44,19 +44,17 @@ func buildQuery(collectionRef *firestore.CollectionRef, params models.SpotQueryP
 	return &query, nil
 }
 
-func FindSpotsByQueryParams(params models.SpotQueryParams, ctx context.Context) (models.SpotMap, error) {
+func FindSpotsByQueryParams(params models.SpotQueryParams, ctx context.Context) ([]models.Spot, error) {
 	client := database.GetFirestoreClient()
 	collectionRef := client.Collection(collectionName)
 
 	query, err := buildQuery(collectionRef, params)
 	if err != nil {
-		return models.SpotMap{}, err
+		return []models.Spot{}, err
 	}
 	iter := query.Documents(ctx)
 
-	found := models.SpotMap{
-		Spots: make(map[string]models.Spot),
-	}
+	var found []models.Spot
 
 	for {
 		doc, err := iter.Next()
@@ -64,16 +62,17 @@ func FindSpotsByQueryParams(params models.SpotQueryParams, ctx context.Context) 
 			break
 		}
 		if err != nil {
-			return models.SpotMap{}, err
+			return []models.Spot{}, err
 		}
 
 		var spot models.Spot
 
 		if err := doc.DataTo(&spot); err != nil {
-			return models.SpotMap{}, err
+			return []models.Spot{}, err
 		}
 
-		found.Spots[doc.Ref.ID] = models.Spot{
+		found = append(found, models.Spot{
+			Id:          doc.Ref.ID,
 			Name:        spot.Name,
 			Description: spot.Description,
 			Latitude:    spot.Latitude,
@@ -82,17 +81,17 @@ func FindSpotsByQueryParams(params models.SpotQueryParams, ctx context.Context) 
 			Photos:      spot.Photos,
 			AddedBy:     spot.AddedBy,
 			CreatedAt:   spot.CreatedAt,
-		}
+		})
 	}
 	return found, nil
 }
 
-func AddSpot(spotInfo models.NewSpot, ctx context.Context) (models.SpotMap, error) {
+func AddSpot(spotInfo models.NewSpot, ctx context.Context) ([]models.Spot, error) {
 	client := database.GetFirestoreClient()
 	collectionRef := client.Collection(collectionName)
 
 	if err := checkIfAlreadyExists(ctx, collectionRef, strconv.FormatFloat(spotInfo.Latitude, 'f', -1, 64), strconv.FormatFloat(spotInfo.Longitude, 'f', -1, 64)); err != nil {
-		return models.SpotMap{}, err
+		return []models.Spot{}, err
 	}
 
 	spot := models.Spot{
@@ -121,14 +120,13 @@ func AddSpot(spotInfo models.NewSpot, ctx context.Context) (models.SpotMap, erro
 	docRef, _, err := collectionRef.Add(ctx, spotData)
 
 	if err != nil {
-		return models.SpotMap{}, err
+		return []models.Spot{}, err
 	}
 
-	result := models.SpotMap{
-		Spots: make(map[string]models.Spot),
-	}
+	spot.Id = docRef.ID
+	var result []models.Spot
 
-	result.Spots[docRef.ID] = spot
+	result = append(result, spot)
 
 	return result, nil
 }
@@ -155,44 +153,41 @@ func checkIfAlreadyExists(ctx context.Context, collectionRef *firestore.Collecti
 	return nil
 }
 
-func FindById(ctx context.Context, id string) (models.SpotMap, error) {
+func FindById(ctx context.Context, id string) ([]models.Spot, error) {
 	client := database.GetFirestoreClient()
-	docRef, err := client.Collection(collectionName).Doc(id).Get(ctx)
+	doc, err := client.Collection(collectionName).Doc(id).Get(ctx)
 	if err != nil {
-		return models.SpotMap{}, err
+		return []models.Spot{}, err
 	}
 
 	var spot models.Spot
-	if err := docRef.DataTo(&spot); err != nil {
-		return models.SpotMap{}, err
+	if err := doc.DataTo(&spot); err != nil {
+		return []models.Spot{}, err
 	}
 
 	// Name should won't ever be empty - unless no doc was found.
 	if spot.Name == "" {
-		return models.SpotMap{}, fmt.Errorf("Spot with ID: %v does not exist", id)
+		return []models.Spot{}, fmt.Errorf("Spot with ID: %v does not exist", id)
 	}
 
-	result := models.SpotMap{
-		Spots: make(map[string]models.Spot),
-	}
+	spot.Id = doc.Ref.ID
+	var result []models.Spot
 
-	result.Spots[id] = spot
+	result = append(result, spot)
 
 	return result, nil
 }
 
-func UpdateSpot(ctx context.Context, id string, newValues models.NewSpot) (models.SpotMap, error) {
+func UpdateSpot(ctx context.Context, id string, newValues models.NewSpot) ([]models.Spot, error) {
 	var err error
-	result := models.SpotMap{
-		Spots: make(map[string]models.Spot),
-	}
+	result := []models.Spot{}
 
 	result, err = FindById(ctx, id)
 	if err != nil {
-		return models.SpotMap{}, err
+		return []models.Spot{}, err
 	}
 
-	spotToUpdate := result.Spots[id]
+	spotToUpdate := result[0]
 	if newValues.Name != "" {
 		spotToUpdate.Name = newValues.Name
 	}
@@ -218,10 +213,10 @@ func UpdateSpot(ctx context.Context, id string, newValues models.NewSpot) (model
 		{Path: "category", Value: spotToUpdate.Category},
 	})
 	if err != nil {
-		return models.SpotMap{}, err
+		return []models.Spot{}, err
 	}
 
-	result.Spots[id] = spotToUpdate
+	result[0] = spotToUpdate
 
 	return result, nil
 }
