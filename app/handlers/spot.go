@@ -17,7 +17,7 @@ func getSpot(response http.ResponseWriter, request *http.Request) {
 		Category:  request.URL.Query().Get("category"),
 	}
 
-	found, err := repositories.FindSpotsByQueryParams(queryParams, request.Context())
+	found, err := repositories.GetSpot(queryParams, request.Context())
 	if err != nil {
 		ErrorResponse(response, "500", err.Error(), http.StatusInternalServerError)
 	}
@@ -56,7 +56,7 @@ func addSpot(response http.ResponseWriter, request *http.Request) {
 func getSpotById(response http.ResponseWriter, request *http.Request, id string) {
 	ctx := request.Context()
 
-	spot, err := repositories.FindById(ctx, id)
+	spot, err := repositories.FindSpotById(ctx, id)
 	if err != nil {
 		if strings.Contains(err.Error(), "does not exist") {
 			response.WriteHeader(http.StatusNotFound)
@@ -100,7 +100,7 @@ func updateSpotById(response http.ResponseWriter, request *http.Request, id stri
 func deleteSpotById(response http.ResponseWriter, request *http.Request, id string) {
 	ctx := request.Context()
 
-	err := repositories.DeleteById(ctx, id)
+	err := repositories.DeleteSpotById(ctx, id)
 	if err != nil {
 		if strings.Contains(err.Error(), "does not exist") {
 			response.WriteHeader(http.StatusNotFound)
@@ -136,16 +136,18 @@ func SpotById(response http.ResponseWriter, request *http.Request) {
 			updateSpotById(response, request, spotId)
 		case "DELETE":
 			deleteSpotById(response, request, spotId)
+		default:
+			response.WriteHeader(http.StatusNotFound)
 		}
-	} else if numberOfParts == 4 {
+	} else if numberOfParts >= 4 {
 		spotElement := parts[3]
 		switch spotElement {
 		case "photo":
 			Photo(response, request, spotId)
 		case "review":
 			Review(response, request, spotId)
+		default:
+			response.WriteHeader(http.StatusNotFound)
 		}
-	} else {
-		http.NotFound(response, request)
 	}
 }

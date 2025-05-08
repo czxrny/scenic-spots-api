@@ -15,7 +15,7 @@ import (
 	"google.golang.org/api/iterator"
 )
 
-var collectionName string = "spots"
+const spotCollectionName string = "spots"
 
 func buildQuery(collectionRef *firestore.CollectionRef, params models.SpotQueryParams) (*firestore.Query, error) {
 	query := collectionRef.Query
@@ -44,9 +44,9 @@ func buildQuery(collectionRef *firestore.CollectionRef, params models.SpotQueryP
 	return &query, nil
 }
 
-func FindSpotsByQueryParams(params models.SpotQueryParams, ctx context.Context) ([]models.Spot, error) {
+func GetSpot(params models.SpotQueryParams, ctx context.Context) ([]models.Spot, error) {
 	client := database.GetFirestoreClient()
-	collectionRef := client.Collection(collectionName)
+	collectionRef := client.Collection(spotCollectionName)
 
 	query, err := buildQuery(collectionRef, params)
 	if err != nil {
@@ -88,7 +88,7 @@ func FindSpotsByQueryParams(params models.SpotQueryParams, ctx context.Context) 
 
 func AddSpot(spotInfo models.NewSpot, ctx context.Context) ([]models.Spot, error) {
 	client := database.GetFirestoreClient()
-	collectionRef := client.Collection(collectionName)
+	collectionRef := client.Collection(spotCollectionName)
 
 	if err := checkIfAlreadyExists(ctx, spotInfo.Latitude, spotInfo.Longitude); err != nil {
 		return []models.Spot{}, err
@@ -131,9 +131,9 @@ func AddSpot(spotInfo models.NewSpot, ctx context.Context) ([]models.Spot, error
 	return result, nil
 }
 
-func FindById(ctx context.Context, id string) ([]models.Spot, error) {
+func FindSpotById(ctx context.Context, id string) ([]models.Spot, error) {
 	client := database.GetFirestoreClient()
-	doc, err := client.Collection(collectionName).Doc(id).Get(ctx)
+	doc, err := client.Collection(spotCollectionName).Doc(id).Get(ctx)
 	if err != nil {
 		return []models.Spot{}, err
 	}
@@ -160,7 +160,7 @@ func UpdateSpot(ctx context.Context, id string, newValues models.NewSpot) ([]mod
 	var err error
 	result := []models.Spot{}
 
-	result, err = FindById(ctx, id)
+	result, err = FindSpotById(ctx, id)
 	if err != nil {
 		return []models.Spot{}, err
 	}
@@ -188,7 +188,7 @@ func UpdateSpot(ctx context.Context, id string, newValues models.NewSpot) ([]mod
 	}
 
 	client := database.GetFirestoreClient()
-	_, err = client.Collection(collectionName).Doc(id).Update(ctx, []firestore.Update{
+	_, err = client.Collection(spotCollectionName).Doc(id).Update(ctx, []firestore.Update{
 		{Path: "name", Value: spotToUpdate.Name},
 		{Path: "description", Value: spotToUpdate.Description},
 		{Path: "latitude", Value: spotToUpdate.Latitude},
@@ -204,9 +204,9 @@ func UpdateSpot(ctx context.Context, id string, newValues models.NewSpot) ([]mod
 	return result, nil
 }
 
-func DeleteById(ctx context.Context, id string) error {
+func DeleteSpotById(ctx context.Context, id string) error {
 	client := database.GetFirestoreClient()
-	docRef := client.Collection(collectionName).Doc(id)
+	docRef := client.Collection(spotCollectionName).Doc(id)
 
 	_, err := docRef.Delete(ctx)
 	if err != nil {
@@ -219,7 +219,7 @@ func DeleteById(ctx context.Context, id string) error {
 // Checking if any spot in 100meter radius exists!
 func checkIfAlreadyExists(ctx context.Context, latitude float64, longitude float64) error {
 	client := database.GetFirestoreClient()
-	collectionRef := client.Collection(collectionName)
+	collectionRef := client.Collection(spotCollectionName)
 
 	query, err := buildQuery(collectionRef, models.SpotQueryParams{
 		Name:      "",

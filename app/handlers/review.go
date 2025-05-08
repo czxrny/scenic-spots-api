@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"net/http"
 	"scenic-spots-api/app/database/repositories"
-	"scenic-spots-api/app/logger"
 	"scenic-spots-api/models"
 	"strings"
 )
@@ -53,20 +52,90 @@ func addReview(response http.ResponseWriter, request *http.Request, spotId strin
 	}
 }
 
-func deleteReview(response http.ResponseWriter, request *http.Request, spotId string, reviewId string) {
-	logger.Info("Delete specified review")
+func getReviewById(response http.ResponseWriter, request *http.Request, id string) {
+	ctx := request.Context()
+
+	spot, err := repositories.FindReviewById(ctx, id)
+	if err != nil {
+		if strings.Contains(err.Error(), "does not exist") {
+			response.WriteHeader(http.StatusNotFound)
+			return
+		}
+		ErrorResponse(response, "500", err.Error(), http.StatusInternalServerError)
+	}
+
+	response.Header().Set("Content-Type", "application/json")
+	if err = json.NewEncoder(response).Encode(spot); err != nil {
+		ErrorResponse(response, "500", "Error while JSON encoding", http.StatusInternalServerError)
+		return
+	}
+}
+
+func updateReviewById(response http.ResponseWriter, request *http.Request, id string) {
+	var review models.NewReview
+	if err := json.NewDecoder(request.Body).Decode(&review); err != nil {
+		response.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	ctx := request.Context()
+	updatedSpot, err := repositories.UpdateReviewById(ctx, id, review)
+	if err != nil {
+		if strings.Contains(err.Error(), "does not exist") {
+			response.WriteHeader(http.StatusConflict)
+			return
+		}
+		ErrorResponse(response, "500", "Error while adding the spot to database: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	response.Header().Set("Content-Type", "application/json")
+	if err = json.NewEncoder(response).Encode(updatedSpot); err != nil {
+		ErrorResponse(response, "500", "Error while JSON encoding", http.StatusInternalServerError)
+		return
+	}
+}
+
+func deleteReviewById(response http.ResponseWriter, request *http.Request, id string) {
+	ctx := request.Context()
+
+	err := repositories.DeleteReviewById(ctx, id)
+	if err != nil {
+		if strings.Contains(err.Error(), "does not exist") {
+			response.WriteHeader(http.StatusNotFound)
+			return
+		}
+		ErrorResponse(response, "500", err.Error(), http.StatusInternalServerError)
+	}
+
+	response.WriteHeader(http.StatusNoContent)
 }
 
 func Review(response http.ResponseWriter, request *http.Request, spotId string) {
+	parts := strings.Split(request.URL.Path, "/")
+	numberOfParts := len(parts)
 	method := request.Method
 
-	switch method {
-	case "GET":
-		getReview(response, request, spotId)
-	case "POST":
-		addReview(response, request, spotId)
-	case "DELETE":
-		// check if there is reviewid specified! if not, delete all!
-		deleteReview(response, request, spotId, "22")
+	if numberOfParts == 4 {
+		switch method {
+		case "GET":
+			getReview(response, request, spotId)
+		case "POST":
+			addReview(response, request, spotId)
+		default:
+			response.WriteHeader(http.StatusNotFound)
+		}
+	} else if numberOfParts == 5 {
+		reviewId := parts[4]
+		switch method {
+		case "GET":
+			getReviewById(response, request, reviewId)
+		case "PATCH":
+			updateReviewById(response, request, reviewId)
+		case "DELETE":
+			deleteReviewById(response, request, reviewId)
+		default:
+			response.WriteHeader(http.StatusNotFound)
+		}
 	}
 }
