@@ -20,15 +20,18 @@ func GetReviews(ctx context.Context, spotId string, limitParam string) ([]models
 	var limit int
 	var err error
 
+	client := database.GetFirestoreClient()
+	query := client.Collection(reviewCollectionName).Query.Where("spotId", "==", spotId)
+
 	if limitParam != "" {
 		limit, err = strconv.Atoi(limitParam)
 		if err != nil {
 			return []models.Review{}, err
 		}
+		query = query.Limit(limit)
 	}
 
-	client := database.GetFirestoreClient()
-	iter := client.Collection(reviewCollectionName).Query.Limit(limit).Documents(ctx)
+	iter := query.Documents(ctx)
 
 	found := make([]models.Review, 0)
 
