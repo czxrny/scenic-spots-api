@@ -70,11 +70,11 @@ func AddReview(ctx context.Context, reviewInfo models.NewReview) ([]models.Revie
 
 	// Casting to a json to avoid capitalized words in database.
 	reviewData := map[string]interface{}{
-		"spotId":      review.SpotId,
-		"description": review.Rating,
-		"content":     review.Content,
-		"addedBy":     review.AddedBy,
-		"createdAt":   review.CreatedAt,
+		"spotId":    review.SpotId,
+		"rating":    review.Rating,
+		"content":   review.Content,
+		"addedBy":   review.AddedBy,
+		"createdAt": review.CreatedAt,
 	}
 
 	docRef, _, err := collectionRef.Add(ctx, reviewData)
