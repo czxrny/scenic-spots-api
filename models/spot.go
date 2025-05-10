@@ -14,6 +14,10 @@ type Spot struct {
 	CreatedAt   time.Time `json:"createdAt"`
 }
 
+func (s *Spot) SetId(id string) {
+	s.Id = id
+}
+
 type NewSpot struct {
 	Name        string  `json:"name"`
 	Description string  `json:"description"`

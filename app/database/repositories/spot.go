@@ -7,17 +7,17 @@ import (
 	"scenic-spots-api/app/logger"
 	"scenic-spots-api/models"
 	"scenic-spots-api/utils/calc"
+	"scenic-spots-api/utils/generics"
 	"strconv"
 	"strings"
 	"time"
 
 	"cloud.google.com/go/firestore"
-	"google.golang.org/api/iterator"
 )
 
 const spotCollectionName string = "spots"
 
-func buildQuery(collectionRef *firestore.CollectionRef, params models.SpotQueryParams) (*firestore.Query, error) {
+func buildSpotQuery(collectionRef *firestore.CollectionRef, params models.SpotQueryParams) (firestore.Query, error) {
 	query := collectionRef.Query
 
 	if params.Name != "" {
@@ -25,12 +25,12 @@ func buildQuery(collectionRef *firestore.CollectionRef, params models.SpotQueryP
 	}
 	if params.Latitude != "" || params.Longitude != "" || params.Radius != "" {
 		if params.Latitude == "" || params.Longitude == "" || params.Radius == "" {
-			return nil, fmt.Errorf("invalid parameter: latitude, longitude, and radius must all be provided together")
+			return firestore.Query{}, fmt.Errorf("invalid parameter: latitude, longitude, and radius must all be provided together")
 		}
 		coordinates, err := calc.CoordinatesAfterRadius(params.Latitude, params.Longitude, params.Radius)
 		if err != nil {
 			logger.Error(err.Error())
-			return nil, err
+			return firestore.Query{}, err
 		}
 		query = query.Where("latitude", "<=", coordinates.MaxLat).
 			Where("latitude", ">=", coordinates.MinLat).
@@ -41,56 +41,33 @@ func buildQuery(collectionRef *firestore.CollectionRef, params models.SpotQueryP
 		query = query.Where("category", "==", strings.ToLower(params.Category))
 	}
 
-	return &query, nil
+	return query, nil
 }
 
 func GetSpot(params models.SpotQueryParams, ctx context.Context) ([]models.Spot, error) {
 	client := database.GetFirestoreClient()
 	collectionRef := client.Collection(spotCollectionName)
 
-	query, err := buildQuery(collectionRef, params)
+	query, err := buildSpotQuery(collectionRef, params)
 	if err != nil {
 		return []models.Spot{}, err
 	}
-	iter := query.Documents(ctx)
 
-	var found []models.Spot
-
-	for {
-		doc, err := iter.Next()
-		if err == iterator.Done {
-			break
-		}
-		if err != nil {
-			return []models.Spot{}, err
-		}
-
-		var spot models.Spot
-
-		if err := doc.DataTo(&spot); err != nil {
-			return []models.Spot{}, err
-		}
-
-		found = append(found, models.Spot{
-			Id:          doc.Ref.ID,
-			Name:        spot.Name,
-			Description: spot.Description,
-			Latitude:    spot.Latitude,
-			Longitude:   spot.Longitude,
-			Category:    spot.Category,
-			Photos:      spot.Photos,
-			AddedBy:     spot.AddedBy,
-			CreatedAt:   spot.CreatedAt,
-		})
+	found, err := getAllItems[*models.Spot](ctx, query)
+	if err != nil {
+		return []models.Spot{}, err
 	}
-	return found, nil
+
+	result := generics.DereferenceAll(found)
+
+	return result, nil
 }
 
 func AddSpot(spotInfo models.NewSpot, ctx context.Context) ([]models.Spot, error) {
 	client := database.GetFirestoreClient()
 	collectionRef := client.Collection(spotCollectionName)
 
-	if err := checkIfAlreadyExists(ctx, spotInfo.Latitude, spotInfo.Longitude); err != nil {
+	if err := checkIfSpotAlreadyExists(ctx, spotInfo.Latitude, spotInfo.Longitude); err != nil {
 		return []models.Spot{}, err
 	}
 
@@ -132,26 +109,13 @@ func AddSpot(spotInfo models.NewSpot, ctx context.Context) ([]models.Spot, error
 }
 
 func FindSpotById(ctx context.Context, id string) ([]models.Spot, error) {
-	client := database.GetFirestoreClient()
-	doc, err := client.Collection(spotCollectionName).Doc(id).Get(ctx)
+	spot, err := findItemById[*models.Spot](ctx, spotCollectionName, id)
 	if err != nil {
 		return []models.Spot{}, err
 	}
 
-	var spot models.Spot
-	if err := doc.DataTo(&spot); err != nil {
-		return []models.Spot{}, err
-	}
-
-	// Name should won't ever be empty - unless no doc was found.
-	if spot.Name == "" {
-		return []models.Spot{}, fmt.Errorf("Spot with ID: %v does not exist", id)
-	}
-
-	spot.Id = doc.Ref.ID
 	var result []models.Spot
-
-	result = append(result, spot)
+	result = append(result, *spot)
 
 	return result, nil
 }
@@ -160,12 +124,11 @@ func UpdateSpot(ctx context.Context, id string, newValues models.NewSpot) ([]mod
 	var err error
 	result := []models.Spot{}
 
-	result, err = FindSpotById(ctx, id)
+	spotToUpdate, err := findItemById[*models.Spot](ctx, spotCollectionName, id)
 	if err != nil {
 		return []models.Spot{}, err
 	}
 
-	spotToUpdate := result[0]
 	if newValues.Name != "" {
 		spotToUpdate.Name = newValues.Name
 	}
@@ -173,7 +136,7 @@ func UpdateSpot(ctx context.Context, id string, newValues models.NewSpot) ([]mod
 		spotToUpdate.Description = newValues.Description
 	}
 	if newValues.Latitude != 0 && newValues.Longitude != 0 {
-		if err := checkIfAlreadyExists(ctx, newValues.Latitude, newValues.Longitude); err != nil {
+		if err := checkIfSpotAlreadyExists(ctx, newValues.Latitude, newValues.Longitude); err != nil {
 			return []models.Spot{}, err
 		}
 	}
@@ -199,35 +162,26 @@ func UpdateSpot(ctx context.Context, id string, newValues models.NewSpot) ([]mod
 		return []models.Spot{}, err
 	}
 
-	result[0] = spotToUpdate
+	result = append(result, *spotToUpdate)
 
 	return result, nil
 }
 
 func DeleteSpotById(ctx context.Context, id string) error {
-	client := database.GetFirestoreClient()
-	docRef := client.Collection(spotCollectionName).Doc(id)
-
-	_, err := docRef.Delete(ctx)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return deleteItemById(ctx, spotCollectionName, id)
 }
 
 // Checking if any spot in 100meter radius exists!
-func checkIfAlreadyExists(ctx context.Context, latitude float64, longitude float64) error {
+func checkIfSpotAlreadyExists(ctx context.Context, latitude float64, longitude float64) error {
 	client := database.GetFirestoreClient()
 	collectionRef := client.Collection(spotCollectionName)
 
-	query, err := buildQuery(collectionRef, models.SpotQueryParams{
+	query, err := buildSpotQuery(collectionRef, models.SpotQueryParams{
 		Name:      "",
 		Latitude:  strconv.FormatFloat(latitude, 'f', -1, 64),
 		Longitude: strconv.FormatFloat(longitude, 'f', -1, 64),
 		Radius:    "0.1",
 	})
-
 	if err != nil {
 		return err
 	}

@@ -10,9 +10,12 @@ import (
 
 func getReview(response http.ResponseWriter, request *http.Request, spotId string) {
 	ctx := request.Context()
-	limit := request.URL.Query().Get("limit")
+	params := models.ReviewQueryParams{
+		SpotId: spotId,
+		Limit:  request.URL.Query().Get("limit"),
+	}
 
-	found, err := repositories.GetReviews(ctx, spotId, limit)
+	found, err := repositories.GetReviews(ctx, params)
 	if err != nil {
 		if strings.Contains(err.Error(), "not exist") {
 			response.WriteHeader(http.StatusNotFound)
@@ -35,8 +38,9 @@ func addReview(response http.ResponseWriter, request *http.Request, spotId strin
 		response.WriteHeader(http.StatusBadRequest)
 		return
 	}
+	newReview.SpotId = spotId
 
-	found, err := repositories.AddReview(ctx, spotId, newReview)
+	found, err := repositories.AddReview(ctx, newReview)
 
 	if err != nil {
 		if strings.Contains(err.Error(), "not exist") {
@@ -55,7 +59,7 @@ func addReview(response http.ResponseWriter, request *http.Request, spotId strin
 func getReviewById(response http.ResponseWriter, request *http.Request, id string) {
 	ctx := request.Context()
 
-	spot, err := repositories.FindReviewById(ctx, id)
+	review, err := repositories.FindReviewById(ctx, id)
 	if err != nil {
 		if strings.Contains(err.Error(), "does not exist") {
 			response.WriteHeader(http.StatusNotFound)
@@ -65,7 +69,7 @@ func getReviewById(response http.ResponseWriter, request *http.Request, id strin
 	}
 
 	response.Header().Set("Content-Type", "application/json")
-	if err = json.NewEncoder(response).Encode(spot); err != nil {
+	if err = json.NewEncoder(response).Encode(review); err != nil {
 		ErrorResponse(response, "500", "Error while JSON encoding", http.StatusInternalServerError)
 		return
 	}

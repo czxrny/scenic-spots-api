@@ -2,70 +2,58 @@ package repositories
 
 import (
 	"context"
-	"fmt"
 	"scenic-spots-api/app/database"
 	"scenic-spots-api/models"
+	"scenic-spots-api/utils/generics"
 	"strconv"
 	"time"
 
 	"cloud.google.com/go/firestore"
-	"google.golang.org/api/iterator"
 )
 
 const reviewCollectionName string = "reviews"
 
-func GetReviews(ctx context.Context, spotId string, limitParam string) ([]models.Review, error) {
-	if _, err := FindSpotById(ctx, spotId); err != nil {
-		return []models.Review{}, err
-	}
-
+func buildReviewQuery(collectionRef *firestore.CollectionRef, params models.ReviewQueryParams) (firestore.Query, error) {
 	var limit int
 	var err error
+	query := collectionRef.Query
 
-	client := database.GetFirestoreClient()
-	query := client.Collection(reviewCollectionName).Query.Where("spotId", "==", spotId)
+	query = query.Where("spotId", "==", params.SpotId)
 
-	if limitParam != "" {
-		limit, err = strconv.Atoi(limitParam)
+	if params.Limit != "" {
+		limit, err = strconv.Atoi(params.Limit)
 		if err != nil {
-			return []models.Review{}, err
+			return firestore.Query{}, err
 		}
 		query = query.Limit(limit)
 	}
-
-	iter := query.Documents(ctx)
-
-	found := make([]models.Review, 0)
-
-	for {
-		doc, err := iter.Next()
-		if err == iterator.Done {
-			break
-		}
-		if err != nil {
-			return []models.Review{}, err
-		}
-
-		var review models.Review
-
-		if err := doc.DataTo(&review); err != nil {
-			return []models.Review{}, err
-		}
-
-		found = append(found, models.Review{
-			Id:        doc.Ref.ID,
-			SpotId:    spotId,
-			Rating:    review.Rating,
-			Content:   review.Content,
-			AddedBy:   review.AddedBy,
-			CreatedAt: review.CreatedAt,
-		})
-	}
-	return found, nil
+	return query, nil
 }
 
-func AddReview(ctx context.Context, spotId string, reviewInfo models.NewReview) ([]models.Review, error) {
-	if _, err := FindSpotById(ctx, spotId); err != nil {
+func GetReviews(ctx context.Context, params models.ReviewQueryParams) ([]models.Review, error) {
+	if _, err := findItemById[*models.Spot](ctx, spotCollectionName, params.SpotId); err != nil {
+		return []models.Review{}, err
+	}
+
+	client := database.GetFirestoreClient()
+	collectionRef := client.Collection(reviewCollectionName)
+
+	query, err := buildReviewQuery(collectionRef, params)
+	if err != nil {
+		return []models.Review{}, err
+	}
+
+	found, err := getAllItems[*models.Review](ctx, query)
+	if err != nil {
+		return []models.Review{}, err
+	}
+
+	result := generics.DereferenceAll(found)
+	return result, nil
+}
+
+func AddReview(ctx context.Context, reviewInfo models.NewReview) ([]models.Review, error) {
+	if _, err := findItemById[*models.Spot](ctx, spotCollectionName, reviewInfo.SpotId); err != nil {
 		return []models.Review{}, err
 	}
 
@@ -73,7 +61,7 @@ func AddReview(ctx context.Context, spotId string, reviewInfo models.NewReview) 
 	collectionRef := client.Collection(reviewCollectionName)
 
 	review := models.Review{
-		SpotId:    spotId,
+		SpotId:    reviewInfo.SpotId,
 		Rating:    reviewInfo.Rating,
 		Content:   reviewInfo.Content,
 		AddedBy:   "test user", /* TODO */
@@ -104,26 +92,13 @@ func AddReview(ctx context.Context, spotId string, reviewInfo models.NewReview) 
 }
 
 func FindReviewById(ctx context.Context, id string) ([]models.Review, error) {
-	client := database.GetFirestoreClient()
-	doc, err := client.Collection(reviewCollectionName).Doc(id).Get(ctx)
+	review, err := findItemById[*models.Review](ctx, reviewCollectionName, id)
 	if err != nil {
 		return []models.Review{}, err
 	}
 
-	var review models.Review
-	if err := doc.DataTo(&review); err != nil {
-		return []models.Review{}, err
-	}
-
-	// Content won't ever be empty - unless no doc was found.
-	if review.Content == "" {
-		return []models.Review{}, fmt.Errorf("Spot with ID: %v does not exist", id)
-	}
-
-	review.Id = doc.Ref.ID
 	var result []models.Review
-
-	result = append(result, review)
+	result = append(result, *review)
 
 	return result, nil
 }
@@ -132,12 +107,11 @@ func UpdateReviewById(ctx context.Context, id string, newValues models.NewReview
 	var err error
 	result := []models.Review{}
 
-	result, err = FindReviewById(ctx, id)
+	reviewToUpdate, err := findItemById[*models.Review](ctx, reviewCollectionName, id)
 	if err != nil {
 		return []models.Review{}, err
 	}
 
-	reviewToUpdate := result[0]
 	if newValues.Rating != reviewToUpdate.Rating {
 		reviewToUpdate.Rating = newValues.Rating
 	}
@@ -154,19 +128,11 @@ func UpdateReviewById(ctx context.Context, id string, newValues models.NewReview
 		return []models.Review{}, err
 	}
 
-	result[0] = reviewToUpdate
+	result = append(result, *reviewToUpdate)
 
 	return result, nil
 }
 
 func DeleteReviewById(ctx context.Context, id string) error {
-	client := database.GetFirestoreClient()
-	docRef := client.Collection(reviewCollectionName).Doc(id)
-
-	_, err := docRef.Delete(ctx)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return deleteItemById(ctx, reviewCollectionName, id)
 }
