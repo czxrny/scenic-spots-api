@@ -3,6 +3,7 @@ package handlers
 import (
 	"encoding/json"
 	"errors"
+	"io"
 	"net/http"
 	"scenic-spots-api/app/database/repositories"
 	"scenic-spots-api/models"
@@ -12,6 +13,16 @@ import (
 )
 
 func getReview(response http.ResponseWriter, request *http.Request, spotId string) {
+	bodyBytes, err := io.ReadAll(request.Body)
+	if err != nil {
+		ErrorResponse(response, "Failed to read request body", http.StatusInternalServerError)
+		return
+	}
+	if len(bodyBytes) > 0 {
+		ErrorResponse(response, "GET request must not contain a body", http.StatusBadRequest)
+		return
+	}
+
 	ctx := request.Context()
 	params := models.ReviewQueryParams{
 		SpotId: spotId,
@@ -74,8 +85,17 @@ func addReview(response http.ResponseWriter, request *http.Request, spotId strin
 }
 
 func getReviewById(response http.ResponseWriter, request *http.Request, id string) {
-	ctx := request.Context()
+	bodyBytes, err := io.ReadAll(request.Body)
+	if err != nil {
+		ErrorResponse(response, "Failed to read request body", http.StatusInternalServerError)
+		return
+	}
+	if len(bodyBytes) > 0 {
+		ErrorResponse(response, "GET request must not contain a body", http.StatusBadRequest)
+		return
+	}
 
+	ctx := request.Context()
 	review, err := repositories.FindReviewById(ctx, id)
 	if err != nil {
 		if errors.Is(err, repositories.ErrDoesNotExist) {
@@ -125,9 +145,18 @@ func updateReviewById(response http.ResponseWriter, request *http.Request, id st
 }
 
 func deleteReviewById(response http.ResponseWriter, request *http.Request, id string) {
-	ctx := request.Context()
+	bodyBytes, err := io.ReadAll(request.Body)
+	if err != nil {
+		ErrorResponse(response, "Failed to read request body", http.StatusInternalServerError)
+		return
+	}
+	if len(bodyBytes) > 0 {
+		ErrorResponse(response, "GET request must not contain a body", http.StatusBadRequest)
+		return
+	}
 
-	err := repositories.DeleteReviewById(ctx, id)
+	ctx := request.Context()
+	err = repositories.DeleteReviewById(ctx, id)
 	if err != nil {
 		if errors.Is(err, repositories.ErrDoesNotExist) {
 			ErrorResponse(response, "Review with ID: ["+id+"] was not found", http.StatusNotFound)

@@ -3,6 +3,7 @@ package handlers
 import (
 	"encoding/json"
 	"errors"
+	"io"
 	"net/http"
 	"scenic-spots-api/app/database/repositories"
 	"scenic-spots-api/models"
@@ -12,6 +13,16 @@ import (
 )
 
 func getSpot(response http.ResponseWriter, request *http.Request) {
+	bodyBytes, err := io.ReadAll(request.Body)
+	if err != nil {
+		ErrorResponse(response, "Failed to read request body", http.StatusInternalServerError)
+		return
+	}
+	if len(bodyBytes) > 0 {
+		ErrorResponse(response, "GET request must not contain a body", http.StatusBadRequest)
+		return
+	}
+
 	queryParams := models.SpotQueryParams{
 		Name:      request.URL.Query().Get("name"),
 		Latitude:  request.URL.Query().Get("latitude"),
@@ -69,6 +80,16 @@ func addSpot(response http.ResponseWriter, request *http.Request) {
 }
 
 func getSpotById(response http.ResponseWriter, request *http.Request, id string) {
+	bodyBytes, err := io.ReadAll(request.Body)
+	if err != nil {
+		ErrorResponse(response, "Failed to read request body", http.StatusInternalServerError)
+		return
+	}
+	if len(bodyBytes) > 0 {
+		ErrorResponse(response, "GET request must not contain a body", http.StatusBadRequest)
+		return
+	}
+
 	ctx := request.Context()
 
 	spot, err := repositories.FindSpotById(ctx, id)
@@ -124,9 +145,18 @@ func updateSpotById(response http.ResponseWriter, request *http.Request, id stri
 }
 
 func deleteSpotById(response http.ResponseWriter, request *http.Request, id string) {
-	ctx := request.Context()
+	bodyBytes, err := io.ReadAll(request.Body)
+	if err != nil {
+		ErrorResponse(response, "Failed to read request body", http.StatusInternalServerError)
+		return
+	}
+	if len(bodyBytes) > 0 {
+		ErrorResponse(response, "DELETE request must not contain a body", http.StatusBadRequest)
+		return
+	}
 
-	err := repositories.DeleteSpotById(ctx, id)
+	ctx := request.Context()
+	err = repositories.DeleteSpotById(ctx, id)
 	if err != nil {
 		if errors.Is(err, repositories.ErrDoesNotExist) {
 			ErrorResponse(response, "Spot with ID: ["+id+"] was not found", http.StatusNotFound)
