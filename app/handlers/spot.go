@@ -155,6 +155,11 @@ func SpotById(response http.ResponseWriter, request *http.Request) {
 	method := request.Method
 	spotId := parts[2]
 
+	if spotId == "" {
+		ErrorResponse(response, "Missing spot ID", http.StatusBadRequest)
+		return
+	}
+
 	if numberOfParts == 3 {
 		switch method {
 		case "GET":
@@ -176,5 +181,7 @@ func SpotById(response http.ResponseWriter, request *http.Request) {
 		default:
 			response.WriteHeader(http.StatusNotFound)
 		}
+	} else {
+		response.WriteHeader(http.StatusNotFound)
 	}
 }

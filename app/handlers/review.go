@@ -156,6 +156,10 @@ func Review(response http.ResponseWriter, request *http.Request, spotId string) 
 		}
 	} else if numberOfParts == 5 {
 		reviewId := parts[4]
+		if reviewId == "" {
+			ErrorResponse(response, "Missing review ID", http.StatusBadRequest)
+			return
+		}
 		switch method {
 		case "GET":
 			getReviewById(response, request, reviewId)
@@ -166,5 +170,7 @@ func Review(response http.ResponseWriter, request *http.Request, spotId string) 
 		default:
 			response.WriteHeader(http.StatusNotFound)
 		}
+	} else {
+		response.WriteHeader(http.StatusNotFound)
 	}
 }
