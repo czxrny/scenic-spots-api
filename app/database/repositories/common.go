@@ -67,3 +67,19 @@ func deleteItemById(ctx context.Context, collectionName string, id string) error
 
 	return nil
 }
+
+func deleteAllItems(ctx context.Context, query firestore.Query) error {
+	iter := query.Documents(ctx)
+
+	for {
+		doc, err := iter.Next()
+		if err == iterator.Done {
+			break
+		}
+		if err != nil {
+			return err
+		}
+		doc.Ref.Delete(ctx)
+	}
+	return nil
+}

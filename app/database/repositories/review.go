@@ -94,6 +94,13 @@ func AddReview(ctx context.Context, reviewInfo models.NewReview) ([]models.Revie
 	return result, nil
 }
 
+func DeleteAllReviews(ctx context.Context, spotId string) error {
+	client := database.GetFirestoreClient()
+	query := client.Collection(reviewCollectionName).Where("spotId", "==", spotId)
+
+	return deleteAllItems(ctx, query)
+}
+
 func FindReviewById(ctx context.Context, id string) ([]models.Review, error) {
 	review, err := findItemById[*models.Review](ctx, reviewCollectionName, id)
 	if err != nil {

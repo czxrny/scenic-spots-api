@@ -84,6 +84,26 @@ func addReview(response http.ResponseWriter, request *http.Request, spotId strin
 	}
 }
 
+func deleteAllReviews(response http.ResponseWriter, request *http.Request, spotId string) {
+	bodyBytes, err := io.ReadAll(request.Body)
+	if err != nil {
+		ErrorResponse(response, "Failed to read request body", http.StatusInternalServerError)
+		return
+	}
+	if len(bodyBytes) > 0 {
+		ErrorResponse(response, "DELETE request must not contain a body", http.StatusBadRequest)
+		return
+	}
+
+	ctx := request.Context()
+	if err := repositories.DeleteAllReviews(ctx, spotId); err != nil {
+		ErrorResponse(response, "Unexpected error: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	response.WriteHeader(http.StatusNoContent)
+}
+
 func getReviewById(response http.ResponseWriter, request *http.Request, id string) {
 	bodyBytes, err := io.ReadAll(request.Body)
 	if err != nil {
@@ -180,6 +200,8 @@ func Review(response http.ResponseWriter, request *http.Request, spotId string) 
 			getReview(response, request, spotId)
 		case "POST":
 			addReview(response, request, spotId)
+		case "DELETE":
+			deleteAllReviews(response, request, spotId)
 		default:
 			response.WriteHeader(http.StatusNotFound)
 		}
