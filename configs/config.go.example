@@ -8,20 +8,37 @@ package configs
 type EnvVars struct {
 	Port                         string
 	FirestoreMode                string
+	StorageMode                  string
+	StoragePhotoBucketName       string
 	FirestoreEmulatorHost        string
+	StorageEmulatorHost          string
 	FirestoreProjectID           string
 	GoogleApplicationCredentials string
 }
 
+type ColNames struct {
+	Spots   string
+	Reviews string
+}
+
 var Env EnvVars
+var CollectionNames ColNames
 
 // Initialize the variables - CHANGE ACCORDINGLY!
 func InitializeVariables() {
 	Env = EnvVars{
 		Port:                         "8080",            // HTTP Server port
 		FirestoreMode:                "cloud",           // Select between [cloud / emulator] for the firestore mode.
-		FirestoreEmulatorHost:        "localhost:8081",  // If [emulator] was selected, set appropiate hostname with port.
+		StorageMode:            	  "cloud",     		 // Select between [cloud / emulator] for the storage mode.
+		StoragePhotoBucketName:		  "default"			 // Specify photos bucket name in the storage. make sure the bucket exist, if storage mode is cloud
+		FirestoreEmulatorHost:        "localhost:8081",  // If [firestore emulator] was selected, set appropiate firestore hostname with port.
+		StorageEmulatorHost: 		  "localhost:9199",  // If [storage emulator] was selected, set appropiate storage hostname with port.
 		FirestoreProjectID:           "your-project-id", // This is the project ID visible on the main page of Firebase Console.
 		GoogleApplicationCredentials: "path-to-key",     // Generated at: Project Overview > Service Accounts > Generate new private key
+	}
+
+	CollectionNames = ColNames{
+		Spots:   "spots",
+		Reviews: "reviews",
 	}
 }
