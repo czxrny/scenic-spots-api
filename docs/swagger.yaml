@@ -37,7 +37,7 @@ paths:
               $ref: '#/components/schemas/NewSpot'
         required: true
       responses:
-        '200':
+        '201':
           description: Successful operation
           content:
             application/json:
@@ -101,8 +101,6 @@ paths:
                   $ref: '#/components/schemas/Spot'
         '400':
           description: Invalid parameters
-        '404':
-          description: No spots found
         '422':
           description: Validation exception
         default:
@@ -143,9 +141,11 @@ paths:
                 schema:
                   $ref: '#/components/schemas/Spot'
           '400':
-            description: Invalid ID supplied
+            description: Invalid spot id
           '404':
             description: Spot not found
+          '409':
+            description: Spot already exists in the database 
           '422':
             description: Validation exception
           default:
@@ -175,12 +175,16 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Spot'
+        '400':
+          description: Invalid spot id
         '404':
           description: Spot not found
-        '400':
-          description: Invalid ID supplied
         '500':
           description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
     ##################################################################################
     delete:
       tags:
@@ -197,6 +201,8 @@ paths:
       responses:
         '204':
           description: Spot successfully deleted (no content)
+        '400':
+          description: Invalid spot ID
         '404':
           description: Spot not found
         '500':
@@ -338,6 +344,16 @@ paths:
       responses:
         '201':
           description: Review created
+        '400':
+          description: Invalid parameters
+        '404':
+          description: Spot not found
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
     ##################################################################################
     get:
       tags:
@@ -353,7 +369,7 @@ paths:
           in: query
           schema:
             type: integer
-          description: Number of reviews to return (default 5).
+          description: Number of reviews to return (default - all).
       responses:
         '200':
           description: A list of reviews
@@ -363,6 +379,16 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Review'
+        '400':
+          description: Invalid parameters
+        '404':
+          description: Spot not found
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
     ################################################################################## 
     delete:
       tags:
@@ -400,7 +426,108 @@ paths:
         '500':
           description: Internal server error
 ################################################################################## 
-
+  /spot/{id}/review/{rId}:
+    patch:
+        tags:
+          - review
+        summary: Update an existing review.
+        description: Update an existing review by Id.
+        parameters:
+        - name: spotId
+          in: path
+          required: true
+          description: The unique ID of the spot.
+          schema:
+            type: integer
+            format: int64
+        requestBody:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NewReview'
+          required: true
+        responses:
+          '200':
+            description: Successful operation
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/Review'
+              application/xml:
+                schema:
+                  $ref: '#/components/schemas/Review'
+          '400':
+            description: Invalid spot id
+          '404':
+            description: Spot not found
+          '422':
+            description: Validation exception
+          default:
+            description: Unexpected error
+            content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/Error"
+    ##################################################################################
+    get:
+      tags:
+        - review
+      summary: Get a review by its ID.
+      description: Retrieve details of a specific review using its unique ID.
+      parameters:
+        - name: spotId
+          in: path
+          required: true
+          description: The unique ID of the spot.
+          schema:
+            type: integer
+            format: int64
+        - name: reviewId
+          in: path
+          required: true
+          description: The unique ID of the review.
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successfully retrieved the spot
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Review'
+        '400':
+          description: Invalid spot id
+        '404':
+          description: Review not found
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    delete:
+        tags:
+          - review
+        summary: Delete a review.
+        description: Deletes a specific review by its ID.
+        parameters:
+          - name: id
+            in: path
+            required: true
+            description: The ID of the review to delete.
+            schema:
+              type: string
+        responses:
+          '204':
+            description: Spot successfully deleted (no content)
+          '400':
+            description: Invalid review ID
+          '404':
+            description: Review not found
+          '500':
+            description: Internal server error
+  ##################################################################################             
 components:
   schemas:
   ##################################################################################
@@ -509,24 +636,24 @@ components:
     Review:
       type: object
       properties:
-        reviewId:
+        id:
           type: string
           example: "rev_abc123"
         spotId:
           type: string
           example: "spot_001"
-        userId:
-          type: string
-          example: "user_42"
         rating:
           type: number
           format: float
           minimum: 0
           maximum: 5
           example: 4.5
-        comment:
+        content:
           type: string
           example: "Wonderfull place!"
+        addedBy:
+          type: string
+          example: "user_42"
         createdAt:
           type: string
           format: date-time
@@ -544,7 +671,7 @@ components:
           minimum: 0
           maximum: 5
           example: 4.0
-        comment:
+        content:
           type: string
           example: "Worth visiting!"
   ##################################################################################
