@@ -3,7 +3,6 @@ package handlers
 import (
 	"encoding/json"
 	"errors"
-	"io"
 	"net/http"
 	"scenic-spots-api/app/database/repositories"
 	"scenic-spots-api/models"
@@ -13,12 +12,7 @@ import (
 )
 
 func getSpot(response http.ResponseWriter, request *http.Request) {
-	bodyBytes, err := io.ReadAll(request.Body)
-	if err != nil {
-		ErrorResponse(response, "Failed to read request body", http.StatusInternalServerError)
-		return
-	}
-	if len(bodyBytes) > 0 {
+	if !requestBodyIsEmpty(request) {
 		ErrorResponse(response, "GET request must not contain a body", http.StatusBadRequest)
 		return
 	}
@@ -60,8 +54,7 @@ func addSpot(response http.ResponseWriter, request *http.Request) {
 		return
 	}
 
-	ctx := request.Context()
-	addedSpot, err := repositories.AddSpot(spot, ctx)
+	addedSpot, err := repositories.AddSpot(spot, request.Context())
 	if err != nil {
 		if errors.Is(err, repositories.ErrSpotAlreadyExists) {
 			ErrorResponse(response, "Spot already exists in the database", http.StatusConflict)
@@ -80,19 +73,12 @@ func addSpot(response http.ResponseWriter, request *http.Request) {
 }
 
 func getSpotById(response http.ResponseWriter, request *http.Request, id string) {
-	bodyBytes, err := io.ReadAll(request.Body)
-	if err != nil {
-		ErrorResponse(response, "Failed to read request body", http.StatusInternalServerError)
-		return
-	}
-	if len(bodyBytes) > 0 {
+	if !requestBodyIsEmpty(request) {
 		ErrorResponse(response, "GET request must not contain a body", http.StatusBadRequest)
 		return
 	}
 
-	ctx := request.Context()
-
-	spot, err := repositories.FindSpotById(ctx, id)
+	spot, err := repositories.FindSpotById(request.Context(), id)
 	if err != nil {
 		if errors.Is(err, repositories.ErrDoesNotExist) {
 			ErrorResponse(response, "Spot with ID: ["+id+"] was not found", http.StatusNotFound)
@@ -122,8 +108,7 @@ func updateSpotById(response http.ResponseWriter, request *http.Request, id stri
 		return
 	}
 
-	ctx := request.Context()
-	updatedSpot, err := repositories.UpdateSpot(ctx, id, spot)
+	updatedSpot, err := repositories.UpdateSpot(request.Context(), id, spot)
 	if err != nil {
 		if errors.Is(err, repositories.ErrDoesNotExist) {
 			ErrorResponse(response, "Spot with ID: ["+id+"] was not found", http.StatusNotFound)
@@ -145,18 +130,12 @@ func updateSpotById(response http.ResponseWriter, request *http.Request, id stri
 }
 
 func deleteSpotById(response http.ResponseWriter, request *http.Request, id string) {
-	bodyBytes, err := io.ReadAll(request.Body)
-	if err != nil {
-		ErrorResponse(response, "Failed to read request body", http.StatusInternalServerError)
-		return
-	}
-	if len(bodyBytes) > 0 {
-		ErrorResponse(response, "DELETE request must not contain a body", http.StatusBadRequest)
+	if !requestBodyIsEmpty(request) {
+		ErrorResponse(response, "GET request must not contain a body", http.StatusBadRequest)
 		return
 	}
 
-	ctx := request.Context()
-	err = repositories.DeleteSpotById(ctx, id)
+	err := repositories.DeleteSpotById(request.Context(), id)
 	if err != nil {
 		if errors.Is(err, repositories.ErrDoesNotExist) {
 			ErrorResponse(response, "Spot with ID: ["+id+"] was not found", http.StatusNotFound)

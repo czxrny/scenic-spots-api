@@ -3,7 +3,6 @@ package handlers
 import (
 	"encoding/json"
 	"errors"
-	"io"
 	"net/http"
 	"scenic-spots-api/app/database/repositories"
 	"scenic-spots-api/models"
@@ -13,23 +12,17 @@ import (
 )
 
 func getReview(response http.ResponseWriter, request *http.Request, spotId string) {
-	bodyBytes, err := io.ReadAll(request.Body)
-	if err != nil {
-		ErrorResponse(response, "Failed to read request body", http.StatusInternalServerError)
-		return
-	}
-	if len(bodyBytes) > 0 {
+	if !requestBodyIsEmpty(request) {
 		ErrorResponse(response, "GET request must not contain a body", http.StatusBadRequest)
 		return
 	}
 
-	ctx := request.Context()
 	params := models.ReviewQueryParams{
 		SpotId: spotId,
 		Limit:  request.URL.Query().Get("limit"),
 	}
 
-	found, err := repositories.GetReviews(ctx, params)
+	found, err := repositories.GetReviews(request.Context(), params)
 	if err != nil {
 		if errors.Is(err, repositories.ErrDoesNotExist) {
 			ErrorResponse(response, "Spot with ID: ["+spotId+"] was not found", http.StatusBadRequest)
@@ -51,8 +44,6 @@ func getReview(response http.ResponseWriter, request *http.Request, spotId strin
 }
 
 func addReview(response http.ResponseWriter, request *http.Request, spotId string) {
-	ctx := request.Context()
-
 	var newReview models.NewReview
 	if err := json.NewDecoder(request.Body).Decode(&newReview); err != nil {
 		ErrorResponse(response, "Bad request body", http.StatusBadRequest)
@@ -66,8 +57,7 @@ func addReview(response http.ResponseWriter, request *http.Request, spotId strin
 		return
 	}
 
-	found, err := repositories.AddReview(ctx, newReview)
-
+	found, err := repositories.AddReview(request.Context(), newReview)
 	if err != nil {
 		if errors.Is(err, repositories.ErrDoesNotExist) {
 			ErrorResponse(response, "Spot with ID: ["+spotId+"] was not found", http.StatusBadRequest)
@@ -85,18 +75,12 @@ func addReview(response http.ResponseWriter, request *http.Request, spotId strin
 }
 
 func deleteAllReviews(response http.ResponseWriter, request *http.Request, spotId string) {
-	bodyBytes, err := io.ReadAll(request.Body)
-	if err != nil {
-		ErrorResponse(response, "Failed to read request body", http.StatusInternalServerError)
-		return
-	}
-	if len(bodyBytes) > 0 {
-		ErrorResponse(response, "DELETE request must not contain a body", http.StatusBadRequest)
+	if !requestBodyIsEmpty(request) {
+		ErrorResponse(response, "GET request must not contain a body", http.StatusBadRequest)
 		return
 	}
 
-	ctx := request.Context()
-	if err := repositories.DeleteAllReviews(ctx, spotId); err != nil {
+	if err := repositories.DeleteAllReviews(request.Context(), spotId); err != nil {
 		ErrorResponse(response, "Unexpected error: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -105,18 +89,12 @@ func deleteAllReviews(response http.ResponseWriter, request *http.Request, spotI
 }
 
 func getReviewById(response http.ResponseWriter, request *http.Request, id string) {
-	bodyBytes, err := io.ReadAll(request.Body)
-	if err != nil {
-		ErrorResponse(response, "Failed to read request body", http.StatusInternalServerError)
-		return
-	}
-	if len(bodyBytes) > 0 {
+	if !requestBodyIsEmpty(request) {
 		ErrorResponse(response, "GET request must not contain a body", http.StatusBadRequest)
 		return
 	}
 
-	ctx := request.Context()
-	review, err := repositories.FindReviewById(ctx, id)
+	review, err := repositories.FindReviewById(request.Context(), id)
 	if err != nil {
 		if errors.Is(err, repositories.ErrDoesNotExist) {
 			ErrorResponse(response, "Review with ID: ["+id+"] was not found", http.StatusBadRequest)
@@ -146,8 +124,7 @@ func updateReviewById(response http.ResponseWriter, request *http.Request, id st
 		return
 	}
 
-	ctx := request.Context()
-	updatedSpot, err := repositories.UpdateReviewById(ctx, id, review)
+	updatedSpot, err := repositories.UpdateReviewById(request.Context(), id, review)
 	if err != nil {
 		if errors.Is(err, repositories.ErrDoesNotExist) {
 			ErrorResponse(response, "Review with ID: ["+id+"] was not found", http.StatusBadRequest)
@@ -165,18 +142,12 @@ func updateReviewById(response http.ResponseWriter, request *http.Request, id st
 }
 
 func deleteReviewById(response http.ResponseWriter, request *http.Request, id string) {
-	bodyBytes, err := io.ReadAll(request.Body)
-	if err != nil {
-		ErrorResponse(response, "Failed to read request body", http.StatusInternalServerError)
-		return
-	}
-	if len(bodyBytes) > 0 {
+	if !requestBodyIsEmpty(request) {
 		ErrorResponse(response, "GET request must not contain a body", http.StatusBadRequest)
 		return
 	}
 
-	ctx := request.Context()
-	err = repositories.DeleteReviewById(ctx, id)
+	err := repositories.DeleteReviewById(request.Context(), id)
 	if err != nil {
 		if errors.Is(err, repositories.ErrDoesNotExist) {
 			ErrorResponse(response, "Review with ID: ["+id+"] was not found", http.StatusNotFound)
