@@ -10,7 +10,7 @@ The “Scenic Spots API” project aims to enable intuitive communication with a
 - `app/` - initialization, handlers, database connection + functions, and logger
 - `docs/` – documentation
 - `models/` - structures used in api
-- `utils` - reusable tools
+- `utils/` - reusable tools
 
 # ✅ TODO – Scenic Spots API (Project Roadmap)
 
@@ -54,7 +54,7 @@ The “Scenic Spots API” project aims to enable intuitive communication with a
 - [x] App entrypoint (`main.go`), router and API handler setup
 - [x] Firestore integration for data storage
 - [x] Spot related endpoints implementation
-- [ ] Review related endpoints implementation
+- [x] Review related endpoints implementation
 - [ ] Firebase Storage integration for image hosting
 - [ ] Photos related endpoints implementation
 - [ ] Data validation and error handling (400, 404, 500, etc.)
