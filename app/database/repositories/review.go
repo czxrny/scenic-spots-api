@@ -2,6 +2,7 @@ package repositories
 
 import (
 	"context"
+	"fmt"
 	"scenic-spots-api/app/database"
 	"scenic-spots-api/models"
 	"scenic-spots-api/utils/generics"
@@ -23,7 +24,7 @@ func buildReviewQuery(collectionRef *firestore.CollectionRef, params models.Revi
 	if params.Limit != "" {
 		limit, err = strconv.Atoi(params.Limit)
 		if err != nil {
-			return firestore.Query{}, err
+			return firestore.Query{}, fmt.Errorf("invalid limit parameter")
 		}
 		query = query.Limit(limit)
 	}
@@ -40,7 +41,9 @@ func GetReviews(ctx context.Context, params models.ReviewQueryParams) ([]models.
 
 	query, err := buildReviewQuery(collectionRef, params)
 	if err != nil {
-		return []models.Review{}, err
+		return []models.Review{}, &InvalidQueryParameterError{
+			Message: err.Error(),
+		}
 	}
 
 	found, err := getAllItems[*models.Review](ctx, query)

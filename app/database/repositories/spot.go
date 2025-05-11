@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"scenic-spots-api/app/database"
-	"scenic-spots-api/app/logger"
 	"scenic-spots-api/models"
 	"scenic-spots-api/utils/calc"
 	"scenic-spots-api/utils/generics"
@@ -29,7 +28,6 @@ func buildSpotQuery(collectionRef *firestore.CollectionRef, params models.SpotQu
 		}
 		coordinates, err := calc.CoordinatesAfterRadius(params.Latitude, params.Longitude, params.Radius)
 		if err != nil {
-			logger.Error(err.Error())
 			return firestore.Query{}, err
 		}
 		query = query.Where("latitude", "<=", coordinates.MaxLat).
@@ -50,7 +48,9 @@ func GetSpot(params models.SpotQueryParams, ctx context.Context) ([]models.Spot,
 
 	query, err := buildSpotQuery(collectionRef, params)
 	if err != nil {
-		return []models.Spot{}, err
+		return []models.Spot{}, &InvalidQueryParameterError{
+			Message: err.Error(),
+		}
 	}
 
 	found, err := getAllItems[*models.Spot](ctx, query)
@@ -168,6 +168,10 @@ func UpdateSpot(ctx context.Context, id string, newValues models.NewSpot) ([]mod
 }
 
 func DeleteSpotById(ctx context.Context, id string) error {
+	if _, err := findItemById[*models.Spot](ctx, spotCollectionName, id); err != nil {
+		return err
+	}
+
 	return deleteItemById(ctx, spotCollectionName, id)
 }
 
@@ -176,20 +180,17 @@ func checkIfSpotAlreadyExists(ctx context.Context, latitude float64, longitude f
 	client := database.GetFirestoreClient()
 	collectionRef := client.Collection(spotCollectionName)
 
-	query, err := buildSpotQuery(collectionRef, models.SpotQueryParams{
+	query, _ := buildSpotQuery(collectionRef, models.SpotQueryParams{
 		Name:      "",
 		Latitude:  strconv.FormatFloat(latitude, 'f', -1, 64),
 		Longitude: strconv.FormatFloat(longitude, 'f', -1, 64),
 		Radius:    "0.1",
 	})
-	if err != nil {
-		return err
-	}
 
 	docs := query.Documents(ctx)
 	results, _ := docs.GetAll()
 	if len(results) != 0 {
-		return fmt.Errorf("The spot already exists in the database: %s", results[0].Ref.ID)
+		return ErrSpotAlreadyExists
 	}
 
 	return nil

@@ -16,9 +16,9 @@ func (r *Review) SetId(id string) {
 }
 
 type NewReview struct {
-	SpotId  string  `json:"spotId"`
-	Rating  float32 `json:"rating"`
-	Content string  `json:"content"`
+	SpotId  string  `json:"spotId" validate:"required"`
+	Rating  float32 `json:"rating" validate:"required,gte=0,lte=5"`
+	Content string  `json:"content" validate:"max=300"`
 }
 
 type ReviewQueryParams struct {

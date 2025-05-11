@@ -7,9 +7,9 @@ import (
 	"scenic-spots-api/models"
 )
 
-func ErrorResponse(response http.ResponseWriter, code string, message string, statusCode int) {
+func ErrorResponse(response http.ResponseWriter, message string, statusCode int) {
 	errorResponse := models.APIError{
-		Code:    code,
+		Code:    statusCode,
 		Message: message,
 	}
 
@@ -17,6 +17,6 @@ func ErrorResponse(response http.ResponseWriter, code string, message string, st
 	response.WriteHeader(statusCode)
 
 	if err := json.NewEncoder(response).Encode(errorResponse); err != nil {
-		logger.Error("JSON Encoding error")
+		logger.Error("Failed to encode JSON error response: " + err.Error())
 	}
 }

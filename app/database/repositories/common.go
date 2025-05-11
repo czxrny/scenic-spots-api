@@ -2,7 +2,6 @@ package repositories
 
 import (
 	"context"
-	"fmt"
 	"scenic-spots-api/app/database"
 	"scenic-spots-api/models"
 
@@ -16,12 +15,10 @@ func findItemById[T models.Identifiable](ctx context.Context, collectionName str
 	doc, err := docRef.Get(ctx)
 	if err != nil {
 		var zero T
+		if !doc.Exists() {
+			return zero, ErrDoesNotExist
+		}
 		return zero, err
-	}
-
-	if !doc.Exists() {
-		var zero T
-		return zero, fmt.Errorf("document with ID: [%v] in the collection [%v] does not exist", id, collectionName)
 	}
 
 	var item T
@@ -60,22 +57,11 @@ func getAllItems[T models.Identifiable](ctx context.Context, query firestore.Que
 	return found, nil
 }
 
-//func addItem
-
-// func updateById[T models.Identifiable, T1 any](ctx context.Context, collectionName string, id string,) (T, error) {
-// 	itemToUpdate, err := findById[T](ctx, collectionName, id)
-// 	if err != nil {
-// 		var zero T
-// 		return zero, err
-// 	}
-// }
-
 func deleteItemById(ctx context.Context, collectionName string, id string) error {
 	client := database.GetFirestoreClient()
 	docRef := client.Collection(collectionName).Doc(id)
 
-	_, err := docRef.Delete(ctx)
-	if err != nil {
+	if _, err := docRef.Delete(ctx); err != nil {
 		return err
 	}
 
