@@ -172,6 +172,10 @@ func DeleteSpotById(ctx context.Context, id string) error {
 		return err
 	}
 
+	if err := DeleteAllReviews(ctx, id); err != nil {
+		return err
+	}
+
 	return deleteItemById(ctx, spotCollectionName, id)
 }
 
