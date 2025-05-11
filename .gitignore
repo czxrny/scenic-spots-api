@@ -3,11 +3,17 @@
 /configs/config.go
 
 # Firebase emulator files
-/firebase-debug.log
+*firebase-debug.log
 /firebase-emulator/
 /storage-emulator/
 /firebase_ui/
 
 # Firebase config
 .firebaserc
-.firebase.json
+firebase.json
+
+# Firestore emulator files
+firestore-debug.log
+
+# Storage config
+storage.rules

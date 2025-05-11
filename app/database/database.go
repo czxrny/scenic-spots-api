@@ -3,6 +3,7 @@ package database
 import (
 	"context"
 	"fmt"
+	"os"
 	"scenic-spots-api/app/logger"
 	"scenic-spots-api/configs"
 
@@ -61,6 +62,7 @@ func connectToFirestoreCloud(ctx context.Context) (*firestore.Client, error) {
 
 // USED FOR TESTING LOCALLY - MAKE SURE TO CONFIGURE THE EMULATOR ACCORDINGLY
 func connectToEmulator(ctx context.Context) (*firestore.Client, error) {
+	_ = os.Setenv("FIRESTORE_EMULATOR_HOST", configs.Env.FirestoreEmulatorHost)
 	projectID := "demo"
 
 	client, err := firestore.NewClient(ctx, projectID)

@@ -14,6 +14,9 @@ func Start(ctx context.Context) error {
 	if err := database.InitializeFirestoreClient(ctx); err != nil {
 		return err
 	}
+	if err := database.InitalizeStorageClient(ctx); err != nil {
+		return err
+	}
 	initializeHandlers()
 	return startTheServer()
 }
