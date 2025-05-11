@@ -25,7 +25,7 @@ func getSpot(response http.ResponseWriter, request *http.Request) {
 		Category:  request.URL.Query().Get("category"),
 	}
 
-	found, err := repositories.GetSpot(queryParams, request.Context())
+	found, err := repositories.GetSpot(request.Context(), queryParams)
 	if err != nil {
 		if errors.Is(err, repositories.ErrInvalidQueryParameters) {
 			ErrorResponse(response, err.Error(), http.StatusBadRequest)
@@ -54,7 +54,7 @@ func addSpot(response http.ResponseWriter, request *http.Request) {
 		return
 	}
 
-	addedSpot, err := repositories.AddSpot(spot, request.Context())
+	addedSpot, err := repositories.AddSpot(request.Context(), spot)
 	if err != nil {
 		if errors.Is(err, repositories.ErrSpotAlreadyExists) {
 			ErrorResponse(response, "Spot already exists in the database", http.StatusConflict)

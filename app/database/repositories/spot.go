@@ -42,7 +42,7 @@ func buildSpotQuery(collectionRef *firestore.CollectionRef, params models.SpotQu
 	return query, nil
 }
 
-func GetSpot(params models.SpotQueryParams, ctx context.Context) ([]models.Spot, error) {
+func GetSpot(ctx context.Context, params models.SpotQueryParams) ([]models.Spot, error) {
 	client := database.GetFirestoreClient()
 	collectionRef := client.Collection(spotCollectionName)
 
@@ -63,7 +63,7 @@ func GetSpot(params models.SpotQueryParams, ctx context.Context) ([]models.Spot,
 	return result, nil
 }
 
-func AddSpot(spotInfo models.NewSpot, ctx context.Context) ([]models.Spot, error) {
+func AddSpot(ctx context.Context, spotInfo models.NewSpot) ([]models.Spot, error) {
 	client := database.GetFirestoreClient()
 	collectionRef := client.Collection(spotCollectionName)
 
