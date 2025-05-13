@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"os"
 	"scenic-spots-api/app/logger"
-	"scenic-spots-api/configs"
 
 	"cloud.google.com/go/firestore"
 	"google.golang.org/api/option"
@@ -13,9 +12,12 @@ import (
 
 var firestoreClient *firestore.Client
 
+const SpotCollectionName string = "spots"
+const ReviewCollectionName string = "reviews"
+
 func InitializeFirestoreClient(ctx context.Context) error {
 	var err error
-	mode := configs.Env.FirestoreMode
+	mode := os.Getenv("FIRESTORE_MODE")
 
 	var connectFunc func(ctx context.Context) (*firestore.Client, error)
 	if mode == "cloud" {
@@ -24,17 +26,15 @@ func InitializeFirestoreClient(ctx context.Context) error {
 		connectFunc = connectToEmulator
 	} else {
 		err = fmt.Errorf("invalid firestore mode - check config.go file")
-		logger.Error(err.Error())
 		return err
 	}
 
 	firestoreClient, err = connectFunc(ctx)
 	if err != nil {
-		logger.Error("failed to connect to firestore: " + err.Error())
 		return err
 	}
 
-	if configs.DBInputFiles.Initialize {
+	if os.Getenv("DB_INITIALIZE") == "true" {
 		if err = InitializeDatabase(ctx); err != nil {
 			logger.Error(err.Error())
 			return err
@@ -50,13 +50,13 @@ func GetFirestoreClient() *firestore.Client {
 }
 
 func connectToFirestoreCloud(ctx context.Context) (*firestore.Client, error) {
-	pathToJson := configs.Env.GoogleApplicationCredentials
-	projectId := configs.Env.FirestoreProjectID
+	pathToJson := os.Getenv("FIREBASE_CREDENTIALS_PATH")
+	projectId := os.Getenv("FIREBASE_PROJECT_ID")
 	if pathToJson == "" {
-		return nil, fmt.Errorf("GOOGLE_APPLICATION_CREDENTIALS is not set - check config.go file")
+		return nil, fmt.Errorf("FIREBASE_CREDENTIALS_PATH is not set - check .env file")
 	}
 	if projectId == "" {
-		return nil, fmt.Errorf("FIRESTORE_PROJECT_ID is not set - check config.go file")
+		return nil, fmt.Errorf("FIREBASE_PROJECT_ID is not set - check .env file")
 	}
 
 	clientOption := option.WithCredentialsFile(pathToJson)
@@ -69,8 +69,12 @@ func connectToFirestoreCloud(ctx context.Context) (*firestore.Client, error) {
 
 // USED FOR TESTING LOCALLY - MAKE SURE TO CONFIGURE THE EMULATOR ACCORDINGLY
 func connectToEmulator(ctx context.Context) (*firestore.Client, error) {
-	_ = os.Setenv("FIRESTORE_EMULATOR_HOST", configs.Env.FirestoreEmulatorHost)
-	projectID := configs.Env.FirestoreProjectID
+	hostName := os.Getenv("FIRESTORE_EMULATOR_HOST_CONFIG")
+	if hostName == "" {
+		return nil, fmt.Errorf("FIRESTORE_EMULATOR_HOST_CONFIG is not set - check .env file")
+	}
+	os.Setenv("FIRESTORE_EMULATOR_HOST", hostName)
+	projectID := os.Getenv("FIREBASE_PROJECT_ID")
 
 	client, err := firestore.NewClient(ctx, projectID)
 	if err != nil {

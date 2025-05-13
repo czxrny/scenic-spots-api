@@ -4,21 +4,18 @@ import (
 	"context"
 	"encoding/json"
 	"os"
-	"scenic-spots-api/configs"
 	"scenic-spots-api/models"
 
 	"cloud.google.com/go/firestore"
 )
 
 func InitializeDatabase(ctx context.Context) error {
-	var err error
-
-	err = addExampleData[models.Spot](ctx, configs.CollectionNames.Spots, configs.DBInputFiles.Spots)
+	err := addExampleData[models.Spot](ctx, SpotCollectionName, os.Getenv("DB_SPOTS"))
 	if err != nil {
 		return err
 	}
 
-	return addExampleData[models.Review](ctx, configs.CollectionNames.Reviews, configs.DBInputFiles.Reviews)
+	return addExampleData[models.Review](ctx, ReviewCollectionName, os.Getenv("DB_REVIEWS"))
 }
 
 func addExampleData[T any](ctx context.Context, collectionName string, filePath string) error {
@@ -27,8 +24,7 @@ func addExampleData[T any](ctx context.Context, collectionName string, filePath 
 		return err
 	}
 
-	client := GetFirestoreClient()
-	return addToDatabase(ctx, client, collectionName, itemMap)
+	return addToDatabase(ctx, GetFirestoreClient(), collectionName, itemMap)
 }
 
 func readFileToStruct[T any](filePath string) (map[string]T, error) {

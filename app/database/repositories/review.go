@@ -12,8 +12,6 @@ import (
 	"cloud.google.com/go/firestore"
 )
 
-const reviewCollectionName string = "reviews"
-
 func buildReviewQuery(collectionRef *firestore.CollectionRef, params models.ReviewQueryParams) (firestore.Query, error) {
 	var limit int
 	var err error
@@ -32,12 +30,12 @@ func buildReviewQuery(collectionRef *firestore.CollectionRef, params models.Revi
 }
 
 func GetReviews(ctx context.Context, params models.ReviewQueryParams) ([]models.Review, error) {
-	if _, err := findItemById[*models.Spot](ctx, spotCollectionName, params.SpotId); err != nil {
+	if _, err := findItemById[*models.Spot](ctx, database.SpotCollectionName, params.SpotId); err != nil {
 		return []models.Review{}, err
 	}
 
 	client := database.GetFirestoreClient()
-	collectionRef := client.Collection(reviewCollectionName)
+	collectionRef := client.Collection(database.ReviewCollectionName)
 
 	query, err := buildReviewQuery(collectionRef, params)
 	if err != nil {
@@ -56,12 +54,9 @@ func GetReviews(ctx context.Context, params models.ReviewQueryParams) ([]models.
 }
 
 func AddReview(ctx context.Context, reviewInfo models.NewReview) ([]models.Review, error) {
-	if _, err := findItemById[*models.Spot](ctx, spotCollectionName, reviewInfo.SpotId); err != nil {
+	if _, err := findItemById[*models.Spot](ctx, database.SpotCollectionName, reviewInfo.SpotId); err != nil {
 		return []models.Review{}, err
 	}
-
-	client := database.GetFirestoreClient()
-	collectionRef := client.Collection(reviewCollectionName)
 
 	review := models.Review{
 		SpotId:    reviewInfo.SpotId,
@@ -80,6 +75,8 @@ func AddReview(ctx context.Context, reviewInfo models.NewReview) ([]models.Revie
 		"createdAt": review.CreatedAt,
 	}
 
+	client := database.GetFirestoreClient()
+	collectionRef := client.Collection(database.ReviewCollectionName)
 	docRef, _, err := collectionRef.Add(ctx, reviewData)
 
 	if err != nil {
@@ -96,13 +93,13 @@ func AddReview(ctx context.Context, reviewInfo models.NewReview) ([]models.Revie
 
 func DeleteAllReviews(ctx context.Context, spotId string) error {
 	client := database.GetFirestoreClient()
-	query := client.Collection(reviewCollectionName).Where("spotId", "==", spotId)
+	query := client.Collection(database.ReviewCollectionName).Where("spotId", "==", spotId)
 
 	return deleteAllItems(ctx, query)
 }
 
 func FindReviewById(ctx context.Context, id string) ([]models.Review, error) {
-	review, err := findItemById[*models.Review](ctx, reviewCollectionName, id)
+	review, err := findItemById[*models.Review](ctx, database.ReviewCollectionName, id)
 	if err != nil {
 		return []models.Review{}, err
 	}
@@ -117,7 +114,7 @@ func UpdateReviewById(ctx context.Context, id string, newValues models.NewReview
 	var err error
 	result := []models.Review{}
 
-	reviewToUpdate, err := findItemById[*models.Review](ctx, reviewCollectionName, id)
+	reviewToUpdate, err := findItemById[*models.Review](ctx, database.ReviewCollectionName, id)
 	if err != nil {
 		return []models.Review{}, err
 	}
@@ -130,7 +127,7 @@ func UpdateReviewById(ctx context.Context, id string, newValues models.NewReview
 	}
 
 	client := database.GetFirestoreClient()
-	_, err = client.Collection(reviewCollectionName).Doc(id).Update(ctx, []firestore.Update{
+	_, err = client.Collection(database.ReviewCollectionName).Doc(id).Update(ctx, []firestore.Update{
 		{Path: "rating", Value: reviewToUpdate.Rating},
 		{Path: "content", Value: reviewToUpdate.Content},
 	})
@@ -144,5 +141,5 @@ func UpdateReviewById(ctx context.Context, id string, newValues models.NewReview
 }
 
 func DeleteReviewById(ctx context.Context, id string) error {
-	return deleteItemById(ctx, reviewCollectionName, id)
+	return deleteItemById(ctx, database.ReviewCollectionName, id)
 }

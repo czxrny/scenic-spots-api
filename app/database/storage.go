@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"os"
 	"scenic-spots-api/app/logger"
-	"scenic-spots-api/configs"
 
 	"cloud.google.com/go/storage"
 	firebase "firebase.google.com/go"
@@ -13,10 +12,11 @@ import (
 )
 
 var bucketHandle *storage.BucketHandle
+var bucketName string
 
 func InitalizeStorageClient(ctx context.Context) error {
 	var err error
-	mode := configs.Env.StorageMode
+	mode := os.Getenv("STORAGE_MODE")
 
 	var connectFunc func(ctx context.Context) (*storage.BucketHandle, error)
 	if mode == "cloud" {
@@ -24,14 +24,13 @@ func InitalizeStorageClient(ctx context.Context) error {
 	} else if mode == "emulator" {
 		connectFunc = connectToStorageEmulator
 	} else {
-		err = fmt.Errorf("invalid storage mode - check config.go file")
-		logger.Error(err.Error())
+		err = fmt.Errorf("invalid storage mode - check .env file")
 		return err
 	}
 
+	setBucketName()
 	bucketHandle, err = connectFunc(ctx)
 	if err != nil {
-		logger.Error("failed to connect to storage: " + err.Error())
 		return err
 	}
 
@@ -40,25 +39,21 @@ func InitalizeStorageClient(ctx context.Context) error {
 }
 
 func connectToStorageCloud(ctx context.Context) (*storage.BucketHandle, error) {
-	pathToJson := configs.Env.GoogleApplicationCredentials
-	bucketName := configs.Env.StoragePhotoBucketName
+	pathToJson := os.Getenv("FIREBASE_CREDENTIALS_PATH")
 	opt := option.WithCredentialsFile(pathToJson)
 
 	app, err := firebase.NewApp(ctx, nil, opt)
 	if err != nil {
-		logger.Error("error while initializing app")
 		return nil, err
 	}
 
 	client, err := app.Storage(ctx)
 	if err != nil {
-		logger.Error("error getting Storage client")
 		return nil, err
 	}
 
 	bucket, err := client.Bucket(bucketName)
 	if err != nil {
-		logger.Error("error getting default bucket")
 		return nil, err
 	}
 
@@ -66,17 +61,25 @@ func connectToStorageCloud(ctx context.Context) (*storage.BucketHandle, error) {
 }
 
 func connectToStorageEmulator(ctx context.Context) (*storage.BucketHandle, error) {
-	os.Setenv("STORAGE_EMULATOR_HOST", configs.Env.StorageEmulatorHost)
-	bucketName := configs.Env.StoragePhotoBucketName
+	hostName := os.Getenv("STORAGE_EMULATOR_HOST_CONFIG")
+	if hostName == "" {
+		return nil, fmt.Errorf("STORAGE_EMULATOR_HOST_CONFIG is not set - check .env file")
+	}
+	os.Setenv("STORAGE_EMULATOR_HOST", hostName)
 
 	client, err := storage.NewClient(ctx, option.WithoutAuthentication())
 	if err != nil {
 		return nil, err
 	}
 
-	bucket := client.Bucket(bucketName)
+	return client.Bucket(bucketName), nil
+}
 
-	return bucket, nil
+func setBucketName() {
+	bucketName = os.Getenv("STORAGE_BUCKET_NAME")
+	if bucketName == "" {
+		bucketName = "default"
+	}
 }
 
 func GetStorageBucketHandle() *storage.BucketHandle {

@@ -1,6 +1,6 @@
 # Secrets!
 /keys/
-/configs/config.go
+.env
 
 # Firebase emulator files
 *firebase-debug.log
