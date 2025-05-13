@@ -70,7 +70,7 @@ func connectToFirestoreCloud(ctx context.Context) (*firestore.Client, error) {
 // USED FOR TESTING LOCALLY - MAKE SURE TO CONFIGURE THE EMULATOR ACCORDINGLY
 func connectToEmulator(ctx context.Context) (*firestore.Client, error) {
 	_ = os.Setenv("FIRESTORE_EMULATOR_HOST", configs.Env.FirestoreEmulatorHost)
-	projectID := "demo"
+	projectID := configs.Env.FirestoreProjectID
 
 	client, err := firestore.NewClient(ctx, projectID)
 	if err != nil {
