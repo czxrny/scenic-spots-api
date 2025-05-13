@@ -21,8 +21,16 @@ type ColNames struct {
 	Reviews string
 }
 
+// Firestore Database example data files
+type DBFiles struct {
+	Initialize bool
+	Spots      string
+	Reviews    string
+}
+
 var Env EnvVars
 var CollectionNames ColNames
+var DBInputFiles DBFiles
 
 // Initialize the variables - CHANGE ACCORDINGLY!
 func InitializeVariables() {
@@ -34,11 +42,17 @@ func InitializeVariables() {
 		FirestoreEmulatorHost:        "localhost:8081",  // If [firestore emulator] was selected, set appropiate firestore hostname with port.
 		StorageEmulatorHost: 		  "localhost:9199",  // If [storage emulator] was selected, set appropiate storage hostname with port.
 		FirestoreProjectID:           "your-project-id", // This is the project ID visible on the main page of Firebase Console.
-		GoogleApplicationCredentials: "path-to-key",     // Generated at: Project Overview > Service Accounts > Generate new private key
+		GoogleApplicationCredentials: "path/to/key",     // Generated at: Project Overview > Service Accounts > Generate new private key.
 	}
 
 	CollectionNames = ColNames{
 		Spots:   "spots",
 		Reviews: "reviews",
+	}
+
+	DBInputFiles = DBFiles{
+		Initialize: false,																		// Specify, if database should be filled with example data upon connection.
+		Spots:   "/your/path/to/project/scenic-spots-api/assets/firestoredata/spots.json",		// If Initialize = true, specifies example spots data file location.
+		Reviews: "/your/path/to/project/scenic-spots-api/assets/firestoredata/reviews.json",	// If Initialize = true, specifies example reviews data file location.
 	}
 }

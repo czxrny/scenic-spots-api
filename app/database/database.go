@@ -34,6 +34,13 @@ func InitializeFirestoreClient(ctx context.Context) error {
 		return err
 	}
 
+	if configs.DBInputFiles.Initialize {
+		if err = InitializeDatabase(ctx); err != nil {
+			logger.Error(err.Error())
+			return err
+		}
+	}
+
 	logger.Success("Connected to firestore " + mode)
 	return nil
 }

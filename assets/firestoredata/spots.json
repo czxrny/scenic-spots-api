@@ -1,0 +1,72 @@
+
+{
+  "tXgX69bYXerScIJlQqU9": {
+    "name": "Książ Castle",
+    "description": "A beautiful castle located in the mountains with an impressive view of the surrounding area.",
+    "latitude": 50.8517,
+    "longitude": 16.2828,
+    "category": "Castle",
+    "photos": [
+      "https://example.com/photos/zamek_ksiaz1.jpg",
+      "https://example.com/photos/zamek_ksiaz2.jpg"
+    ],
+    "addedBy": "admin",
+    "createdAt": "2025-05-13T12:00:00Z"
+  },
+  "F8qW56zXZUiydZ9H7df1":
+  {
+    "name": "Wieliczka Salt Mine",
+    "description": "A famous salt mine offering a fascinating underground tour.",
+    "latitude": 49.9904,
+    "longitude": 20.0737,
+    "category": "Mine",
+    "photos": [
+      "https://example.com/photos/wieliczka1.jpg",
+      "https://example.com/photos/wieliczka2.jpg"
+    ],
+    "addedBy": "user1",
+    "createdAt": "2025-05-13T12:00:00Z"
+  },
+  "zM1H5I8TzKXqJ0M4FvYv":
+  {
+    "name": "Tatra Mountains",
+    "description": "A stunning mountain range in Poland, perfect for hiking and skiing.",
+    "latitude": 49.2995,
+    "longitude": 19.9989,
+    "category": "Mountain",
+    "photos": [
+      "https://example.com/photos/tatry1.jpg",
+      "https://example.com/photos/tatry2.jpg"
+    ],
+    "addedBy": "user2",
+    "createdAt": "2025-05-13T12:00:00Z"
+  },
+  "QYsH9kFhTsh5tRVybcv3":
+  {
+    "name": "Auschwitz-Birkenau Memorial",
+    "description": "A historical site that serves as a reminder of the atrocities of World War II.",
+    "latitude": 50.0359,
+    "longitude": 19.1783,
+    "category": "Museum",
+    "photos": [
+      "https://example.com/photos/auschwitz1.jpg",
+      "https://example.com/photos/auschwitz2.jpg"
+    ],
+    "addedBy": "user3",
+    "createdAt": "2025-05-13T12:00:00Z"
+  },
+  "mFf65c9IiHTH3FbQmG6y":
+  {
+    "name": "Białowieża Forest",
+    "description": "A UNESCO World Heritage site, home to the European bison and ancient trees.",
+    "latitude": 52.7011,
+    "longitude": 23.8475,
+    "category": "Nature Reserve",
+    "photos": [
+      "https://example.com/photos/bialowieza1.jpg",
+      "https://example.com/photos/bialowieza2.jpg"
+    ],
+    "addedBy": "admin",
+    "createdAt": "2025-05-13T12:00:00Z"
+  }
+}
