@@ -2,6 +2,7 @@ package generics
 
 import (
 	"reflect"
+	"strings"
 )
 
 func DereferenceAll[T any](in []*T) []T {
@@ -14,27 +15,25 @@ func DereferenceAll[T any](in []*T) []T {
 	return out
 }
 
-func HasEmptyFields(data interface{}) bool {
-	structure := reflect.ValueOf(data)
+func StructToMapLower[T any](item T) (map[string]interface{}, error) {
+	result := make(map[string]interface{})
+	structValue := reflect.ValueOf(item)
+	structType := reflect.TypeOf(item)
+	numberOfFields := structValue.NumField()
 
-	if structure.Kind() == reflect.Ptr {
-		structure = structure.Elem()
-	}
+	for i := 0; i < numberOfFields; i++ {
+		field := structType.Field(i)
+		fieldValue := structValue.Field(i)
 
-	for i := 0; i < structure.NumField(); i++ {
-		field := structure.Field(i)
-
-		if !field.CanInterface() {
+		// skip private fields
+		if !fieldValue.CanInterface() {
 			continue
 		}
 
-		zero := reflect.Zero(field.Type()).Interface()
-		current := field.Interface()
+		lowerCaseName := strings.ToLower(field.Name[:1]) + field.Name[1:]
 
-		if reflect.DeepEqual(current, zero) {
-			return true
-		}
+		result[lowerCaseName] = fieldValue.Interface()
 	}
 
-	return false
+	return result, nil
 }

@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"os"
 	"scenic-spots-api/models"
+	"scenic-spots-api/utils/generics"
 
 	"cloud.google.com/go/firestore"
 )
@@ -43,7 +44,11 @@ func readFileToStruct[T any](filePath string) (map[string]T, error) {
 
 func addToDatabase[T ~map[string]V, V any](ctx context.Context, client *firestore.Client, collectionName string, items T) error {
 	for id, item := range items {
-		_, err := client.Collection(collectionName).Doc(id).Set(ctx, item)
+		jsonItem, err := generics.StructToMapLower(item)
+		if err != nil {
+			return err
+		}
+		_, err = client.Collection(collectionName).Doc(id).Set(ctx, jsonItem)
 		if err != nil {
 			return err
 		}
