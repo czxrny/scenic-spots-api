@@ -9,7 +9,7 @@ import (
 	"cloud.google.com/go/firestore"
 )
 
-func InitializeDatabase(ctx context.Context) error {
+func PopulateDatabase(ctx context.Context) error {
 	err := addExampleData[models.Spot](ctx, SpotCollectionName, os.Getenv("DB_SPOTS"))
 	if err != nil {
 		return err

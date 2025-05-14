@@ -34,8 +34,8 @@ func InitializeFirestoreClient(ctx context.Context) error {
 		return err
 	}
 
-	if os.Getenv("DB_INITIALIZE") == "true" {
-		if err = InitializeDatabase(ctx); err != nil {
+	if os.Getenv("DB_POPULATE") == "true" {
+		if err = PopulateDatabase(ctx); err != nil {
 			logger.Error(err.Error())
 			return err
 		}
