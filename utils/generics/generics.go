@@ -1,6 +1,7 @@
 package generics
 
 import (
+	"fmt"
 	"reflect"
 	"strings"
 )
@@ -21,6 +22,10 @@ func StructToMapLower[T any](item T) (map[string]interface{}, error) {
 	structType := reflect.TypeOf(item)
 	numberOfFields := structValue.NumField()
 
+	if structValue.Kind() != reflect.Struct {
+		return nil, fmt.Errorf("expected a struct, got %s", structValue.Kind())
+	}
+
 	for i := 0; i < numberOfFields; i++ {
 		field := structType.Field(i)
 		fieldValue := structValue.Field(i)
@@ -29,7 +34,10 @@ func StructToMapLower[T any](item T) (map[string]interface{}, error) {
 		if !fieldValue.CanInterface() {
 			continue
 		}
-
+		// skip Id field
+		if field.Name == "Id" {
+			continue
+		}
 		lowerCaseName := strings.ToLower(field.Name[:1]) + field.Name[1:]
 
 		result[lowerCaseName] = fieldValue.Interface()
