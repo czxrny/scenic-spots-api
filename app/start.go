@@ -5,7 +5,8 @@ import (
 	"net/http"
 	"os"
 	"scenic-spots-api/app/database"
-	"scenic-spots-api/app/handlers"
+	hHandler "scenic-spots-api/app/handlers/health"
+	sHandler "scenic-spots-api/app/handlers/spot"
 	"scenic-spots-api/app/logger"
 
 	"github.com/joho/godotenv"
@@ -33,10 +34,10 @@ func loadEnv() error {
 }
 
 func initializeHandlers() {
-	http.HandleFunc("/ping", handlers.Ping)
-	http.HandleFunc("/health", handlers.Health)
-	http.HandleFunc("/spot", handlers.Spot)
-	http.HandleFunc("/spot/", handlers.SpotById)
+	http.HandleFunc("/ping", hHandler.Ping)
+	http.HandleFunc("/health", hHandler.Health)
+	http.HandleFunc("/spot", sHandler.Spot)
+	http.HandleFunc("/spot/", sHandler.SpotById)
 }
 
 func startTheServer() error {

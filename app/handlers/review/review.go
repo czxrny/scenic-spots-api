@@ -1,10 +1,11 @@
-package handlers
+package review
 
 import (
 	"encoding/json"
 	"errors"
 	"net/http"
 	reviewRepo "scenic-spots-api/app/database/repositories/review"
+	helpers "scenic-spots-api/internal/apihelpers"
 	"scenic-spots-api/internal/repoerrors"
 	"scenic-spots-api/models"
 	"strings"
@@ -13,8 +14,8 @@ import (
 )
 
 func getReview(response http.ResponseWriter, request *http.Request, spotId string) {
-	if !requestBodyIsEmpty(request) {
-		ErrorResponse(response, "GET request must not contain a body", http.StatusBadRequest)
+	if !helpers.RequestBodyIsEmpty(request) {
+		helpers.ErrorResponse(response, "GET request must not contain a body", http.StatusBadRequest)
 		return
 	}
 
@@ -26,20 +27,20 @@ func getReview(response http.ResponseWriter, request *http.Request, spotId strin
 	found, err := reviewRepo.GetReviews(request.Context(), params)
 	if err != nil {
 		if errors.Is(err, repoerrors.ErrDoesNotExist) {
-			ErrorResponse(response, "Spot with ID: ["+spotId+"] was not found", http.StatusBadRequest)
+			helpers.ErrorResponse(response, "Spot with ID: ["+spotId+"] was not found", http.StatusBadRequest)
 			return
 		}
 		if errors.Is(err, repoerrors.ErrInvalidQueryParameters) {
-			ErrorResponse(response, err.Error(), http.StatusBadRequest)
+			helpers.ErrorResponse(response, err.Error(), http.StatusBadRequest)
 			return
 		}
-		ErrorResponse(response, "Unexpected error: "+err.Error(), http.StatusInternalServerError)
+		helpers.ErrorResponse(response, "Unexpected error: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	response.Header().Set("Content-Type", "application/json")
 	if err := json.NewEncoder(response).Encode(found); err != nil {
-		ErrorResponse(response, "Failed to encode JSON error response: "+err.Error(), http.StatusInternalServerError)
+		helpers.ErrorResponse(response, "Failed to encode JSON error response: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
 }
@@ -47,42 +48,42 @@ func getReview(response http.ResponseWriter, request *http.Request, spotId strin
 func addReview(response http.ResponseWriter, request *http.Request, spotId string) {
 	var newReview models.NewReview
 	if err := json.NewDecoder(request.Body).Decode(&newReview); err != nil {
-		ErrorResponse(response, "Bad request body", http.StatusBadRequest)
+		helpers.ErrorResponse(response, "Bad request body", http.StatusBadRequest)
 		return
 	}
 	newReview.SpotId = spotId
 
 	validate := validator.New()
 	if err := validate.Struct(newReview); err != nil {
-		ErrorResponse(response, "Invalid parameters", http.StatusBadRequest)
+		helpers.ErrorResponse(response, "Invalid parameters", http.StatusBadRequest)
 		return
 	}
 
 	found, err := reviewRepo.AddReview(request.Context(), newReview)
 	if err != nil {
 		if errors.Is(err, repoerrors.ErrDoesNotExist) {
-			ErrorResponse(response, "Spot with ID: ["+spotId+"] was not found", http.StatusBadRequest)
+			helpers.ErrorResponse(response, "Spot with ID: ["+spotId+"] was not found", http.StatusBadRequest)
 			return
 		}
-		ErrorResponse(response, "Unexpected error: "+err.Error(), http.StatusInternalServerError)
+		helpers.ErrorResponse(response, "Unexpected error: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	response.Header().Set("Content-Type", "application/json")
 	if err := json.NewEncoder(response).Encode(found); err != nil {
-		ErrorResponse(response, "Failed to encode JSON error response: "+err.Error(), http.StatusInternalServerError)
+		helpers.ErrorResponse(response, "Failed to encode JSON error response: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
 }
 
 func deleteAllReviews(response http.ResponseWriter, request *http.Request, spotId string) {
-	if !requestBodyIsEmpty(request) {
-		ErrorResponse(response, "GET request must not contain a body", http.StatusBadRequest)
+	if !helpers.RequestBodyIsEmpty(request) {
+		helpers.ErrorResponse(response, "GET request must not contain a body", http.StatusBadRequest)
 		return
 	}
 
 	if err := reviewRepo.DeleteAllReviews(request.Context(), spotId); err != nil {
-		ErrorResponse(response, "Unexpected error: "+err.Error(), http.StatusInternalServerError)
+		helpers.ErrorResponse(response, "Unexpected error: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -90,24 +91,24 @@ func deleteAllReviews(response http.ResponseWriter, request *http.Request, spotI
 }
 
 func getReviewById(response http.ResponseWriter, request *http.Request, id string) {
-	if !requestBodyIsEmpty(request) {
-		ErrorResponse(response, "GET request must not contain a body", http.StatusBadRequest)
+	if !helpers.RequestBodyIsEmpty(request) {
+		helpers.ErrorResponse(response, "GET request must not contain a body", http.StatusBadRequest)
 		return
 	}
 
 	review, err := reviewRepo.FindReviewById(request.Context(), id)
 	if err != nil {
 		if errors.Is(err, repoerrors.ErrDoesNotExist) {
-			ErrorResponse(response, "Review with ID: ["+id+"] was not found", http.StatusBadRequest)
+			helpers.ErrorResponse(response, "Review with ID: ["+id+"] was not found", http.StatusBadRequest)
 			return
 		}
-		ErrorResponse(response, "Unexpected error: "+err.Error(), http.StatusInternalServerError)
+		helpers.ErrorResponse(response, "Unexpected error: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	response.Header().Set("Content-Type", "application/json")
 	if err = json.NewEncoder(response).Encode(review); err != nil {
-		ErrorResponse(response, "Failed to encode JSON error response: "+err.Error(), http.StatusInternalServerError)
+		helpers.ErrorResponse(response, "Failed to encode JSON error response: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
 }
@@ -115,46 +116,46 @@ func getReviewById(response http.ResponseWriter, request *http.Request, id strin
 func updateReviewById(response http.ResponseWriter, request *http.Request, id string) {
 	var review models.NewReview
 	if err := json.NewDecoder(request.Body).Decode(&review); err != nil {
-		ErrorResponse(response, "Bad request body", http.StatusBadRequest)
+		helpers.ErrorResponse(response, "Bad request body", http.StatusBadRequest)
 		return
 	}
 
 	validate := validator.New()
 	if err := validate.Struct(review); err != nil {
-		ErrorResponse(response, "Invalid parameters", http.StatusBadRequest)
+		helpers.ErrorResponse(response, "Invalid parameters", http.StatusBadRequest)
 		return
 	}
 
 	updatedSpot, err := reviewRepo.UpdateReviewById(request.Context(), id, review)
 	if err != nil {
 		if errors.Is(err, repoerrors.ErrDoesNotExist) {
-			ErrorResponse(response, "Review with ID: ["+id+"] was not found", http.StatusBadRequest)
+			helpers.ErrorResponse(response, "Review with ID: ["+id+"] was not found", http.StatusBadRequest)
 			return
 		}
-		ErrorResponse(response, "Unexpected error: "+err.Error(), http.StatusInternalServerError)
+		helpers.ErrorResponse(response, "Unexpected error: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	response.Header().Set("Content-Type", "application/json")
 	if err = json.NewEncoder(response).Encode(updatedSpot); err != nil {
-		ErrorResponse(response, "Failed to encode JSON error response: "+err.Error(), http.StatusInternalServerError)
+		helpers.ErrorResponse(response, "Failed to encode JSON error response: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
 }
 
 func deleteReviewById(response http.ResponseWriter, request *http.Request, id string) {
-	if !requestBodyIsEmpty(request) {
-		ErrorResponse(response, "GET request must not contain a body", http.StatusBadRequest)
+	if !helpers.RequestBodyIsEmpty(request) {
+		helpers.ErrorResponse(response, "GET request must not contain a body", http.StatusBadRequest)
 		return
 	}
 
 	err := reviewRepo.DeleteReviewById(request.Context(), id)
 	if err != nil {
 		if errors.Is(err, repoerrors.ErrDoesNotExist) {
-			ErrorResponse(response, "Review with ID: ["+id+"] was not found", http.StatusNotFound)
+			helpers.ErrorResponse(response, "Review with ID: ["+id+"] was not found", http.StatusNotFound)
 			return
 		}
-		ErrorResponse(response, err.Error(), http.StatusInternalServerError)
+		helpers.ErrorResponse(response, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -180,7 +181,7 @@ func Review(response http.ResponseWriter, request *http.Request, spotId string) 
 	} else if numberOfParts == 5 {
 		reviewId := parts[4]
 		if reviewId == "" {
-			ErrorResponse(response, "Missing review ID", http.StatusBadRequest)
+			helpers.ErrorResponse(response, "Missing review ID", http.StatusBadRequest)
 			return
 		}
 		switch method {
