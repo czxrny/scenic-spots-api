@@ -20,12 +20,17 @@ func StructToMapLower[T any](item T) (map[string]interface{}, error) {
 	result := make(map[string]interface{})
 	structValue := reflect.ValueOf(item)
 	structType := reflect.TypeOf(item)
-	numberOfFields := structValue.NumField()
+
+	if structValue.Kind() == reflect.Ptr {
+		structValue = structValue.Elem()
+		structType = structType.Elem()
+	}
 
 	if structValue.Kind() != reflect.Struct {
 		return nil, fmt.Errorf("expected a struct, got %s", structValue.Kind())
 	}
 
+	numberOfFields := structValue.NumField()
 	for i := 0; i < numberOfFields; i++ {
 		field := structType.Field(i)
 		fieldValue := structValue.Field(i)

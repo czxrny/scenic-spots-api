@@ -77,30 +77,13 @@ func AddSpot(ctx context.Context, spotInfo models.NewSpot) ([]models.Spot, error
 		CreatedAt:   time.Now(),
 	}
 
-	// Casting to a json to avoid capitalized words in database.
-	spotData := map[string]interface{}{
-		"name":        spot.Name,
-		"description": spot.Description,
-		"latitude":    spot.Latitude,
-		"longitude":   spot.Longitude,
-		"category":    spot.Category,
-		"photos":      spot.Photos,
-		"addedBy":     spot.AddedBy,
-		"createdAt":   spot.CreatedAt,
-	}
-
-	client := database.GetFirestoreClient()
-	collectionRef := client.Collection(database.SpotCollectionName)
-	docRef, _, err := collectionRef.Add(ctx, spotData)
-
+	addedSpot, err := addItem(ctx, database.SpotCollectionName, &spot)
 	if err != nil {
 		return []models.Spot{}, err
 	}
 
-	spot.Id = docRef.ID
 	var result []models.Spot
-
-	result = append(result, spot)
+	result = append(result, *addedSpot)
 
 	return result, nil
 }

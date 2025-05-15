@@ -4,6 +4,7 @@ import (
 	"context"
 	"scenic-spots-api/app/database"
 	"scenic-spots-api/models"
+	"scenic-spots-api/utils/generics"
 
 	"cloud.google.com/go/firestore"
 	"google.golang.org/api/iterator"
@@ -55,6 +56,28 @@ func getAllItems[T models.Identifiable](ctx context.Context, query firestore.Que
 		found = append(found, item)
 	}
 	return found, nil
+}
+
+func addItem[T models.Identifiable](ctx context.Context, collectionName string, item T) (T, error) {
+	// Casting to a json to avoid capitalized words in database.
+	data, err := generics.StructToMapLower(item)
+	if err != nil {
+		var zero T
+		return zero, err
+	}
+
+	client := database.GetFirestoreClient()
+	collectionRef := client.Collection(database.SpotCollectionName)
+	docRef, _, err := collectionRef.Add(ctx, data)
+
+	if err != nil {
+		var zero T
+		return zero, err
+	}
+
+	item.SetId(docRef.ID)
+
+	return item, nil
 }
 
 func deleteItemById(ctx context.Context, collectionName string, id string) error {

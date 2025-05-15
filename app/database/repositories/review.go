@@ -66,27 +66,13 @@ func AddReview(ctx context.Context, reviewInfo models.NewReview) ([]models.Revie
 		CreatedAt: time.Now(),
 	}
 
-	// Casting to a json to avoid capitalized words in database.
-	reviewData := map[string]interface{}{
-		"spotId":    review.SpotId,
-		"rating":    review.Rating,
-		"content":   review.Content,
-		"addedBy":   review.AddedBy,
-		"createdAt": review.CreatedAt,
-	}
-
-	client := database.GetFirestoreClient()
-	collectionRef := client.Collection(database.ReviewCollectionName)
-	docRef, _, err := collectionRef.Add(ctx, reviewData)
-
+	addedReview, err := addItem(ctx, database.SpotCollectionName, &review)
 	if err != nil {
 		return []models.Review{}, err
 	}
 
-	review.Id = docRef.ID
 	var result []models.Review
-
-	result = append(result, review)
+	result = append(result, *addedReview)
 
 	return result, nil
 }
