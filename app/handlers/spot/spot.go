@@ -1,10 +1,13 @@
-package handlers
+package spot
 
 import (
 	"encoding/json"
 	"errors"
 	"net/http"
 	spotRepo "scenic-spots-api/app/database/repositories/spot"
+	pHandler "scenic-spots-api/app/handlers/photo"
+	rHandler "scenic-spots-api/app/handlers/review"
+	helpers "scenic-spots-api/internal/apihelpers"
 	"scenic-spots-api/internal/repoerrors"
 	"scenic-spots-api/models"
 	"strings"
@@ -13,8 +16,8 @@ import (
 )
 
 func getSpot(response http.ResponseWriter, request *http.Request) {
-	if !requestBodyIsEmpty(request) {
-		ErrorResponse(response, "GET request must not contain a body", http.StatusBadRequest)
+	if !helpers.RequestBodyIsEmpty(request) {
+		helpers.ErrorResponse(response, "GET request must not contain a body", http.StatusBadRequest)
 		return
 	}
 
@@ -29,15 +32,15 @@ func getSpot(response http.ResponseWriter, request *http.Request) {
 	found, err := spotRepo.GetSpot(request.Context(), queryParams)
 	if err != nil {
 		if errors.Is(err, repoerrors.ErrInvalidQueryParameters) {
-			ErrorResponse(response, err.Error(), http.StatusBadRequest)
+			helpers.ErrorResponse(response, err.Error(), http.StatusBadRequest)
 			return
 		}
-		ErrorResponse(response, "Unexpected error: "+err.Error(), http.StatusInternalServerError)
+		helpers.ErrorResponse(response, "Unexpected error: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
 	response.Header().Set("Content-Type", "application/json")
 	if err := json.NewEncoder(response).Encode(found); err != nil {
-		ErrorResponse(response, "Failed to encode JSON error response: "+err.Error(), http.StatusInternalServerError)
+		helpers.ErrorResponse(response, "Failed to encode JSON error response: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
 }
@@ -45,53 +48,53 @@ func getSpot(response http.ResponseWriter, request *http.Request) {
 func addSpot(response http.ResponseWriter, request *http.Request) {
 	var spot models.NewSpot
 	if err := json.NewDecoder(request.Body).Decode(&spot); err != nil {
-		ErrorResponse(response, "Bad request body", http.StatusBadRequest)
+		helpers.ErrorResponse(response, "Bad request body", http.StatusBadRequest)
 		return
 	}
 
 	validate := validator.New()
 	if err := validate.Struct(spot); err != nil {
-		ErrorResponse(response, "Invalid parameters", http.StatusBadRequest)
+		helpers.ErrorResponse(response, "Invalid parameters", http.StatusBadRequest)
 		return
 	}
 
 	addedSpot, err := spotRepo.AddSpot(request.Context(), spot)
 	if err != nil {
 		if errors.Is(err, repoerrors.ErrSpotAlreadyExists) {
-			ErrorResponse(response, "Spot already exists in the database", http.StatusConflict)
+			helpers.ErrorResponse(response, "Spot already exists in the database", http.StatusConflict)
 			return
 		}
-		ErrorResponse(response, "Unexpected error: "+err.Error(), http.StatusInternalServerError)
+		helpers.ErrorResponse(response, "Unexpected error: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	response.Header().Set("Content-Type", "application/json")
 	response.WriteHeader(http.StatusCreated)
 	if err = json.NewEncoder(response).Encode(addedSpot); err != nil {
-		ErrorResponse(response, "Failed to encode JSON error response: "+err.Error(), http.StatusInternalServerError)
+		helpers.ErrorResponse(response, "Failed to encode JSON error response: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
 }
 
 func getSpotById(response http.ResponseWriter, request *http.Request, id string) {
-	if !requestBodyIsEmpty(request) {
-		ErrorResponse(response, "GET request must not contain a body", http.StatusBadRequest)
+	if !helpers.RequestBodyIsEmpty(request) {
+		helpers.ErrorResponse(response, "GET request must not contain a body", http.StatusBadRequest)
 		return
 	}
 
 	spot, err := spotRepo.FindSpotById(request.Context(), id)
 	if err != nil {
 		if errors.Is(err, repoerrors.ErrDoesNotExist) {
-			ErrorResponse(response, "Spot with ID: ["+id+"] was not found", http.StatusNotFound)
+			helpers.ErrorResponse(response, "Spot with ID: ["+id+"] was not found", http.StatusNotFound)
 			return
 		}
-		ErrorResponse(response, "Unexpected error: "+err.Error(), http.StatusInternalServerError)
+		helpers.ErrorResponse(response, "Unexpected error: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	response.Header().Set("Content-Type", "application/json")
 	if err = json.NewEncoder(response).Encode(spot); err != nil {
-		ErrorResponse(response, "Failed to encode JSON error response: "+err.Error(), http.StatusInternalServerError)
+		helpers.ErrorResponse(response, "Failed to encode JSON error response: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
 }
@@ -99,50 +102,50 @@ func getSpotById(response http.ResponseWriter, request *http.Request, id string)
 func updateSpotById(response http.ResponseWriter, request *http.Request, id string) {
 	var spot models.NewSpot
 	if err := json.NewDecoder(request.Body).Decode(&spot); err != nil {
-		ErrorResponse(response, "Bad request body", http.StatusBadRequest)
+		helpers.ErrorResponse(response, "Bad request body", http.StatusBadRequest)
 		return
 	}
 
 	validate := validator.New()
 	if err := validate.Struct(spot); err != nil {
-		ErrorResponse(response, "Invalid parameters", http.StatusBadRequest)
+		helpers.ErrorResponse(response, "Invalid parameters", http.StatusBadRequest)
 		return
 	}
 
 	updatedSpot, err := spotRepo.UpdateSpot(request.Context(), id, spot)
 	if err != nil {
 		if errors.Is(err, repoerrors.ErrDoesNotExist) {
-			ErrorResponse(response, "Spot with ID: ["+id+"] was not found", http.StatusNotFound)
+			helpers.ErrorResponse(response, "Spot with ID: ["+id+"] was not found", http.StatusNotFound)
 			return
 		}
 		if errors.Is(err, repoerrors.ErrSpotAlreadyExists) {
-			ErrorResponse(response, "Spot in this coordinates already exists!", http.StatusConflict)
+			helpers.ErrorResponse(response, "Spot in this coordinates already exists!", http.StatusConflict)
 			return
 		}
-		ErrorResponse(response, "Unexpected error: "+err.Error(), http.StatusInternalServerError)
+		helpers.ErrorResponse(response, "Unexpected error: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	response.Header().Set("Content-Type", "application/json")
 	if err = json.NewEncoder(response).Encode(updatedSpot); err != nil {
-		ErrorResponse(response, "Failed to encode JSON error response: "+err.Error(), http.StatusInternalServerError)
+		helpers.ErrorResponse(response, "Failed to encode JSON error response: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
 }
 
 func deleteSpotById(response http.ResponseWriter, request *http.Request, id string) {
-	if !requestBodyIsEmpty(request) {
-		ErrorResponse(response, "GET request must not contain a body", http.StatusBadRequest)
+	if !helpers.RequestBodyIsEmpty(request) {
+		helpers.ErrorResponse(response, "GET request must not contain a body", http.StatusBadRequest)
 		return
 	}
 
 	err := spotRepo.DeleteSpotById(request.Context(), id)
 	if err != nil {
 		if errors.Is(err, repoerrors.ErrDoesNotExist) {
-			ErrorResponse(response, "Spot with ID: ["+id+"] was not found", http.StatusNotFound)
+			helpers.ErrorResponse(response, "Spot with ID: ["+id+"] was not found", http.StatusNotFound)
 			return
 		}
-		ErrorResponse(response, "Unexpected error: "+err.Error(), http.StatusInternalServerError)
+		helpers.ErrorResponse(response, "Unexpected error: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -166,7 +169,7 @@ func SpotById(response http.ResponseWriter, request *http.Request) {
 	spotId := parts[2]
 
 	if spotId == "" {
-		ErrorResponse(response, "Missing spot ID", http.StatusBadRequest)
+		helpers.ErrorResponse(response, "Missing spot ID", http.StatusBadRequest)
 		return
 	}
 
@@ -185,9 +188,9 @@ func SpotById(response http.ResponseWriter, request *http.Request) {
 		spotElement := parts[3]
 		switch spotElement {
 		case "photo":
-			Photo(response, request, spotId)
+			pHandler.Photo(response, request, spotId)
 		case "review":
-			Review(response, request, spotId)
+			rHandler.Review(response, request, spotId)
 		default:
 			response.WriteHeader(http.StatusNotFound)
 		}

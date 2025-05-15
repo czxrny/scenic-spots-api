@@ -1,11 +1,11 @@
-package handlers
+package apihelpers
 
 import (
 	"io"
 	"net/http"
 )
 
-func requestBodyIsEmpty(request *http.Request) bool {
+func RequestBodyIsEmpty(request *http.Request) bool {
 	bodyBytes, err := io.ReadAll(request.Body)
 	if err != nil {
 		return false
