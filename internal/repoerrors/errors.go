@@ -1,4 +1,4 @@
-package repositories
+package repoerrors
 
 import (
 	"errors"

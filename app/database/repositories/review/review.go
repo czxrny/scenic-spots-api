@@ -1,9 +1,11 @@
-package repositories
+package review
 
 import (
 	"context"
 	"fmt"
 	"scenic-spots-api/app/database"
+	common "scenic-spots-api/app/database/repositories/common"
+	"scenic-spots-api/internal/repoerrors"
 	"scenic-spots-api/models"
 	"scenic-spots-api/utils/generics"
 	"strconv"
@@ -30,7 +32,7 @@ func buildReviewQuery(collectionRef *firestore.CollectionRef, params models.Revi
 }
 
 func GetReviews(ctx context.Context, params models.ReviewQueryParams) ([]models.Review, error) {
-	if _, err := findItemById[*models.Spot](ctx, database.SpotCollectionName, params.SpotId); err != nil {
+	if _, err := common.FindItemById[*models.Spot](ctx, database.SpotCollectionName, params.SpotId); err != nil {
 		return []models.Review{}, err
 	}
 
@@ -39,12 +41,12 @@ func GetReviews(ctx context.Context, params models.ReviewQueryParams) ([]models.
 
 	query, err := buildReviewQuery(collectionRef, params)
 	if err != nil {
-		return []models.Review{}, &InvalidQueryParameterError{
+		return []models.Review{}, &repoerrors.InvalidQueryParameterError{
 			Message: err.Error(),
 		}
 	}
 
-	found, err := getAllItems[*models.Review](ctx, query)
+	found, err := common.GetAllItems[*models.Review](ctx, query)
 	if err != nil {
 		return []models.Review{}, err
 	}
@@ -54,7 +56,7 @@ func GetReviews(ctx context.Context, params models.ReviewQueryParams) ([]models.
 }
 
 func AddReview(ctx context.Context, reviewInfo models.NewReview) ([]models.Review, error) {
-	if _, err := findItemById[*models.Spot](ctx, database.SpotCollectionName, reviewInfo.SpotId); err != nil {
+	if _, err := common.FindItemById[*models.Spot](ctx, database.SpotCollectionName, reviewInfo.SpotId); err != nil {
 		return []models.Review{}, err
 	}
 
@@ -66,7 +68,7 @@ func AddReview(ctx context.Context, reviewInfo models.NewReview) ([]models.Revie
 		CreatedAt: time.Now(),
 	}
 
-	addedReview, err := addItem(ctx, database.SpotCollectionName, &review)
+	addedReview, err := common.AddItem(ctx, database.SpotCollectionName, &review)
 	if err != nil {
 		return []models.Review{}, err
 	}
@@ -81,11 +83,11 @@ func DeleteAllReviews(ctx context.Context, spotId string) error {
 	client := database.GetFirestoreClient()
 	query := client.Collection(database.ReviewCollectionName).Where("spotId", "==", spotId)
 
-	return deleteAllItems(ctx, query)
+	return common.DeleteAllItems(ctx, query)
 }
 
 func FindReviewById(ctx context.Context, id string) ([]models.Review, error) {
-	review, err := findItemById[*models.Review](ctx, database.ReviewCollectionName, id)
+	review, err := common.FindItemById[*models.Review](ctx, database.ReviewCollectionName, id)
 	if err != nil {
 		return []models.Review{}, err
 	}
@@ -100,7 +102,7 @@ func UpdateReviewById(ctx context.Context, id string, newValues models.NewReview
 	var err error
 	result := []models.Review{}
 
-	reviewToUpdate, err := findItemById[*models.Review](ctx, database.ReviewCollectionName, id)
+	reviewToUpdate, err := common.FindItemById[*models.Review](ctx, database.ReviewCollectionName, id)
 	if err != nil {
 		return []models.Review{}, err
 	}
@@ -127,5 +129,5 @@ func UpdateReviewById(ctx context.Context, id string, newValues models.NewReview
 }
 
 func DeleteReviewById(ctx context.Context, id string) error {
-	return deleteItemById(ctx, database.ReviewCollectionName, id)
+	return common.DeleteItemById(ctx, database.ReviewCollectionName, id)
 }

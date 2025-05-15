@@ -1,8 +1,9 @@
-package repositories
+package common
 
 import (
 	"context"
 	"scenic-spots-api/app/database"
+	"scenic-spots-api/internal/repoerrors"
 	"scenic-spots-api/models"
 	"scenic-spots-api/utils/generics"
 
@@ -10,14 +11,14 @@ import (
 	"google.golang.org/api/iterator"
 )
 
-func findItemById[T models.Identifiable](ctx context.Context, collectionName string, id string) (T, error) {
+func FindItemById[T models.Identifiable](ctx context.Context, collectionName string, id string) (T, error) {
 	client := database.GetFirestoreClient()
 	docRef := client.Collection(collectionName).Doc(id)
 	doc, err := docRef.Get(ctx)
 	if err != nil {
 		var zero T
 		if !doc.Exists() {
-			return zero, ErrDoesNotExist
+			return zero, repoerrors.ErrDoesNotExist
 		}
 		return zero, err
 	}
@@ -32,7 +33,7 @@ func findItemById[T models.Identifiable](ctx context.Context, collectionName str
 	return item, nil
 }
 
-func getAllItems[T models.Identifiable](ctx context.Context, query firestore.Query) ([]T, error) {
+func GetAllItems[T models.Identifiable](ctx context.Context, query firestore.Query) ([]T, error) {
 	iter := query.Documents(ctx)
 	found := make([]T, 0)
 
@@ -58,7 +59,7 @@ func getAllItems[T models.Identifiable](ctx context.Context, query firestore.Que
 	return found, nil
 }
 
-func addItem[T models.Identifiable](ctx context.Context, collectionName string, item T) (T, error) {
+func AddItem[T models.Identifiable](ctx context.Context, collectionName string, item T) (T, error) {
 	// Casting to a json to avoid capitalized words in database.
 	data, err := generics.StructToMapLower(item)
 	if err != nil {
@@ -80,7 +81,7 @@ func addItem[T models.Identifiable](ctx context.Context, collectionName string, 
 	return item, nil
 }
 
-func deleteItemById(ctx context.Context, collectionName string, id string) error {
+func DeleteItemById(ctx context.Context, collectionName string, id string) error {
 	client := database.GetFirestoreClient()
 	docRef := client.Collection(collectionName).Doc(id)
 
@@ -91,7 +92,7 @@ func deleteItemById(ctx context.Context, collectionName string, id string) error
 	return nil
 }
 
-func deleteAllItems(ctx context.Context, query firestore.Query) error {
+func DeleteAllItems(ctx context.Context, query firestore.Query) error {
 	iter := query.Documents(ctx)
 
 	for {

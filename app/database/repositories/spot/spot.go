@@ -1,9 +1,12 @@
-package repositories
+package spot
 
 import (
 	"context"
 	"fmt"
 	"scenic-spots-api/app/database"
+	common "scenic-spots-api/app/database/repositories/common"
+	reviewRepo "scenic-spots-api/app/database/repositories/review"
+	"scenic-spots-api/internal/repoerrors"
 	"scenic-spots-api/models"
 	"scenic-spots-api/utils/calc"
 	"scenic-spots-api/utils/generics"
@@ -46,12 +49,12 @@ func GetSpot(ctx context.Context, params models.SpotQueryParams) ([]models.Spot,
 
 	query, err := buildSpotQuery(collectionRef, params)
 	if err != nil {
-		return []models.Spot{}, &InvalidQueryParameterError{
+		return []models.Spot{}, &repoerrors.InvalidQueryParameterError{
 			Message: err.Error(),
 		}
 	}
 
-	found, err := getAllItems[*models.Spot](ctx, query)
+	found, err := common.GetAllItems[*models.Spot](ctx, query)
 	if err != nil {
 		return []models.Spot{}, err
 	}
@@ -77,7 +80,7 @@ func AddSpot(ctx context.Context, spotInfo models.NewSpot) ([]models.Spot, error
 		CreatedAt:   time.Now(),
 	}
 
-	addedSpot, err := addItem(ctx, database.SpotCollectionName, &spot)
+	addedSpot, err := common.AddItem(ctx, database.SpotCollectionName, &spot)
 	if err != nil {
 		return []models.Spot{}, err
 	}
@@ -89,7 +92,7 @@ func AddSpot(ctx context.Context, spotInfo models.NewSpot) ([]models.Spot, error
 }
 
 func FindSpotById(ctx context.Context, id string) ([]models.Spot, error) {
-	spot, err := findItemById[*models.Spot](ctx, database.SpotCollectionName, id)
+	spot, err := common.FindItemById[*models.Spot](ctx, database.SpotCollectionName, id)
 	if err != nil {
 		return []models.Spot{}, err
 	}
@@ -104,7 +107,7 @@ func UpdateSpot(ctx context.Context, id string, newValues models.NewSpot) ([]mod
 	var err error
 	result := []models.Spot{}
 
-	spotToUpdate, err := findItemById[*models.Spot](ctx, database.SpotCollectionName, id)
+	spotToUpdate, err := common.FindItemById[*models.Spot](ctx, database.SpotCollectionName, id)
 	if err != nil {
 		return []models.Spot{}, err
 	}
@@ -148,15 +151,15 @@ func UpdateSpot(ctx context.Context, id string, newValues models.NewSpot) ([]mod
 }
 
 func DeleteSpotById(ctx context.Context, id string) error {
-	if _, err := findItemById[*models.Spot](ctx, database.SpotCollectionName, id); err != nil {
+	if _, err := common.FindItemById[*models.Spot](ctx, database.SpotCollectionName, id); err != nil {
 		return err
 	}
 
-	if err := DeleteAllReviews(ctx, id); err != nil {
+	if err := reviewRepo.DeleteAllReviews(ctx, id); err != nil {
 		return err
 	}
 
-	return deleteItemById(ctx, database.SpotCollectionName, id)
+	return common.DeleteItemById(ctx, database.SpotCollectionName, id)
 }
 
 // Checking if any spot in 100meter radius exists!
@@ -174,7 +177,7 @@ func checkIfSpotAlreadyExists(ctx context.Context, latitude float64, longitude f
 	docs := query.Documents(ctx)
 	results, _ := docs.GetAll()
 	if len(results) != 0 {
-		return ErrSpotAlreadyExists
+		return repoerrors.ErrSpotAlreadyExists
 	}
 
 	return nil

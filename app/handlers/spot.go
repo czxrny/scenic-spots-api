@@ -4,7 +4,8 @@ import (
 	"encoding/json"
 	"errors"
 	"net/http"
-	"scenic-spots-api/app/database/repositories"
+	spotRepo "scenic-spots-api/app/database/repositories/spot"
+	"scenic-spots-api/internal/repoerrors"
 	"scenic-spots-api/models"
 	"strings"
 
@@ -25,9 +26,9 @@ func getSpot(response http.ResponseWriter, request *http.Request) {
 		Category:  request.URL.Query().Get("category"),
 	}
 
-	found, err := repositories.GetSpot(request.Context(), queryParams)
+	found, err := spotRepo.GetSpot(request.Context(), queryParams)
 	if err != nil {
-		if errors.Is(err, repositories.ErrInvalidQueryParameters) {
+		if errors.Is(err, repoerrors.ErrInvalidQueryParameters) {
 			ErrorResponse(response, err.Error(), http.StatusBadRequest)
 			return
 		}
@@ -54,9 +55,9 @@ func addSpot(response http.ResponseWriter, request *http.Request) {
 		return
 	}
 
-	addedSpot, err := repositories.AddSpot(request.Context(), spot)
+	addedSpot, err := spotRepo.AddSpot(request.Context(), spot)
 	if err != nil {
-		if errors.Is(err, repositories.ErrSpotAlreadyExists) {
+		if errors.Is(err, repoerrors.ErrSpotAlreadyExists) {
 			ErrorResponse(response, "Spot already exists in the database", http.StatusConflict)
 			return
 		}
@@ -78,9 +79,9 @@ func getSpotById(response http.ResponseWriter, request *http.Request, id string)
 		return
 	}
 
-	spot, err := repositories.FindSpotById(request.Context(), id)
+	spot, err := spotRepo.FindSpotById(request.Context(), id)
 	if err != nil {
-		if errors.Is(err, repositories.ErrDoesNotExist) {
+		if errors.Is(err, repoerrors.ErrDoesNotExist) {
 			ErrorResponse(response, "Spot with ID: ["+id+"] was not found", http.StatusNotFound)
 			return
 		}
@@ -108,13 +109,13 @@ func updateSpotById(response http.ResponseWriter, request *http.Request, id stri
 		return
 	}
 
-	updatedSpot, err := repositories.UpdateSpot(request.Context(), id, spot)
+	updatedSpot, err := spotRepo.UpdateSpot(request.Context(), id, spot)
 	if err != nil {
-		if errors.Is(err, repositories.ErrDoesNotExist) {
+		if errors.Is(err, repoerrors.ErrDoesNotExist) {
 			ErrorResponse(response, "Spot with ID: ["+id+"] was not found", http.StatusNotFound)
 			return
 		}
-		if errors.Is(err, repositories.ErrSpotAlreadyExists) {
+		if errors.Is(err, repoerrors.ErrSpotAlreadyExists) {
 			ErrorResponse(response, "Spot in this coordinates already exists!", http.StatusConflict)
 			return
 		}
@@ -135,9 +136,9 @@ func deleteSpotById(response http.ResponseWriter, request *http.Request, id stri
 		return
 	}
 
-	err := repositories.DeleteSpotById(request.Context(), id)
+	err := spotRepo.DeleteSpotById(request.Context(), id)
 	if err != nil {
-		if errors.Is(err, repositories.ErrDoesNotExist) {
+		if errors.Is(err, repoerrors.ErrDoesNotExist) {
 			ErrorResponse(response, "Spot with ID: ["+id+"] was not found", http.StatusNotFound)
 			return
 		}

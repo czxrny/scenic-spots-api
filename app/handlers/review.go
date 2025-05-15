@@ -4,7 +4,8 @@ import (
 	"encoding/json"
 	"errors"
 	"net/http"
-	"scenic-spots-api/app/database/repositories"
+	reviewRepo "scenic-spots-api/app/database/repositories/review"
+	"scenic-spots-api/internal/repoerrors"
 	"scenic-spots-api/models"
 	"strings"
 
@@ -22,13 +23,13 @@ func getReview(response http.ResponseWriter, request *http.Request, spotId strin
 		Limit:  request.URL.Query().Get("limit"),
 	}
 
-	found, err := repositories.GetReviews(request.Context(), params)
+	found, err := reviewRepo.GetReviews(request.Context(), params)
 	if err != nil {
-		if errors.Is(err, repositories.ErrDoesNotExist) {
+		if errors.Is(err, repoerrors.ErrDoesNotExist) {
 			ErrorResponse(response, "Spot with ID: ["+spotId+"] was not found", http.StatusBadRequest)
 			return
 		}
-		if errors.Is(err, repositories.ErrInvalidQueryParameters) {
+		if errors.Is(err, repoerrors.ErrInvalidQueryParameters) {
 			ErrorResponse(response, err.Error(), http.StatusBadRequest)
 			return
 		}
@@ -57,9 +58,9 @@ func addReview(response http.ResponseWriter, request *http.Request, spotId strin
 		return
 	}
 
-	found, err := repositories.AddReview(request.Context(), newReview)
+	found, err := reviewRepo.AddReview(request.Context(), newReview)
 	if err != nil {
-		if errors.Is(err, repositories.ErrDoesNotExist) {
+		if errors.Is(err, repoerrors.ErrDoesNotExist) {
 			ErrorResponse(response, "Spot with ID: ["+spotId+"] was not found", http.StatusBadRequest)
 			return
 		}
@@ -80,7 +81,7 @@ func deleteAllReviews(response http.ResponseWriter, request *http.Request, spotI
 		return
 	}
 
-	if err := repositories.DeleteAllReviews(request.Context(), spotId); err != nil {
+	if err := reviewRepo.DeleteAllReviews(request.Context(), spotId); err != nil {
 		ErrorResponse(response, "Unexpected error: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -94,9 +95,9 @@ func getReviewById(response http.ResponseWriter, request *http.Request, id strin
 		return
 	}
 
-	review, err := repositories.FindReviewById(request.Context(), id)
+	review, err := reviewRepo.FindReviewById(request.Context(), id)
 	if err != nil {
-		if errors.Is(err, repositories.ErrDoesNotExist) {
+		if errors.Is(err, repoerrors.ErrDoesNotExist) {
 			ErrorResponse(response, "Review with ID: ["+id+"] was not found", http.StatusBadRequest)
 			return
 		}
@@ -124,9 +125,9 @@ func updateReviewById(response http.ResponseWriter, request *http.Request, id st
 		return
 	}
 
-	updatedSpot, err := repositories.UpdateReviewById(request.Context(), id, review)
+	updatedSpot, err := reviewRepo.UpdateReviewById(request.Context(), id, review)
 	if err != nil {
-		if errors.Is(err, repositories.ErrDoesNotExist) {
+		if errors.Is(err, repoerrors.ErrDoesNotExist) {
 			ErrorResponse(response, "Review with ID: ["+id+"] was not found", http.StatusBadRequest)
 			return
 		}
@@ -147,9 +148,9 @@ func deleteReviewById(response http.ResponseWriter, request *http.Request, id st
 		return
 	}
 
-	err := repositories.DeleteReviewById(request.Context(), id)
+	err := reviewRepo.DeleteReviewById(request.Context(), id)
 	if err != nil {
-		if errors.Is(err, repositories.ErrDoesNotExist) {
+		if errors.Is(err, repoerrors.ErrDoesNotExist) {
 			ErrorResponse(response, "Review with ID: ["+id+"] was not found", http.StatusNotFound)
 			return
 		}
