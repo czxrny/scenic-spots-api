@@ -2,11 +2,12 @@ package user
 
 import (
 	"encoding/json"
+	"errors"
 	"net/http"
 	"scenic-spots-api/app/auth"
-	userRepo "scenic-spots-api/app/database/repositories/user"
 	"scenic-spots-api/app/logger"
 	helpers "scenic-spots-api/internal/apihelpers"
+	"scenic-spots-api/internal/repoerrors"
 	"scenic-spots-api/models"
 	"strings"
 
@@ -72,33 +73,26 @@ func User(response http.ResponseWriter, request *http.Request) {
 }
 
 func registerUser(response http.ResponseWriter, request *http.Request) {
-	var newUser models.UserCredentials
-	if err := json.NewDecoder(request.Body).Decode(&newUser); err != nil {
+	var userCredentials models.UserCredentials
+	if err := json.NewDecoder(request.Body).Decode(&userCredentials); err != nil {
 		helpers.ErrorResponse(response, "Bad request body", http.StatusBadRequest)
 		return
 	}
 
 	validate := validator.New()
-	if err := validate.Struct(newUser); err != nil {
+	if err := validate.Struct(userCredentials); err != nil {
 		helpers.ErrorResponse(response, "Invalid parameters", http.StatusBadRequest)
 		return
 	}
 
-	addedUser, err := userRepo.AddUser(request.Context(), newUser)
+	result, err := auth.RegisterUser(request.Context(), userCredentials)
 	if err != nil {
+		if errors.Is(err, repoerrors.ErrAlreadyExists) {
+			helpers.ErrorResponse(response, "User already exists in the database", http.StatusConflict)
+			return
+		}
 		helpers.ErrorResponse(response, "Unexpected error: "+err.Error(), http.StatusInternalServerError)
 		return
-	}
-
-	token, err := auth.CreateToken(addedUser[0])
-	if err != nil {
-		helpers.ErrorResponse(response, "Unexpected error: "+err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	result := models.UserTokenResponse{
-		Token:   token,
-		LocalId: addedUser[0].Id,
 	}
 
 	response.Header().Set("Content-Type", "application/json")

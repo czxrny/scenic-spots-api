@@ -2,13 +2,10 @@ package user
 
 import (
 	"context"
-	"fmt"
 	"scenic-spots-api/app/database"
 	"scenic-spots-api/app/database/repositories/common"
 	"scenic-spots-api/internal/repoerrors"
 	"scenic-spots-api/models"
-
-	"golang.org/x/crypto/bcrypt"
 )
 
 func AddUser(ctx context.Context, credentials models.UserCredentials) ([]models.User, error) {
@@ -16,16 +13,11 @@ func AddUser(ctx context.Context, credentials models.UserCredentials) ([]models.
 		return []models.User{}, err
 	}
 
-	hashed, err := bcrypt.GenerateFromPassword([]byte(credentials.Password), bcrypt.DefaultCost)
-	if err != nil {
-		return []models.User{}, fmt.Errorf("Error hashing password")
-	}
-
 	newUser := models.User{
 		Name:     credentials.Name,
 		Email:    credentials.Email,
-		Password: string(hashed),
-		Role:     "user",
+		Password: credentials.Password,
+		Role:     "user", // by default
 	}
 
 	addedUser, err := common.AddItem(ctx, database.UserAuthCollectionName, &newUser)
@@ -40,11 +32,24 @@ func AddUser(ctx context.Context, credentials models.UserCredentials) ([]models.
 }
 
 func checkIfEmailAlreadyExists(ctx context.Context, email string) error {
-	client := database.GetFirestoreClient()
-	result, _ := client.Collection(database.UserAuthCollectionName).Where("email", "==", email).Documents(ctx).GetAll()
-
-	if len(result) != 0 {
+	result, err := GetUserByEmail(ctx, email)
+	if err != nil {
+		return err
+	}
+	if result != nil {
 		return repoerrors.ErrAlreadyExists
 	}
 	return nil
+}
+
+func GetUserByEmail(ctx context.Context, email string) (*models.User, error) {
+	client := database.GetFirestoreClient()
+	query := client.Collection(database.UserAuthCollectionName).Where("email", "==", email)
+
+	result, err := common.GetAllItems[*models.User](ctx, query)
+	if err != nil {
+		return nil, err
+	}
+
+	return result[0], nil
 }
