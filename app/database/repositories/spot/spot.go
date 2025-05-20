@@ -177,7 +177,7 @@ func checkIfSpotAlreadyExists(ctx context.Context, latitude float64, longitude f
 	docs := query.Documents(ctx)
 	results, _ := docs.GetAll()
 	if len(results) != 0 {
-		return repoerrors.ErrSpotAlreadyExists
+		return repoerrors.ErrAlreadyExists
 	}
 
 	return nil

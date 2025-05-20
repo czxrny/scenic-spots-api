@@ -15,6 +15,53 @@ import (
 	"github.com/go-playground/validator/v10"
 )
 
+func Spot(response http.ResponseWriter, request *http.Request) {
+	method := request.Method
+	switch method {
+	case "GET":
+		getSpot(response, request)
+	case "POST":
+		addSpot(response, request)
+	}
+}
+
+func SpotById(response http.ResponseWriter, request *http.Request) {
+	parts := strings.Split(request.URL.Path, "/")
+	numberOfParts := len(parts)
+	method := request.Method
+	spotId := parts[2]
+
+	if spotId == "" {
+		helpers.ErrorResponse(response, "Missing spot ID", http.StatusBadRequest)
+		return
+	}
+
+	if numberOfParts == 3 {
+		switch method {
+		case "GET":
+			getSpotById(response, request, spotId)
+		case "PATCH":
+			updateSpotById(response, request, spotId)
+		case "DELETE":
+			deleteSpotById(response, request, spotId)
+		default:
+			response.WriteHeader(http.StatusMethodNotAllowed)
+		}
+	} else if numberOfParts >= 4 {
+		spotElement := parts[3]
+		switch spotElement {
+		case "photo":
+			pHandler.Photo(response, request, spotId)
+		case "review":
+			rHandler.Review(response, request, spotId)
+		default:
+			response.WriteHeader(http.StatusNotFound)
+		}
+	} else {
+		response.WriteHeader(http.StatusNotFound)
+	}
+}
+
 func getSpot(response http.ResponseWriter, request *http.Request) {
 	if !helpers.RequestBodyIsEmpty(request) {
 		helpers.ErrorResponse(response, "GET request must not contain a body", http.StatusBadRequest)
@@ -60,7 +107,7 @@ func addSpot(response http.ResponseWriter, request *http.Request) {
 
 	addedSpot, err := spotRepo.AddSpot(request.Context(), spot)
 	if err != nil {
-		if errors.Is(err, repoerrors.ErrSpotAlreadyExists) {
+		if errors.Is(err, repoerrors.ErrAlreadyExists) {
 			helpers.ErrorResponse(response, "Spot already exists in the database", http.StatusConflict)
 			return
 		}
@@ -118,7 +165,7 @@ func updateSpotById(response http.ResponseWriter, request *http.Request, id stri
 			helpers.ErrorResponse(response, "Spot with ID: ["+id+"] was not found", http.StatusNotFound)
 			return
 		}
-		if errors.Is(err, repoerrors.ErrSpotAlreadyExists) {
+		if errors.Is(err, repoerrors.ErrAlreadyExists) {
 			helpers.ErrorResponse(response, "Spot in this coordinates already exists!", http.StatusConflict)
 			return
 		}
@@ -150,51 +197,4 @@ func deleteSpotById(response http.ResponseWriter, request *http.Request, id stri
 	}
 
 	response.WriteHeader(http.StatusNoContent)
-}
-
-func Spot(response http.ResponseWriter, request *http.Request) {
-	method := request.Method
-	switch method {
-	case "GET":
-		getSpot(response, request)
-	case "POST":
-		addSpot(response, request)
-	}
-}
-
-func SpotById(response http.ResponseWriter, request *http.Request) {
-	parts := strings.Split(request.URL.Path, "/")
-	numberOfParts := len(parts)
-	method := request.Method
-	spotId := parts[2]
-
-	if spotId == "" {
-		helpers.ErrorResponse(response, "Missing spot ID", http.StatusBadRequest)
-		return
-	}
-
-	if numberOfParts == 3 {
-		switch method {
-		case "GET":
-			getSpotById(response, request, spotId)
-		case "PATCH":
-			updateSpotById(response, request, spotId)
-		case "DELETE":
-			deleteSpotById(response, request, spotId)
-		default:
-			response.WriteHeader(http.StatusNotFound)
-		}
-	} else if numberOfParts >= 4 {
-		spotElement := parts[3]
-		switch spotElement {
-		case "photo":
-			pHandler.Photo(response, request, spotId)
-		case "review":
-			rHandler.Review(response, request, spotId)
-		default:
-			response.WriteHeader(http.StatusNotFound)
-		}
-	} else {
-		response.WriteHeader(http.StatusNotFound)
-	}
 }

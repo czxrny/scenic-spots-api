@@ -14,6 +14,7 @@ var firestoreClient *firestore.Client
 
 const SpotCollectionName string = "spots"
 const ReviewCollectionName string = "reviews"
+const UserAuthCollectionName string = "user_auth"
 
 func InitializeFirestoreClient(ctx context.Context) error {
 	var err error
@@ -35,7 +36,7 @@ func InitializeFirestoreClient(ctx context.Context) error {
 	}
 
 	if os.Getenv("DB_POPULATE") == "true" {
-		if err = PopulateDatabase(ctx); err != nil {
+		if err = populateDatabase(ctx); err != nil {
 			logger.Error(err.Error())
 			return err
 		}
