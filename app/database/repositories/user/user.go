@@ -8,15 +8,15 @@ import (
 	"scenic-spots-api/models"
 )
 
-func AddUser(ctx context.Context, credentials models.UserCredentials) ([]models.User, error) {
-	if err := checkIfEmailAlreadyExists(ctx, credentials.Email); err != nil {
+func AddUser(ctx context.Context, userRegisterInfo models.UserRegisterInfo) ([]models.User, error) {
+	if err := checkIfEmailAlreadyExists(ctx, userRegisterInfo.Email); err != nil {
 		return []models.User{}, err
 	}
 
 	newUser := models.User{
-		Name:     credentials.Name,
-		Email:    credentials.Email,
-		Password: credentials.Password,
+		Name:     userRegisterInfo.Name,
+		Email:    userRegisterInfo.Email,
+		Password: userRegisterInfo.Password,
 		Role:     "user", // by default
 	}
 
@@ -49,6 +49,9 @@ func GetUserByEmail(ctx context.Context, email string) (*models.User, error) {
 	result, err := common.GetAllItems[*models.User](ctx, query)
 	if err != nil {
 		return nil, err
+	}
+	if result == nil {
+		return nil, repoerrors.ErrDoesNotExist
 	}
 
 	return result[0], nil

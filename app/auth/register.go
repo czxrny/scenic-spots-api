@@ -9,14 +9,14 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-func RegisterUser(ctx context.Context, credentials models.UserCredentials) (models.UserTokenResponse, error) {
-	hashed, err := bcrypt.GenerateFromPassword([]byte(credentials.Password), bcrypt.DefaultCost)
+func RegisterUser(ctx context.Context, userRegisterInfo models.UserRegisterInfo) (models.UserTokenResponse, error) {
+	hashed, err := bcrypt.GenerateFromPassword([]byte(userRegisterInfo.Password), bcrypt.DefaultCost)
 	if err != nil {
 		return models.UserTokenResponse{}, fmt.Errorf("Error hashing password")
 	}
-	credentials.Password = string(hashed)
+	userRegisterInfo.Password = string(hashed)
 
-	addedUser, err := userRepo.AddUser(ctx, credentials)
+	addedUser, err := userRepo.AddUser(ctx, userRegisterInfo)
 	if err != nil {
 		return models.UserTokenResponse{}, err
 	}

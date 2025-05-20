@@ -73,19 +73,19 @@ func User(response http.ResponseWriter, request *http.Request) {
 }
 
 func registerUser(response http.ResponseWriter, request *http.Request) {
-	var userCredentials models.UserCredentials
-	if err := json.NewDecoder(request.Body).Decode(&userCredentials); err != nil {
+	var userRegisterInfo models.UserRegisterInfo
+	if err := json.NewDecoder(request.Body).Decode(&userRegisterInfo); err != nil {
 		helpers.ErrorResponse(response, "Bad request body", http.StatusBadRequest)
 		return
 	}
 
 	validate := validator.New()
-	if err := validate.Struct(userCredentials); err != nil {
+	if err := validate.Struct(userRegisterInfo); err != nil {
 		helpers.ErrorResponse(response, "Invalid parameters", http.StatusBadRequest)
 		return
 	}
 
-	result, err := auth.RegisterUser(request.Context(), userCredentials)
+	result, err := auth.RegisterUser(request.Context(), userRegisterInfo)
 	if err != nil {
 		if errors.Is(err, repoerrors.ErrAlreadyExists) {
 			helpers.ErrorResponse(response, "User already exists in the database", http.StatusConflict)
@@ -104,7 +104,34 @@ func registerUser(response http.ResponseWriter, request *http.Request) {
 }
 
 func loginUser(response http.ResponseWriter, request *http.Request) {
-	logger.Info("User login attempt.")
+	var userCredentials models.UserCredentials
+	if err := json.NewDecoder(request.Body).Decode(&userCredentials); err != nil {
+		helpers.ErrorResponse(response, "Bad request body", http.StatusBadRequest)
+		return
+	}
+
+	validate := validator.New()
+	if err := validate.Struct(userCredentials); err != nil {
+		helpers.ErrorResponse(response, "Invalid parameters", http.StatusBadRequest)
+		return
+	}
+
+	result, err := auth.LoginUser(request.Context(), userCredentials)
+	if err != nil {
+		if errors.Is(err, repoerrors.ErrDoesNotExist) {
+			helpers.ErrorResponse(response, "User does not exist in database.", http.StatusConflict)
+			return
+		}
+		helpers.ErrorResponse(response, "Unexpected error: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	response.Header().Set("Content-Type", "application/json")
+	response.WriteHeader(http.StatusCreated)
+	if err = json.NewEncoder(response).Encode(result); err != nil {
+		helpers.ErrorResponse(response, "Failed to encode JSON error response: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
 }
 
 func getUserInfo(response http.ResponseWriter, request *http.Request) {
