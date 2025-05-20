@@ -68,7 +68,7 @@ func AddItem[T models.Identifiable](ctx context.Context, collectionName string, 
 	}
 
 	client := database.GetFirestoreClient()
-	collectionRef := client.Collection(database.SpotCollectionName)
+	collectionRef := client.Collection(collectionName)
 	docRef, _, err := collectionRef.Add(ctx, data)
 
 	if err != nil {
