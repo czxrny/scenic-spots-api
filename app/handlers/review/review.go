@@ -23,8 +23,16 @@ func Review(response http.ResponseWriter, request *http.Request, spotId string) 
 		case "GET":
 			getReview(response, request, spotId)
 		case "POST":
+			if err := helpers.IsAuthenticated(request); err != nil {
+				helpers.ErrorResponse(response, err.Error(), http.StatusUnauthorized)
+				return
+			}
 			addReview(response, request, spotId)
 		case "DELETE":
+			if err := helpers.IsAuthenticated(request); err != nil {
+				helpers.ErrorResponse(response, err.Error(), http.StatusUnauthorized)
+				return
+			}
 			deleteAllReviews(response, request, spotId)
 		default:
 			response.WriteHeader(http.StatusMethodNotAllowed)
@@ -39,8 +47,16 @@ func Review(response http.ResponseWriter, request *http.Request, spotId string) 
 		case "GET":
 			getReviewById(response, request, reviewId)
 		case "PATCH":
+			if err := helpers.IsAuthenticated(request); err != nil {
+				helpers.ErrorResponse(response, err.Error(), http.StatusUnauthorized)
+				return
+			}
 			updateReviewById(response, request, reviewId)
 		case "DELETE":
+			if err := helpers.IsAuthenticated(request); err != nil {
+				helpers.ErrorResponse(response, err.Error(), http.StatusUnauthorized)
+				return
+			}
 			deleteReviewById(response, request, reviewId)
 		default:
 			response.WriteHeader(http.StatusMethodNotAllowed)

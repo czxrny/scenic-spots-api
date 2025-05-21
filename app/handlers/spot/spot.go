@@ -21,6 +21,10 @@ func Spot(response http.ResponseWriter, request *http.Request) {
 	case "GET":
 		getSpot(response, request)
 	case "POST":
+		if err := helpers.IsAuthenticated(request); err != nil {
+			helpers.ErrorResponse(response, err.Error(), http.StatusUnauthorized)
+			return
+		}
 		addSpot(response, request)
 	}
 }
@@ -41,8 +45,16 @@ func SpotById(response http.ResponseWriter, request *http.Request) {
 		case "GET":
 			getSpotById(response, request, spotId)
 		case "PATCH":
+			if err := helpers.IsAuthenticated(request); err != nil {
+				helpers.ErrorResponse(response, err.Error(), http.StatusUnauthorized)
+				return
+			}
 			updateSpotById(response, request, spotId)
 		case "DELETE":
+			if err := helpers.IsAuthenticated(request); err != nil {
+				helpers.ErrorResponse(response, err.Error(), http.StatusUnauthorized)
+				return
+			}
 			deleteSpotById(response, request, spotId)
 		default:
 			response.WriteHeader(http.StatusMethodNotAllowed)

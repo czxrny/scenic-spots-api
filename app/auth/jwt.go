@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"fmt"
 	"os"
 	"scenic-spots-api/models"
 	"time"
@@ -9,7 +10,7 @@ import (
 )
 
 func CreateToken(user models.User) (string, error) {
-	expirationTime := time.Now().Add(24 * time.Hour)
+	expirationTime := time.Now().Add(time.Hour)
 
 	claims := jwt.MapClaims{
 		"lid":  user.Id,
@@ -24,4 +25,22 @@ func CreateToken(user models.User) (string, error) {
 		return "", err
 	}
 	return signedToken, nil
+}
+
+func VerifyToken(tokenString string) error {
+	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+		if token.Method.Alg() != jwt.SigningMethodHS256.Alg() {
+			return nil, fmt.Errorf("token has a wrong signature algorithm set")
+		}
+		return []byte(os.Getenv("JWT_SECRET")), nil
+	})
+	if err != nil {
+		return fmt.Errorf("Bad token!: " + err.Error())
+	}
+
+	if _, ok := token.Claims.(jwt.MapClaims); !ok || !token.Valid {
+		return fmt.Errorf("Invalid token formatting / expired", err)
+	}
+
+	return nil
 }
