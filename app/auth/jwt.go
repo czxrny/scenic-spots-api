@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"encoding/base64"
 	"fmt"
 	"os"
 	"scenic-spots-api/models"
@@ -13,10 +14,10 @@ func CreateToken(user models.User) (string, error) {
 	expirationTime := time.Now().Add(time.Hour)
 
 	claims := jwt.MapClaims{
-		"lid":  user.Id,
-		"usr":  user.Name,
-		"role": user.Role,
-		"exp":  expirationTime.Unix(),
+		"lid": user.Id,
+		"usr": user.Name,
+		"rol": user.Role,
+		"exp": expirationTime.Unix(),
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
@@ -43,4 +44,12 @@ func VerifyToken(tokenString string) error {
 	}
 
 	return nil
+}
+
+func DecodeSegment(seg string) ([]byte, error) {
+	return base64.RawURLEncoding.DecodeString(seg)
+}
+
+func encodeSegment(data string) string {
+	return base64.RawURLEncoding.EncodeToString([]byte(data))
 }

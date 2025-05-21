@@ -33,13 +33,13 @@ func AddUser(ctx context.Context, userRegisterInfo models.UserRegisterInfo) ([]m
 
 func checkIfEmailAlreadyExists(ctx context.Context, email string) error {
 	result, err := GetUserByEmail(ctx, email)
-	if err != nil {
+	if err == repoerrors.ErrDoesNotExist {
+		return nil
+	} else if result != nil {
+		return repoerrors.ErrAlreadyExists
+	} else {
 		return err
 	}
-	if result != nil {
-		return repoerrors.ErrAlreadyExists
-	}
-	return nil
 }
 
 func GetUserByEmail(ctx context.Context, email string) (*models.User, error) {
@@ -50,9 +50,17 @@ func GetUserByEmail(ctx context.Context, email string) (*models.User, error) {
 	if err != nil {
 		return nil, err
 	}
-	if result == nil {
+	if len(result) == 0 {
 		return nil, repoerrors.ErrDoesNotExist
 	}
 
 	return result[0], nil
+}
+
+func DeleteUserById(ctx context.Context, id string) error {
+	if _, err := common.FindItemById[*models.User](ctx, database.UserAuthCollectionName, id); err != nil {
+		return err
+	}
+
+	return common.DeleteItemById(ctx, database.UserAuthCollectionName, id)
 }

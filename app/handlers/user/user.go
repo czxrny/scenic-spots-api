@@ -5,6 +5,7 @@ import (
 	"errors"
 	"net/http"
 	"scenic-spots-api/app/auth"
+	userRepo "scenic-spots-api/app/database/repositories/user"
 	helpers "scenic-spots-api/internal/apihelpers"
 	"scenic-spots-api/internal/repoerrors"
 	"scenic-spots-api/models"
@@ -33,41 +34,31 @@ func User(response http.ResponseWriter, request *http.Request) {
 				return
 			}
 			loginUser(response, request)
-
-		case "me":
-			if method != "GET" {
-				response.WriteHeader(http.StatusMethodNotAllowed)
-				return
-			}
-			getUserInfo(response, request)
-
-		case "password":
-			if method != "PUT" {
-				response.WriteHeader(http.StatusMethodNotAllowed)
-				return
-			}
-			setUserPassword(response, request)
-
-		case "profile":
-			if method != "GET" {
-				response.WriteHeader(http.StatusMethodNotAllowed)
-				return
-			}
-			updateUserInfo(response, request)
-
-		case "delete":
-			if method != "DELETE" {
-				response.WriteHeader(http.StatusMethodNotAllowed)
-				return
-			}
-			deleteUser(response, request)
 		default:
-			response.WriteHeader(http.StatusNotFound)
+			UserById(response, request, operation)
 		}
 	} else {
 		response.WriteHeader(http.StatusNotFound)
 	}
+}
 
+func UserById(response http.ResponseWriter, request *http.Request, id string) {
+	method := request.Method
+
+	switch method {
+	case "DELETE":
+		if err := helpers.IsAuthenticated(request); err != nil {
+			helpers.ErrorResponse(response, err.Error(), http.StatusUnauthorized)
+			return
+		}
+		if err := helpers.CanEditAsset(request, id); err != nil {
+			helpers.ErrorResponse(response, err.Error(), http.StatusUnauthorized)
+			return
+		}
+		deleteUserById(response, request, id)
+	default:
+		response.WriteHeader(http.StatusMethodNotAllowed)
+	}
 }
 
 func registerUser(response http.ResponseWriter, request *http.Request) {
@@ -120,6 +111,20 @@ func loginUser(response http.ResponseWriter, request *http.Request) {
 	}
 }
 
+func deleteUserById(response http.ResponseWriter, request *http.Request, userId string) {
+	err := userRepo.DeleteUserById(request.Context(), userId)
+	if err != nil {
+		if errors.Is(err, repoerrors.ErrDoesNotExist) {
+			helpers.ErrorResponse(response, "User does not exist in database.", http.StatusNotFound)
+			return
+		}
+		helpers.ErrorResponse(response, "Unexpected error: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	response.WriteHeader(http.StatusNoContent)
+}
+
 /* TO IMPLEMENT IN THE FUTURE - ADDITIONAL USER INFO, STORED IN DIFFERENT COLLECTION */
 
 func getUserInfo(response http.ResponseWriter, request *http.Request) {
@@ -132,8 +137,4 @@ func setUserPassword(response http.ResponseWriter, request *http.Request) {
 
 func updateUserInfo(response http.ResponseWriter, request *http.Request) {
 	logger.Info("Updating user profile info.")
-}
-
-func deleteUser(response http.ResponseWriter, request *http.Request) {
-	logger.Info("Deleting user account.")
 }
