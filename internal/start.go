@@ -1,13 +1,13 @@
-package app
+package internal
 
 import (
 	"context"
 	"net/http"
 	"os"
-	"scenic-spots-api/app/database"
-	hHandler "scenic-spots-api/app/handlers/health"
-	sHandler "scenic-spots-api/app/handlers/spot"
-	uHandler "scenic-spots-api/app/handlers/user"
+	hHandler "scenic-spots-api/internal/api/handlers/health"
+	sHandler "scenic-spots-api/internal/api/handlers/spot"
+	uHandler "scenic-spots-api/internal/api/handlers/user"
+	"scenic-spots-api/internal/database"
 	"scenic-spots-api/utils/logger"
 
 	"github.com/joho/godotenv"

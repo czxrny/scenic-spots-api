@@ -2,10 +2,10 @@ package user
 
 import (
 	"context"
-	"scenic-spots-api/app/database"
-	"scenic-spots-api/app/database/repositories/common"
-	"scenic-spots-api/internal/repoerrors"
-	"scenic-spots-api/models"
+	"scenic-spots-api/internal/database"
+	"scenic-spots-api/internal/database/repositories/common"
+	"scenic-spots-api/internal/database/repositories/repoerrors"
+	"scenic-spots-api/internal/models"
 )
 
 func AddUser(ctx context.Context, userRegisterInfo models.UserRegisterInfo) ([]models.User, error) {

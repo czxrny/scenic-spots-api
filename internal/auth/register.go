@@ -3,8 +3,8 @@ package auth
 import (
 	"context"
 	"fmt"
-	userRepo "scenic-spots-api/app/database/repositories/user"
-	"scenic-spots-api/models"
+	userRepo "scenic-spots-api/internal/database/repositories/user"
+	"scenic-spots-api/internal/models"
 
 	"golang.org/x/crypto/bcrypt"
 )

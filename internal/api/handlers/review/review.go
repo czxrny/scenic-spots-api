@@ -4,10 +4,10 @@ import (
 	"encoding/json"
 	"errors"
 	"net/http"
-	reviewRepo "scenic-spots-api/app/database/repositories/review"
-	helpers "scenic-spots-api/internal/apihelpers"
-	"scenic-spots-api/internal/repoerrors"
-	"scenic-spots-api/models"
+	helpers "scenic-spots-api/internal/api/helpers"
+	"scenic-spots-api/internal/database/repositories/repoerrors"
+	reviewRepo "scenic-spots-api/internal/database/repositories/review"
+	"scenic-spots-api/internal/models"
 	"strings"
 )
 

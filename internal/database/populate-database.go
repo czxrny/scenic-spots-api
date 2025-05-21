@@ -4,7 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"os"
-	"scenic-spots-api/models"
+	"scenic-spots-api/internal/models"
 	"scenic-spots-api/utils/generics"
 
 	"cloud.google.com/go/firestore"

@@ -3,7 +3,7 @@ package main
 import (
 	"context"
 	"os"
-	"scenic-spots-api/app"
+	app "scenic-spots-api/internal"
 )
 
 func main() {

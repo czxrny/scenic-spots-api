@@ -4,12 +4,12 @@ import (
 	"encoding/json"
 	"errors"
 	"net/http"
-	spotRepo "scenic-spots-api/app/database/repositories/spot"
-	pHandler "scenic-spots-api/app/handlers/photo"
-	rHandler "scenic-spots-api/app/handlers/review"
-	helpers "scenic-spots-api/internal/apihelpers"
-	"scenic-spots-api/internal/repoerrors"
-	"scenic-spots-api/models"
+	pHandler "scenic-spots-api/internal/api/handlers/photo"
+	rHandler "scenic-spots-api/internal/api/handlers/review"
+	helpers "scenic-spots-api/internal/api/helpers"
+	"scenic-spots-api/internal/database/repositories/repoerrors"
+	spotRepo "scenic-spots-api/internal/database/repositories/spot"
+	"scenic-spots-api/internal/models"
 	"strings"
 )
 

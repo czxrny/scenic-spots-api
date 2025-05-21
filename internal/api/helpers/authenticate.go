@@ -1,11 +1,11 @@
-package apihelpers
+package helpers
 
 import (
 	"encoding/json"
 	"errors"
 	"fmt"
 	"net/http"
-	"scenic-spots-api/app/auth"
+	"scenic-spots-api/internal/auth"
 	"strings"
 )
 

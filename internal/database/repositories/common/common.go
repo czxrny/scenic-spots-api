@@ -2,9 +2,9 @@ package common
 
 import (
 	"context"
-	"scenic-spots-api/app/database"
-	"scenic-spots-api/internal/repoerrors"
-	"scenic-spots-api/models"
+	"scenic-spots-api/internal/database"
+	"scenic-spots-api/internal/database/repositories/repoerrors"
+	"scenic-spots-api/internal/models"
 	"scenic-spots-api/utils/generics"
 
 	"cloud.google.com/go/firestore"

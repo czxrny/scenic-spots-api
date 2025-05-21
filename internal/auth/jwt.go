@@ -4,7 +4,7 @@ import (
 	"encoding/base64"
 	"fmt"
 	"os"
-	"scenic-spots-api/models"
+	"scenic-spots-api/internal/models"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -48,8 +48,4 @@ func VerifyToken(tokenString string) error {
 
 func DecodeSegment(seg string) ([]byte, error) {
 	return base64.RawURLEncoding.DecodeString(seg)
-}
-
-func encodeSegment(data string) string {
-	return base64.RawURLEncoding.EncodeToString([]byte(data))
 }

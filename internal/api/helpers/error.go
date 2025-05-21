@@ -1,9 +1,9 @@
-package apihelpers
+package helpers
 
 import (
 	"encoding/json"
 	"net/http"
-	"scenic-spots-api/models"
+	"scenic-spots-api/internal/models"
 	"scenic-spots-api/utils/logger"
 )
 
