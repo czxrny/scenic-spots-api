@@ -7,10 +7,10 @@ The “Scenic Spots API” project aims to enable intuitive communication with a
 ## 📁 Project structure
 
 - `cmd/` – main app entrance (`main.go`)
-- `app/` - initialization, handlers, database connection + functions, and logger
+- `internal/` - initialization, handlers, database connection + functions, authorization, and logger
 - `docs/` – documentation
-- `models/` - structures used in api
 - `utils/` - reusable tools
+- `assets/` - sample data for database.
 
 # ✅ TODO – Scenic Spots API (Project Roadmap)
 
@@ -47,12 +47,12 @@ The “Scenic Spots API” project aims to enable intuitive communication with a
   - [x] `GET /spot/{id}/review` – list reviews for a spot
   - [x] `DELETE /spot/{id}/review/{reviewId}` – delete a specific review
 - [ ] User endpoints:
-  - [ ] `POST /user/register` – registers a new user with email and password, returns a JWT
-  - [ ] `POST /user/login` – authenticates a user and returns a JWT
+  - [x] `POST /user/register` – registers a new user with email and password, returns a JWT
+  - [x] `POST /user/login` – authenticates a user and returns a JWT
   - [ ] `PATCH /user/updateCredentials` – updates the user's email or password (requires JWT)
   - [ ] `GET /user/{id}` – retrieves user profile information by user ID (UID)
   - [ ] `PATCH /user/{id}` – updates user profile data (e.g., name, description)
-  - [ ] `DELETE /user/{id}` – deletes the user account from User_Auth and User_Profile
+  - [x] `DELETE /user/{id}` – deletes the user account from User_Auth and User_Profile
 
 ---
 
@@ -71,9 +71,9 @@ The “Scenic Spots API” project aims to enable intuitive communication with a
 ## 🔐 Authentication & User Management
 
 - [x] Plan and define `User` model
-- [ ] Implement JWT
-- [ ] Add security schemes to Swagger (`securitySchemes`)
-- [ ] Design user-related endpoints (login, register, etc.)
+- [x] Implement JWT
+- [ ] Add security schemes to Swagger (`securitySchemes`).
+- [x] Design user-related endpoints (login, register, etc.)
 
 ---
 
@@ -87,5 +87,6 @@ The “Scenic Spots API” project aims to enable intuitive communication with a
 
 ## 📄 Used Technologies:
 - Firebase Firestore
+- Firebase Emulator
 
-**🔄 Status**: Currently working on User related endpoints.
+**🔄 Status**: Currently working on code refactor and separating business logic from handlers.
