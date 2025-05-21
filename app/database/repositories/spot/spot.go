@@ -103,49 +103,27 @@ func FindSpotById(ctx context.Context, id string) ([]models.Spot, error) {
 	return result, nil
 }
 
-func UpdateSpot(ctx context.Context, id string, newValues models.NewSpot) ([]models.Spot, error) {
+func UpdateSpot(ctx context.Context, id string, updatedSpot models.Spot) ([]models.Spot, error) {
 	var err error
 	result := []models.Spot{}
 
-	spotToUpdate, err := common.FindItemById[*models.Spot](ctx, database.SpotCollectionName, id)
-	if err != nil {
+	if err := checkIfSpotAlreadyExists(ctx, updatedSpot.Latitude, updatedSpot.Longitude); err != nil {
 		return []models.Spot{}, err
-	}
-
-	if newValues.Name != "" {
-		spotToUpdate.Name = newValues.Name
-	}
-	if newValues.Description != "" {
-		spotToUpdate.Description = newValues.Description
-	}
-	if newValues.Latitude != 0 && newValues.Longitude != 0 {
-		if err := checkIfSpotAlreadyExists(ctx, newValues.Latitude, newValues.Longitude); err != nil {
-			return []models.Spot{}, err
-		}
-	}
-	if newValues.Latitude != 0 {
-		spotToUpdate.Latitude = newValues.Latitude
-	}
-	if newValues.Longitude != 0 {
-		spotToUpdate.Longitude = newValues.Longitude
-	}
-	if newValues.Category != "" {
-		spotToUpdate.Category = newValues.Category
 	}
 
 	client := database.GetFirestoreClient()
 	_, err = client.Collection(database.SpotCollectionName).Doc(id).Update(ctx, []firestore.Update{
-		{Path: "name", Value: spotToUpdate.Name},
-		{Path: "description", Value: spotToUpdate.Description},
-		{Path: "latitude", Value: spotToUpdate.Latitude},
-		{Path: "longitude", Value: spotToUpdate.Longitude},
-		{Path: "category", Value: spotToUpdate.Category},
+		{Path: "name", Value: updatedSpot.Name},
+		{Path: "description", Value: updatedSpot.Description},
+		{Path: "latitude", Value: updatedSpot.Latitude},
+		{Path: "longitude", Value: updatedSpot.Longitude},
+		{Path: "category", Value: updatedSpot.Category},
 	})
 	if err != nil {
 		return []models.Spot{}, err
 	}
 
-	result = append(result, *spotToUpdate)
+	result = append(result, updatedSpot)
 
 	return result, nil
 }

@@ -34,26 +34,34 @@ func CanEditAsset(request *http.Request, orignalId string) error {
 		return err
 	}
 
-	claims, err := extractClaimsFromToken(token)
+	userId, err := extractFromToken(&token, "lid")
 	if err != nil {
 		return err
 	}
 
-	lid, ok := claims["lid"].(string)
-	if !ok {
-		return fmt.Errorf("lid not found or is not a string")
+	role, err := extractFromToken(&token, "rol")
+	if err != nil {
+		return err
 	}
 
-	role, ok := claims["rol"].(string)
-	if !ok {
-		return fmt.Errorf("rol not found or is not a string")
-	}
-
-	if lid != orignalId && role != "admin" {
+	if userId != orignalId && role != "admin" {
 		return fmt.Errorf("illegal operation: not authorized to delete this user")
 	}
 
 	return nil
+}
+
+func extractFromToken(token *string, field string) (string, error) {
+	claims, err := extractClaimsFromToken(*token)
+	if err != nil {
+		return "", err
+	}
+
+	fieldVal, ok := claims[field].(string)
+	if !ok {
+		return "", fmt.Errorf("%v not found or is not a string", field)
+	}
+	return fieldVal, nil
 }
 
 func extractClaimsFromToken(token string) (map[string]interface{}, error) {

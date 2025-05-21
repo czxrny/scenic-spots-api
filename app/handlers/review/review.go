@@ -128,6 +128,12 @@ func deleteAllReviews(response http.ResponseWriter, request *http.Request, spotI
 		return
 	}
 
+	// can delete only if jwt states that the user is an admin.
+	if err := helpers.CanEditAsset(request, ""); err != nil {
+		helpers.ErrorResponse(response, "Authorization error: "+err.Error(), http.StatusUnauthorized)
+		return
+	}
+
 	if err := reviewRepo.DeleteAllReviews(request.Context(), spotId); err != nil {
 		helpers.ErrorResponse(response, "Unexpected error: "+err.Error(), http.StatusInternalServerError)
 		return
@@ -160,7 +166,23 @@ func getReviewById(response http.ResponseWriter, request *http.Request, id strin
 }
 
 func updateReviewById(response http.ResponseWriter, request *http.Request, id string) {
-	var review models.NewReview
+	found, err := reviewRepo.FindReviewById(request.Context(), id)
+	if err != nil {
+		if errors.Is(err, repoerrors.ErrDoesNotExist) {
+			helpers.ErrorResponse(response, "Review with ID: ["+id+"] was not found", http.StatusNotFound)
+			return
+		}
+		helpers.ErrorResponse(response, "Unexpected error: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	review := found[0]
+
+	if err := helpers.CanEditAsset(request, review.AddedBy); err != nil {
+		helpers.ErrorResponse(response, "Authorization error: "+err.Error(), http.StatusUnauthorized)
+		return
+	}
+
 	if err := helpers.DecodeAndValidateRequestBody(request, &review); err != nil {
 		helpers.ErrorResponse(response, "Error while decoding request body: "+err.Error(), http.StatusBadRequest)
 		return
@@ -168,10 +190,6 @@ func updateReviewById(response http.ResponseWriter, request *http.Request, id st
 
 	updatedReview, err := reviewRepo.UpdateReviewById(request.Context(), id, review)
 	if err != nil {
-		if errors.Is(err, repoerrors.ErrDoesNotExist) {
-			helpers.ErrorResponse(response, "Review with ID: ["+id+"] was not found", http.StatusBadRequest)
-			return
-		}
 		helpers.ErrorResponse(response, "Unexpected error: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -189,7 +207,24 @@ func deleteReviewById(response http.ResponseWriter, request *http.Request, id st
 		return
 	}
 
-	err := reviewRepo.DeleteReviewById(request.Context(), id)
+	found, err := reviewRepo.FindReviewById(request.Context(), id)
+	if err != nil {
+		if errors.Is(err, repoerrors.ErrDoesNotExist) {
+			helpers.ErrorResponse(response, "Spot with ID: ["+id+"] was not found", http.StatusNotFound)
+			return
+		}
+		helpers.ErrorResponse(response, "Unexpected error: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	review := found[0]
+
+	if err := helpers.CanEditAsset(request, review.AddedBy); err != nil {
+		helpers.ErrorResponse(response, "Authorization error: "+err.Error(), http.StatusUnauthorized)
+		return
+	}
+
+	err = reviewRepo.DeleteReviewById(request.Context(), id)
 	if err != nil {
 		if errors.Is(err, repoerrors.ErrDoesNotExist) {
 			helpers.ErrorResponse(response, "Review with ID: ["+id+"] was not found", http.StatusNotFound)

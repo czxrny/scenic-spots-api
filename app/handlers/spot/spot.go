@@ -24,6 +24,8 @@ func Spot(response http.ResponseWriter, request *http.Request) {
 			return
 		}
 		addSpot(response, request)
+	default:
+		response.WriteHeader(http.StatusMethodNotAllowed)
 	}
 }
 
@@ -151,7 +153,23 @@ func getSpotById(response http.ResponseWriter, request *http.Request, id string)
 }
 
 func updateSpotById(response http.ResponseWriter, request *http.Request, id string) {
-	var spot models.NewSpot
+	found, err := spotRepo.FindSpotById(request.Context(), id)
+	if err != nil {
+		if errors.Is(err, repoerrors.ErrDoesNotExist) {
+			helpers.ErrorResponse(response, "Spot with ID: ["+id+"] was not found", http.StatusNotFound)
+			return
+		}
+		helpers.ErrorResponse(response, "Unexpected error: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	spot := found[0]
+
+	if err := helpers.CanEditAsset(request, spot.AddedBy); err != nil {
+		helpers.ErrorResponse(response, "Authorization error: "+err.Error(), http.StatusUnauthorized)
+		return
+	}
+
 	if err := helpers.DecodeAndValidateRequestBody(request, &spot); err != nil {
 		helpers.ErrorResponse(response, "Error while decoding request body: "+err.Error(), http.StatusBadRequest)
 		return
@@ -159,10 +177,6 @@ func updateSpotById(response http.ResponseWriter, request *http.Request, id stri
 
 	updatedSpot, err := spotRepo.UpdateSpot(request.Context(), id, spot)
 	if err != nil {
-		if errors.Is(err, repoerrors.ErrDoesNotExist) {
-			helpers.ErrorResponse(response, "Spot with ID: ["+id+"] was not found", http.StatusNotFound)
-			return
-		}
 		if errors.Is(err, repoerrors.ErrAlreadyExists) {
 			helpers.ErrorResponse(response, "Spot in this coordinates already exists!", http.StatusConflict)
 			return
@@ -184,7 +198,24 @@ func deleteSpotById(response http.ResponseWriter, request *http.Request, id stri
 		return
 	}
 
-	err := spotRepo.DeleteSpotById(request.Context(), id)
+	found, err := spotRepo.FindSpotById(request.Context(), id)
+	if err != nil {
+		if errors.Is(err, repoerrors.ErrDoesNotExist) {
+			helpers.ErrorResponse(response, "Spot with ID: ["+id+"] was not found", http.StatusNotFound)
+			return
+		}
+		helpers.ErrorResponse(response, "Unexpected error: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	spot := found[0]
+
+	if err := helpers.CanEditAsset(request, spot.AddedBy); err != nil {
+		helpers.ErrorResponse(response, "Authorization error: "+err.Error(), http.StatusUnauthorized)
+		return
+	}
+
+	err = spotRepo.DeleteSpotById(request.Context(), id)
 	if err != nil {
 		if errors.Is(err, repoerrors.ErrDoesNotExist) {
 			helpers.ErrorResponse(response, "Spot with ID: ["+id+"] was not found", http.StatusNotFound)

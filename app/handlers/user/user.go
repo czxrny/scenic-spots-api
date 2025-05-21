@@ -112,6 +112,11 @@ func loginUser(response http.ResponseWriter, request *http.Request) {
 }
 
 func deleteUserById(response http.ResponseWriter, request *http.Request, userId string) {
+	if !helpers.RequestBodyIsEmpty(request) {
+		helpers.ErrorResponse(response, "DELETE request must not contain a body", http.StatusBadRequest)
+		return
+	}
+
 	err := userRepo.DeleteUserById(request.Context(), userId)
 	if err != nil {
 		if errors.Is(err, repoerrors.ErrDoesNotExist) {

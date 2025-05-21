@@ -98,32 +98,20 @@ func FindReviewById(ctx context.Context, id string) ([]models.Review, error) {
 	return result, nil
 }
 
-func UpdateReviewById(ctx context.Context, id string, newValues models.NewReview) ([]models.Review, error) {
+func UpdateReviewById(ctx context.Context, id string, updatedReview models.Review) ([]models.Review, error) {
 	var err error
 	result := []models.Review{}
 
-	reviewToUpdate, err := common.FindItemById[*models.Review](ctx, database.ReviewCollectionName, id)
-	if err != nil {
-		return []models.Review{}, err
-	}
-
-	if newValues.Rating != reviewToUpdate.Rating {
-		reviewToUpdate.Rating = newValues.Rating
-	}
-	if newValues.Content != "" {
-		reviewToUpdate.Content = newValues.Content
-	}
-
 	client := database.GetFirestoreClient()
 	_, err = client.Collection(database.ReviewCollectionName).Doc(id).Update(ctx, []firestore.Update{
-		{Path: "rating", Value: reviewToUpdate.Rating},
-		{Path: "content", Value: reviewToUpdate.Content},
+		{Path: "rating", Value: updatedReview.Rating},
+		{Path: "content", Value: updatedReview.Content},
 	})
 	if err != nil {
 		return []models.Review{}, err
 	}
 
-	result = append(result, *reviewToUpdate)
+	result = append(result, updatedReview)
 
 	return result, nil
 }
