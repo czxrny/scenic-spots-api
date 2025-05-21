@@ -9,8 +9,6 @@ import (
 	"scenic-spots-api/internal/repoerrors"
 	"scenic-spots-api/models"
 	"strings"
-
-	"github.com/go-playground/validator/v10"
 )
 
 func Review(response http.ResponseWriter, request *http.Request, spotId string) {
@@ -100,17 +98,12 @@ func getReview(response http.ResponseWriter, request *http.Request, spotId strin
 
 func addReview(response http.ResponseWriter, request *http.Request, spotId string) {
 	var newReview models.NewReview
-	if err := json.NewDecoder(request.Body).Decode(&newReview); err != nil {
-		helpers.ErrorResponse(response, "Bad request body", http.StatusBadRequest)
+	if err := helpers.DecodeAndValidateRequestBody(request, &newReview); err != nil {
+		helpers.ErrorResponse(response, "Error while decoding request body: "+err.Error(), http.StatusBadRequest)
 		return
 	}
-	newReview.SpotId = spotId
 
-	validate := validator.New()
-	if err := validate.Struct(newReview); err != nil {
-		helpers.ErrorResponse(response, "Invalid parameters", http.StatusBadRequest)
-		return
-	}
+	newReview.SpotId = spotId
 
 	found, err := reviewRepo.AddReview(request.Context(), newReview)
 	if err != nil {
@@ -168,18 +161,12 @@ func getReviewById(response http.ResponseWriter, request *http.Request, id strin
 
 func updateReviewById(response http.ResponseWriter, request *http.Request, id string) {
 	var review models.NewReview
-	if err := json.NewDecoder(request.Body).Decode(&review); err != nil {
-		helpers.ErrorResponse(response, "Bad request body", http.StatusBadRequest)
+	if err := helpers.DecodeAndValidateRequestBody(request, &review); err != nil {
+		helpers.ErrorResponse(response, "Error while decoding request body: "+err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	validate := validator.New()
-	if err := validate.Struct(review); err != nil {
-		helpers.ErrorResponse(response, "Invalid parameters", http.StatusBadRequest)
-		return
-	}
-
-	updatedSpot, err := reviewRepo.UpdateReviewById(request.Context(), id, review)
+	updatedReview, err := reviewRepo.UpdateReviewById(request.Context(), id, review)
 	if err != nil {
 		if errors.Is(err, repoerrors.ErrDoesNotExist) {
 			helpers.ErrorResponse(response, "Review with ID: ["+id+"] was not found", http.StatusBadRequest)
@@ -190,7 +177,7 @@ func updateReviewById(response http.ResponseWriter, request *http.Request, id st
 	}
 
 	response.Header().Set("Content-Type", "application/json")
-	if err = json.NewEncoder(response).Encode(updatedSpot); err != nil {
+	if err = json.NewEncoder(response).Encode(updatedReview); err != nil {
 		helpers.ErrorResponse(response, "Failed to encode JSON error response: "+err.Error(), http.StatusInternalServerError)
 		return
 	}

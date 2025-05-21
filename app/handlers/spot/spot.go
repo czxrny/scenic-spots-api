@@ -11,8 +11,6 @@ import (
 	"scenic-spots-api/internal/repoerrors"
 	"scenic-spots-api/models"
 	"strings"
-
-	"github.com/go-playground/validator/v10"
 )
 
 func Spot(response http.ResponseWriter, request *http.Request) {
@@ -106,14 +104,8 @@ func getSpot(response http.ResponseWriter, request *http.Request) {
 
 func addSpot(response http.ResponseWriter, request *http.Request) {
 	var spot models.NewSpot
-	if err := json.NewDecoder(request.Body).Decode(&spot); err != nil {
-		helpers.ErrorResponse(response, "Bad request body", http.StatusBadRequest)
-		return
-	}
-
-	validate := validator.New()
-	if err := validate.Struct(spot); err != nil {
-		helpers.ErrorResponse(response, "Invalid parameters", http.StatusBadRequest)
+	if err := helpers.DecodeAndValidateRequestBody(request, &spot); err != nil {
+		helpers.ErrorResponse(response, "Error while decoding request body: "+err.Error(), http.StatusBadRequest)
 		return
 	}
 
@@ -160,14 +152,8 @@ func getSpotById(response http.ResponseWriter, request *http.Request, id string)
 
 func updateSpotById(response http.ResponseWriter, request *http.Request, id string) {
 	var spot models.NewSpot
-	if err := json.NewDecoder(request.Body).Decode(&spot); err != nil {
-		helpers.ErrorResponse(response, "Bad request body", http.StatusBadRequest)
-		return
-	}
-
-	validate := validator.New()
-	if err := validate.Struct(spot); err != nil {
-		helpers.ErrorResponse(response, "Invalid parameters", http.StatusBadRequest)
+	if err := helpers.DecodeAndValidateRequestBody(request, &spot); err != nil {
+		helpers.ErrorResponse(response, "Error while decoding request body: "+err.Error(), http.StatusBadRequest)
 		return
 	}
 

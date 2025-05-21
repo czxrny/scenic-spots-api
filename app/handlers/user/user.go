@@ -10,8 +10,6 @@ import (
 	"scenic-spots-api/internal/repoerrors"
 	"scenic-spots-api/models"
 	"strings"
-
-	"github.com/go-playground/validator/v10"
 )
 
 func User(response http.ResponseWriter, request *http.Request) {
@@ -74,14 +72,8 @@ func User(response http.ResponseWriter, request *http.Request) {
 
 func registerUser(response http.ResponseWriter, request *http.Request) {
 	var userRegisterInfo models.UserRegisterInfo
-	if err := json.NewDecoder(request.Body).Decode(&userRegisterInfo); err != nil {
-		helpers.ErrorResponse(response, "Bad request body", http.StatusBadRequest)
-		return
-	}
-
-	validate := validator.New()
-	if err := validate.Struct(userRegisterInfo); err != nil {
-		helpers.ErrorResponse(response, "Invalid parameters", http.StatusBadRequest)
+	if err := helpers.DecodeAndValidateRequestBody(request, &userRegisterInfo); err != nil {
+		helpers.ErrorResponse(response, "Error while decoding request body: "+err.Error(), http.StatusBadRequest)
 		return
 	}
 
@@ -105,14 +97,8 @@ func registerUser(response http.ResponseWriter, request *http.Request) {
 
 func loginUser(response http.ResponseWriter, request *http.Request) {
 	var userCredentials models.UserCredentials
-	if err := json.NewDecoder(request.Body).Decode(&userCredentials); err != nil {
-		helpers.ErrorResponse(response, "Bad request body", http.StatusBadRequest)
-		return
-	}
-
-	validate := validator.New()
-	if err := validate.Struct(userCredentials); err != nil {
-		helpers.ErrorResponse(response, "Invalid parameters", http.StatusBadRequest)
+	if err := helpers.DecodeAndValidateRequestBody(request, &userCredentials); err != nil {
+		helpers.ErrorResponse(response, "Error while decoding request body: "+err.Error(), http.StatusBadRequest)
 		return
 	}
 
@@ -133,6 +119,8 @@ func loginUser(response http.ResponseWriter, request *http.Request) {
 		return
 	}
 }
+
+/* TO IMPLEMENT IN THE FUTURE - ADDITIONAL USER INFO, STORED IN DIFFERENT COLLECTION */
 
 func getUserInfo(response http.ResponseWriter, request *http.Request) {
 	logger.Info("Fetching user profile info.")
