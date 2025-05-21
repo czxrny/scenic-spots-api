@@ -45,7 +45,7 @@ func buildSpotQuery(collectionRef *firestore.CollectionRef, params models.SpotQu
 
 func GetSpot(ctx context.Context, params models.SpotQueryParams) ([]models.Spot, error) {
 	client := database.GetFirestoreClient()
-	collectionRef := client.Collection(database.SpotCollectionName)
+	collectionRef := client.Collection(models.SpotCollectionName)
 
 	query, err := buildSpotQuery(collectionRef, params)
 	if err != nil {
@@ -80,7 +80,7 @@ func AddSpot(ctx context.Context, spotInfo models.NewSpot) ([]models.Spot, error
 		CreatedAt:   time.Now(),
 	}
 
-	addedSpot, err := common.AddItem(ctx, database.SpotCollectionName, &spot)
+	addedSpot, err := common.AddItem(ctx, models.SpotCollectionName, &spot)
 	if err != nil {
 		return []models.Spot{}, err
 	}
@@ -92,7 +92,7 @@ func AddSpot(ctx context.Context, spotInfo models.NewSpot) ([]models.Spot, error
 }
 
 func FindSpotById(ctx context.Context, id string) ([]models.Spot, error) {
-	spot, err := common.FindItemById[*models.Spot](ctx, database.SpotCollectionName, id)
+	spot, err := common.FindItemById[*models.Spot](ctx, models.SpotCollectionName, id)
 	if err != nil {
 		return []models.Spot{}, err
 	}
@@ -112,7 +112,7 @@ func UpdateSpot(ctx context.Context, id string, updatedSpot models.Spot) ([]mode
 	}
 
 	client := database.GetFirestoreClient()
-	_, err = client.Collection(database.SpotCollectionName).Doc(id).Update(ctx, []firestore.Update{
+	_, err = client.Collection(models.SpotCollectionName).Doc(id).Update(ctx, []firestore.Update{
 		{Path: "name", Value: updatedSpot.Name},
 		{Path: "description", Value: updatedSpot.Description},
 		{Path: "latitude", Value: updatedSpot.Latitude},
@@ -129,7 +129,7 @@ func UpdateSpot(ctx context.Context, id string, updatedSpot models.Spot) ([]mode
 }
 
 func DeleteSpotById(ctx context.Context, id string) error {
-	if _, err := common.FindItemById[*models.Spot](ctx, database.SpotCollectionName, id); err != nil {
+	if _, err := common.FindItemById[*models.Spot](ctx, models.SpotCollectionName, id); err != nil {
 		return err
 	}
 
@@ -137,13 +137,13 @@ func DeleteSpotById(ctx context.Context, id string) error {
 		return err
 	}
 
-	return common.DeleteItemById(ctx, database.SpotCollectionName, id)
+	return common.DeleteItemById(ctx, models.SpotCollectionName, id)
 }
 
 // Checking if any spot in 100meter radius exists!
 func checkIfSpotAlreadyExists(ctx context.Context, latitude float64, longitude float64) error {
 	client := database.GetFirestoreClient()
-	collectionRef := client.Collection(database.SpotCollectionName)
+	collectionRef := client.Collection(models.SpotCollectionName)
 
 	query, _ := buildSpotQuery(collectionRef, models.SpotQueryParams{
 		Name:      "",

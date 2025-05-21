@@ -1,12 +1,9 @@
 package user
 
 import (
-	"encoding/json"
-	"errors"
 	"net/http"
 	helpers "scenic-spots-api/internal/api/helpers"
 	"scenic-spots-api/internal/auth"
-	"scenic-spots-api/internal/database/repositories/repoerrors"
 	userRepo "scenic-spots-api/internal/database/repositories/user"
 	"scenic-spots-api/internal/models"
 	"scenic-spots-api/utils/logger"
@@ -70,20 +67,11 @@ func registerUser(response http.ResponseWriter, request *http.Request) {
 
 	result, err := auth.RegisterUser(request.Context(), userRegisterInfo)
 	if err != nil {
-		if errors.Is(err, repoerrors.ErrAlreadyExists) {
-			helpers.ErrorResponse(response, "User already exists in the database", http.StatusConflict)
-			return
-		}
-		helpers.ErrorResponse(response, "Unexpected error: "+err.Error(), http.StatusInternalServerError)
+		helpers.HandleRepoError(response, err)
 		return
 	}
 
-	response.Header().Set("Content-Type", "application/json")
-	response.WriteHeader(http.StatusCreated)
-	if err = json.NewEncoder(response).Encode(result); err != nil {
-		helpers.ErrorResponse(response, "Failed to encode JSON error response: "+err.Error(), http.StatusInternalServerError)
-		return
-	}
+	helpers.WriteJSONResponse(response, http.StatusOK, result)
 }
 
 func loginUser(response http.ResponseWriter, request *http.Request) {
@@ -95,20 +83,11 @@ func loginUser(response http.ResponseWriter, request *http.Request) {
 
 	result, err := auth.LoginUser(request.Context(), userCredentials)
 	if err != nil {
-		if errors.Is(err, repoerrors.ErrDoesNotExist) {
-			helpers.ErrorResponse(response, "User does not exist in database.", http.StatusConflict)
-			return
-		}
-		helpers.ErrorResponse(response, "Unexpected error: "+err.Error(), http.StatusInternalServerError)
+		helpers.HandleRepoError(response, err)
 		return
 	}
 
-	response.Header().Set("Content-Type", "application/json")
-	response.WriteHeader(http.StatusCreated)
-	if err = json.NewEncoder(response).Encode(result); err != nil {
-		helpers.ErrorResponse(response, "Failed to encode JSON error response: "+err.Error(), http.StatusInternalServerError)
-		return
-	}
+	helpers.WriteJSONResponse(response, http.StatusOK, result)
 }
 
 func deleteUserById(response http.ResponseWriter, request *http.Request, userId string) {
@@ -119,11 +98,7 @@ func deleteUserById(response http.ResponseWriter, request *http.Request, userId 
 
 	err := userRepo.DeleteUserById(request.Context(), userId)
 	if err != nil {
-		if errors.Is(err, repoerrors.ErrDoesNotExist) {
-			helpers.ErrorResponse(response, "User does not exist in database.", http.StatusNotFound)
-			return
-		}
-		helpers.ErrorResponse(response, "Unexpected error: "+err.Error(), http.StatusInternalServerError)
+		helpers.HandleRepoError(response, err)
 		return
 	}
 

@@ -20,7 +20,7 @@ func AddUser(ctx context.Context, userRegisterInfo models.UserRegisterInfo) ([]m
 		Role:     "user", // by default
 	}
 
-	addedUser, err := common.AddItem(ctx, database.UserAuthCollectionName, &newUser)
+	addedUser, err := common.AddItem(ctx, models.UserAuthCollectionName, &newUser)
 	if err != nil {
 		return []models.User{}, err
 	}
@@ -44,7 +44,7 @@ func checkIfEmailAlreadyExists(ctx context.Context, email string) error {
 
 func GetUserByEmail(ctx context.Context, email string) (*models.User, error) {
 	client := database.GetFirestoreClient()
-	query := client.Collection(database.UserAuthCollectionName).Where("email", "==", email)
+	query := client.Collection(models.UserAuthCollectionName).Where("email", "==", email)
 
 	result, err := common.GetAllItems[*models.User](ctx, query)
 	if err != nil {
@@ -58,9 +58,9 @@ func GetUserByEmail(ctx context.Context, email string) (*models.User, error) {
 }
 
 func DeleteUserById(ctx context.Context, id string) error {
-	if _, err := common.FindItemById[*models.User](ctx, database.UserAuthCollectionName, id); err != nil {
+	if _, err := common.FindItemById[*models.User](ctx, models.UserAuthCollectionName, id); err != nil {
 		return err
 	}
 
-	return common.DeleteItemById(ctx, database.UserAuthCollectionName, id)
+	return common.DeleteItemById(ctx, models.UserAuthCollectionName, id)
 }

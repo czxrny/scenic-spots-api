@@ -1,13 +1,10 @@
 package spot
 
 import (
-	"encoding/json"
-	"errors"
 	"net/http"
 	pHandler "scenic-spots-api/internal/api/handlers/photo"
 	rHandler "scenic-spots-api/internal/api/handlers/review"
 	helpers "scenic-spots-api/internal/api/helpers"
-	"scenic-spots-api/internal/database/repositories/repoerrors"
 	spotRepo "scenic-spots-api/internal/database/repositories/spot"
 	"scenic-spots-api/internal/models"
 	"strings"
@@ -90,18 +87,10 @@ func getSpot(response http.ResponseWriter, request *http.Request) {
 
 	found, err := spotRepo.GetSpot(request.Context(), queryParams)
 	if err != nil {
-		if errors.Is(err, repoerrors.ErrInvalidQueryParameters) {
-			helpers.ErrorResponse(response, err.Error(), http.StatusBadRequest)
-			return
-		}
-		helpers.ErrorResponse(response, "Unexpected error: "+err.Error(), http.StatusInternalServerError)
+		helpers.HandleRepoError(response, err)
 		return
 	}
-	response.Header().Set("Content-Type", "application/json")
-	if err := json.NewEncoder(response).Encode(found); err != nil {
-		helpers.ErrorResponse(response, "Failed to encode JSON error response: "+err.Error(), http.StatusInternalServerError)
-		return
-	}
+	helpers.WriteJSONResponse(response, http.StatusOK, found)
 }
 
 func addSpot(response http.ResponseWriter, request *http.Request) {
@@ -113,20 +102,11 @@ func addSpot(response http.ResponseWriter, request *http.Request) {
 
 	addedSpot, err := spotRepo.AddSpot(request.Context(), spot)
 	if err != nil {
-		if errors.Is(err, repoerrors.ErrAlreadyExists) {
-			helpers.ErrorResponse(response, "Spot already exists in the database", http.StatusConflict)
-			return
-		}
-		helpers.ErrorResponse(response, "Unexpected error: "+err.Error(), http.StatusInternalServerError)
+		helpers.HandleRepoError(response, err)
 		return
 	}
 
-	response.Header().Set("Content-Type", "application/json")
-	response.WriteHeader(http.StatusCreated)
-	if err = json.NewEncoder(response).Encode(addedSpot); err != nil {
-		helpers.ErrorResponse(response, "Failed to encode JSON error response: "+err.Error(), http.StatusInternalServerError)
-		return
-	}
+	helpers.WriteJSONResponse(response, http.StatusOK, addedSpot)
 }
 
 func getSpotById(response http.ResponseWriter, request *http.Request, id string) {
@@ -137,29 +117,17 @@ func getSpotById(response http.ResponseWriter, request *http.Request, id string)
 
 	spot, err := spotRepo.FindSpotById(request.Context(), id)
 	if err != nil {
-		if errors.Is(err, repoerrors.ErrDoesNotExist) {
-			helpers.ErrorResponse(response, "Spot with ID: ["+id+"] was not found", http.StatusNotFound)
-			return
-		}
-		helpers.ErrorResponse(response, "Unexpected error: "+err.Error(), http.StatusInternalServerError)
+		helpers.HandleRepoError(response, err)
 		return
 	}
 
-	response.Header().Set("Content-Type", "application/json")
-	if err = json.NewEncoder(response).Encode(spot); err != nil {
-		helpers.ErrorResponse(response, "Failed to encode JSON error response: "+err.Error(), http.StatusInternalServerError)
-		return
-	}
+	helpers.WriteJSONResponse(response, http.StatusOK, spot)
 }
 
 func updateSpotById(response http.ResponseWriter, request *http.Request, id string) {
 	found, err := spotRepo.FindSpotById(request.Context(), id)
 	if err != nil {
-		if errors.Is(err, repoerrors.ErrDoesNotExist) {
-			helpers.ErrorResponse(response, "Spot with ID: ["+id+"] was not found", http.StatusNotFound)
-			return
-		}
-		helpers.ErrorResponse(response, "Unexpected error: "+err.Error(), http.StatusInternalServerError)
+		helpers.HandleRepoError(response, err)
 		return
 	}
 
@@ -177,19 +145,11 @@ func updateSpotById(response http.ResponseWriter, request *http.Request, id stri
 
 	updatedSpot, err := spotRepo.UpdateSpot(request.Context(), id, spot)
 	if err != nil {
-		if errors.Is(err, repoerrors.ErrAlreadyExists) {
-			helpers.ErrorResponse(response, "Spot in this coordinates already exists!", http.StatusConflict)
-			return
-		}
-		helpers.ErrorResponse(response, "Unexpected error: "+err.Error(), http.StatusInternalServerError)
+		helpers.HandleRepoError(response, err)
 		return
 	}
 
-	response.Header().Set("Content-Type", "application/json")
-	if err = json.NewEncoder(response).Encode(updatedSpot); err != nil {
-		helpers.ErrorResponse(response, "Failed to encode JSON error response: "+err.Error(), http.StatusInternalServerError)
-		return
-	}
+	helpers.WriteJSONResponse(response, http.StatusOK, updatedSpot)
 }
 
 func deleteSpotById(response http.ResponseWriter, request *http.Request, id string) {
@@ -200,11 +160,7 @@ func deleteSpotById(response http.ResponseWriter, request *http.Request, id stri
 
 	found, err := spotRepo.FindSpotById(request.Context(), id)
 	if err != nil {
-		if errors.Is(err, repoerrors.ErrDoesNotExist) {
-			helpers.ErrorResponse(response, "Spot with ID: ["+id+"] was not found", http.StatusNotFound)
-			return
-		}
-		helpers.ErrorResponse(response, "Unexpected error: "+err.Error(), http.StatusInternalServerError)
+		helpers.HandleRepoError(response, err)
 		return
 	}
 
@@ -217,11 +173,7 @@ func deleteSpotById(response http.ResponseWriter, request *http.Request, id stri
 
 	err = spotRepo.DeleteSpotById(request.Context(), id)
 	if err != nil {
-		if errors.Is(err, repoerrors.ErrDoesNotExist) {
-			helpers.ErrorResponse(response, "Spot with ID: ["+id+"] was not found", http.StatusNotFound)
-			return
-		}
-		helpers.ErrorResponse(response, "Unexpected error: "+err.Error(), http.StatusInternalServerError)
+		helpers.HandleRepoError(response, err)
 		return
 	}
 

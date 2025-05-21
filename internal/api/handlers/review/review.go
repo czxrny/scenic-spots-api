@@ -1,11 +1,8 @@
 package review
 
 import (
-	"encoding/json"
-	"errors"
 	"net/http"
 	helpers "scenic-spots-api/internal/api/helpers"
-	"scenic-spots-api/internal/database/repositories/repoerrors"
 	reviewRepo "scenic-spots-api/internal/database/repositories/review"
 	"scenic-spots-api/internal/models"
 	"strings"
@@ -77,23 +74,11 @@ func getReview(response http.ResponseWriter, request *http.Request, spotId strin
 
 	found, err := reviewRepo.GetReviews(request.Context(), params)
 	if err != nil {
-		if errors.Is(err, repoerrors.ErrDoesNotExist) {
-			helpers.ErrorResponse(response, "Spot with ID: ["+spotId+"] was not found", http.StatusBadRequest)
-			return
-		}
-		if errors.Is(err, repoerrors.ErrInvalidQueryParameters) {
-			helpers.ErrorResponse(response, err.Error(), http.StatusBadRequest)
-			return
-		}
-		helpers.ErrorResponse(response, "Unexpected error: "+err.Error(), http.StatusInternalServerError)
+		helpers.HandleRepoError(response, err)
 		return
 	}
 
-	response.Header().Set("Content-Type", "application/json")
-	if err := json.NewEncoder(response).Encode(found); err != nil {
-		helpers.ErrorResponse(response, "Failed to encode JSON error response: "+err.Error(), http.StatusInternalServerError)
-		return
-	}
+	helpers.WriteJSONResponse(response, http.StatusOK, found)
 }
 
 func addReview(response http.ResponseWriter, request *http.Request, spotId string) {
@@ -107,19 +92,11 @@ func addReview(response http.ResponseWriter, request *http.Request, spotId strin
 
 	found, err := reviewRepo.AddReview(request.Context(), newReview)
 	if err != nil {
-		if errors.Is(err, repoerrors.ErrDoesNotExist) {
-			helpers.ErrorResponse(response, "Spot with ID: ["+spotId+"] was not found", http.StatusBadRequest)
-			return
-		}
-		helpers.ErrorResponse(response, "Unexpected error: "+err.Error(), http.StatusInternalServerError)
+		helpers.HandleRepoError(response, err)
 		return
 	}
 
-	response.Header().Set("Content-Type", "application/json")
-	if err := json.NewEncoder(response).Encode(found); err != nil {
-		helpers.ErrorResponse(response, "Failed to encode JSON error response: "+err.Error(), http.StatusInternalServerError)
-		return
-	}
+	helpers.WriteJSONResponse(response, http.StatusOK, found)
 }
 
 func deleteAllReviews(response http.ResponseWriter, request *http.Request, spotId string) {
@@ -150,30 +127,17 @@ func getReviewById(response http.ResponseWriter, request *http.Request, id strin
 
 	review, err := reviewRepo.FindReviewById(request.Context(), id)
 	if err != nil {
-		if errors.Is(err, repoerrors.ErrDoesNotExist) {
-			helpers.ErrorResponse(response, "Review with ID: ["+id+"] was not found", http.StatusBadRequest)
-			return
-		}
-		helpers.ErrorResponse(response, "Unexpected error: "+err.Error(), http.StatusInternalServerError)
+		helpers.HandleRepoError(response, err)
 		return
 	}
 
-	response.Header().Set("Content-Type", "application/json")
-	if err = json.NewEncoder(response).Encode(review); err != nil {
-		helpers.ErrorResponse(response, "Failed to encode JSON error response: "+err.Error(), http.StatusInternalServerError)
-		return
-	}
+	helpers.WriteJSONResponse(response, http.StatusOK, review)
 }
 
 func updateReviewById(response http.ResponseWriter, request *http.Request, id string) {
 	found, err := reviewRepo.FindReviewById(request.Context(), id)
 	if err != nil {
-		if errors.Is(err, repoerrors.ErrDoesNotExist) {
-			helpers.ErrorResponse(response, "Review with ID: ["+id+"] was not found", http.StatusNotFound)
-			return
-		}
-		helpers.ErrorResponse(response, "Unexpected error: "+err.Error(), http.StatusInternalServerError)
-		return
+		helpers.HandleRepoError(response, err)
 	}
 
 	review := found[0]
@@ -194,11 +158,7 @@ func updateReviewById(response http.ResponseWriter, request *http.Request, id st
 		return
 	}
 
-	response.Header().Set("Content-Type", "application/json")
-	if err = json.NewEncoder(response).Encode(updatedReview); err != nil {
-		helpers.ErrorResponse(response, "Failed to encode JSON error response: "+err.Error(), http.StatusInternalServerError)
-		return
-	}
+	helpers.WriteJSONResponse(response, http.StatusOK, updatedReview)
 }
 
 func deleteReviewById(response http.ResponseWriter, request *http.Request, id string) {
@@ -209,11 +169,7 @@ func deleteReviewById(response http.ResponseWriter, request *http.Request, id st
 
 	found, err := reviewRepo.FindReviewById(request.Context(), id)
 	if err != nil {
-		if errors.Is(err, repoerrors.ErrDoesNotExist) {
-			helpers.ErrorResponse(response, "Spot with ID: ["+id+"] was not found", http.StatusNotFound)
-			return
-		}
-		helpers.ErrorResponse(response, "Unexpected error: "+err.Error(), http.StatusInternalServerError)
+		helpers.HandleRepoError(response, err)
 		return
 	}
 
@@ -226,11 +182,7 @@ func deleteReviewById(response http.ResponseWriter, request *http.Request, id st
 
 	err = reviewRepo.DeleteReviewById(request.Context(), id)
 	if err != nil {
-		if errors.Is(err, repoerrors.ErrDoesNotExist) {
-			helpers.ErrorResponse(response, "Review with ID: ["+id+"] was not found", http.StatusNotFound)
-			return
-		}
-		helpers.ErrorResponse(response, err.Error(), http.StatusInternalServerError)
+		helpers.HandleRepoError(response, err)
 		return
 	}
 
