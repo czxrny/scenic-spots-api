@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"math/rand"
 	"net/http"
-	"scenic-spots-api/app/logger"
+	"scenic-spots-api/utils/logger"
 	"time"
 )
 

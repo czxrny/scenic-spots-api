@@ -2,7 +2,7 @@ package photo
 
 import (
 	"net/http"
-	"scenic-spots-api/app/logger"
+	"scenic-spots-api/utils/logger"
 )
 
 func getPhoto(response http.ResponseWriter, request *http.Request, id string) {

@@ -3,8 +3,8 @@ package apihelpers
 import (
 	"encoding/json"
 	"net/http"
-	"scenic-spots-api/app/logger"
 	"scenic-spots-api/models"
+	"scenic-spots-api/utils/logger"
 )
 
 func ErrorResponse(response http.ResponseWriter, message string, statusCode int) {

@@ -5,10 +5,10 @@ import (
 	"errors"
 	"net/http"
 	"scenic-spots-api/app/auth"
-	"scenic-spots-api/app/logger"
 	helpers "scenic-spots-api/internal/apihelpers"
 	"scenic-spots-api/internal/repoerrors"
 	"scenic-spots-api/models"
+	"scenic-spots-api/utils/logger"
 	"strings"
 )
 

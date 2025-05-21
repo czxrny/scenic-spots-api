@@ -8,7 +8,7 @@ import (
 	hHandler "scenic-spots-api/app/handlers/health"
 	sHandler "scenic-spots-api/app/handlers/spot"
 	uHandler "scenic-spots-api/app/handlers/user"
-	"scenic-spots-api/app/logger"
+	"scenic-spots-api/utils/logger"
 
 	"github.com/joho/godotenv"
 )

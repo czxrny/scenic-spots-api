@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 	"os"
-	"scenic-spots-api/app/logger"
+	"scenic-spots-api/utils/logger"
 
 	"cloud.google.com/go/storage"
 	firebase "firebase.google.com/go"
