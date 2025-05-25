@@ -5,7 +5,7 @@ import (
 	pHandler "scenic-spots-api/internal/api/handlers/photo"
 	rHandler "scenic-spots-api/internal/api/handlers/review"
 	helpers "scenic-spots-api/internal/api/helpers"
-	spotRepo "scenic-spots-api/internal/database/repositories/spot"
+	spotService "scenic-spots-api/internal/api/service/spot"
 	"scenic-spots-api/internal/models"
 	"strings"
 )
@@ -77,15 +77,7 @@ func getSpot(response http.ResponseWriter, request *http.Request) {
 		return
 	}
 
-	queryParams := models.SpotQueryParams{
-		Name:      request.URL.Query().Get("name"),
-		Latitude:  request.URL.Query().Get("latitude"),
-		Longitude: request.URL.Query().Get("longitude"),
-		Radius:    request.URL.Query().Get("radius"),
-		Category:  request.URL.Query().Get("category"),
-	}
-
-	found, err := spotRepo.GetSpot(request.Context(), queryParams)
+	found, err := spotService.GetSpot(request.Context(), request.URL.Query())
 	if err != nil {
 		helpers.HandleRepoError(response, err)
 		return
@@ -94,19 +86,25 @@ func getSpot(response http.ResponseWriter, request *http.Request) {
 }
 
 func addSpot(response http.ResponseWriter, request *http.Request) {
+	token, err := helpers.GetJWTToken(request)
+	if err != nil {
+		helpers.ErrorResponse(response, "Error while decoding header: "+err.Error(), http.StatusBadRequest)
+		return
+	}
+
 	var spot models.NewSpot
 	if err := helpers.DecodeAndValidateRequestBody(request, &spot); err != nil {
 		helpers.ErrorResponse(response, "Error while decoding request body: "+err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	addedSpot, err := spotRepo.AddSpot(request.Context(), spot)
+	result, err := spotService.AddSpot(request.Context(), token, spot)
 	if err != nil {
 		helpers.HandleRepoError(response, err)
 		return
 	}
 
-	helpers.WriteJSONResponse(response, http.StatusOK, addedSpot)
+	helpers.WriteJSONResponse(response, http.StatusOK, result)
 }
 
 func getSpotById(response http.ResponseWriter, request *http.Request, id string) {
@@ -115,41 +113,35 @@ func getSpotById(response http.ResponseWriter, request *http.Request, id string)
 		return
 	}
 
-	spot, err := spotRepo.FindSpotById(request.Context(), id)
+	result, err := spotService.FindSpotById(request.Context(), id)
 	if err != nil {
 		helpers.HandleRepoError(response, err)
 		return
 	}
 
-	helpers.WriteJSONResponse(response, http.StatusOK, spot)
+	helpers.WriteJSONResponse(response, http.StatusOK, result)
 }
 
 func updateSpotById(response http.ResponseWriter, request *http.Request, id string) {
-	found, err := spotRepo.FindSpotById(request.Context(), id)
+	token, err := helpers.GetJWTToken(request)
 	if err != nil {
-		helpers.HandleRepoError(response, err)
+		helpers.ErrorResponse(response, "Error while decoding header: "+err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	spot := found[0]
-
-	if err := helpers.CanEditAsset(request, spot.AddedBy); err != nil {
-		helpers.ErrorResponse(response, "Authorization error: "+err.Error(), http.StatusUnauthorized)
-		return
-	}
-
+	var spot models.NewSpot
 	if err := helpers.DecodeAndValidateRequestBody(request, &spot); err != nil {
 		helpers.ErrorResponse(response, "Error while decoding request body: "+err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	updatedSpot, err := spotRepo.UpdateSpot(request.Context(), id, spot)
+	result, err := spotService.UpdateSpotById(request.Context(), token, spot, id)
 	if err != nil {
 		helpers.HandleRepoError(response, err)
 		return
 	}
 
-	helpers.WriteJSONResponse(response, http.StatusOK, updatedSpot)
+	helpers.WriteJSONResponse(response, http.StatusOK, result)
 }
 
 func deleteSpotById(response http.ResponseWriter, request *http.Request, id string) {
@@ -157,21 +149,13 @@ func deleteSpotById(response http.ResponseWriter, request *http.Request, id stri
 		helpers.ErrorResponse(response, "GET request must not contain a body", http.StatusBadRequest)
 		return
 	}
-
-	found, err := spotRepo.FindSpotById(request.Context(), id)
+	token, err := helpers.GetJWTToken(request)
 	if err != nil {
-		helpers.HandleRepoError(response, err)
+		helpers.ErrorResponse(response, "Error while decoding header: "+err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	spot := found[0]
-
-	if err := helpers.CanEditAsset(request, spot.AddedBy); err != nil {
-		helpers.ErrorResponse(response, "Authorization error: "+err.Error(), http.StatusUnauthorized)
-		return
-	}
-
-	err = spotRepo.DeleteSpotById(request.Context(), id)
+	err = spotService.DeleteSpotById(request.Context(), token, id)
 	if err != nil {
 		helpers.HandleRepoError(response, err)
 		return

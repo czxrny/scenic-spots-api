@@ -12,7 +12,6 @@ import (
 	"scenic-spots-api/utils/generics"
 	"strconv"
 	"strings"
-	"time"
 
 	"cloud.google.com/go/firestore"
 )
@@ -64,55 +63,27 @@ func GetSpot(ctx context.Context, params models.SpotQueryParams) ([]models.Spot,
 	return result, nil
 }
 
-func AddSpot(ctx context.Context, spotInfo models.NewSpot) ([]models.Spot, error) {
-	if err := checkIfSpotAlreadyExists(ctx, spotInfo.Latitude, spotInfo.Longitude); err != nil {
-		return []models.Spot{}, err
-	}
-
-	spot := models.Spot{
-		Name:        strings.ToLower(spotInfo.Name),
-		Description: spotInfo.Description,
-		Latitude:    spotInfo.Latitude,
-		Longitude:   spotInfo.Longitude,
-		Category:    strings.ToLower(spotInfo.Category),
-		Photos:      []string{},
-		AddedBy:     "test user", /* TODO */
-		CreatedAt:   time.Now(),
-	}
-
+func AddSpot(ctx context.Context, spot models.Spot) (models.Spot, error) {
 	addedSpot, err := common.AddItem(ctx, models.SpotCollectionName, &spot)
 	if err != nil {
-		return []models.Spot{}, err
+		return models.Spot{}, err
 	}
 
-	var result []models.Spot
-	result = append(result, *addedSpot)
-
-	return result, nil
+	return *addedSpot, nil
 }
 
-func FindSpotById(ctx context.Context, id string) ([]models.Spot, error) {
+func FindSpotById(ctx context.Context, id string) (models.Spot, error) {
 	spot, err := common.FindItemById[*models.Spot](ctx, models.SpotCollectionName, id)
 	if err != nil {
-		return []models.Spot{}, err
+		return models.Spot{}, err
 	}
 
-	var result []models.Spot
-	result = append(result, *spot)
-
-	return result, nil
+	return *spot, nil
 }
 
-func UpdateSpot(ctx context.Context, id string, updatedSpot models.Spot) ([]models.Spot, error) {
-	var err error
-	result := []models.Spot{}
-
-	if err := checkIfSpotAlreadyExists(ctx, updatedSpot.Latitude, updatedSpot.Longitude); err != nil {
-		return []models.Spot{}, err
-	}
-
+func UpdateSpot(ctx context.Context, id string, updatedSpot models.NewSpot) error {
 	client := database.GetFirestoreClient()
-	_, err = client.Collection(models.SpotCollectionName).Doc(id).Update(ctx, []firestore.Update{
+	_, err := client.Collection(models.SpotCollectionName).Doc(id).Update(ctx, []firestore.Update{
 		{Path: "name", Value: updatedSpot.Name},
 		{Path: "description", Value: updatedSpot.Description},
 		{Path: "latitude", Value: updatedSpot.Latitude},
@@ -120,12 +91,10 @@ func UpdateSpot(ctx context.Context, id string, updatedSpot models.Spot) ([]mode
 		{Path: "category", Value: updatedSpot.Category},
 	})
 	if err != nil {
-		return []models.Spot{}, err
+		return err
 	}
 
-	result = append(result, updatedSpot)
-
-	return result, nil
+	return nil
 }
 
 func DeleteSpotById(ctx context.Context, id string) error {
@@ -141,7 +110,7 @@ func DeleteSpotById(ctx context.Context, id string) error {
 }
 
 // Checking if any spot in 100meter radius exists!
-func checkIfSpotAlreadyExists(ctx context.Context, latitude float64, longitude float64) error {
+func CheckIfSpotAlreadyExists(ctx context.Context, latitude float64, longitude float64) error {
 	client := database.GetFirestoreClient()
 	collectionRef := client.Collection(models.SpotCollectionName)
 

@@ -1,7 +1,6 @@
 package auth
 
 import (
-	"encoding/base64"
 	"fmt"
 	"os"
 	"scenic-spots-api/internal/models"
@@ -44,8 +43,4 @@ func VerifyToken(tokenString string) error {
 	}
 
 	return nil
-}
-
-func DecodeSegment(seg string) ([]byte, error) {
-	return base64.RawURLEncoding.DecodeString(seg)
 }
