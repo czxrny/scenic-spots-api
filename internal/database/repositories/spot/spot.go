@@ -6,7 +6,6 @@ import (
 	"scenic-spots-api/internal/database"
 	common "scenic-spots-api/internal/database/repositories/common"
 	"scenic-spots-api/internal/database/repositories/repoerrors"
-	reviewRepo "scenic-spots-api/internal/database/repositories/review"
 	"scenic-spots-api/internal/models"
 	"scenic-spots-api/utils/calc"
 	"scenic-spots-api/utils/generics"
@@ -95,10 +94,6 @@ func UpdateSpot(ctx context.Context, id string, updatedSpot models.NewSpot) erro
 
 func DeleteSpotById(ctx context.Context, id string) error {
 	if _, err := common.FindItemById[*models.Spot](ctx, models.SpotCollectionName, id); err != nil {
-		return err
-	}
-
-	if err := reviewRepo.DeleteAllReviews(ctx, id); err != nil {
 		return err
 	}
 

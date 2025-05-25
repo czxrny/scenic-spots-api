@@ -4,6 +4,7 @@ import (
 	"context"
 	"net/url"
 	"scenic-spots-api/internal/auth"
+	reviewRepo "scenic-spots-api/internal/database/repositories/review"
 	spotRepo "scenic-spots-api/internal/database/repositories/spot"
 	"scenic-spots-api/internal/models"
 	"time"
@@ -105,6 +106,10 @@ func DeleteSpotById(ctx context.Context, token string, id string) error {
 	}
 
 	if err := auth.IsAuthorizedToEditAsset(token, spot.AddedBy); err != nil {
+		return err
+	}
+
+	if err := reviewRepo.DeleteAllReviews(ctx, id); err != nil {
 		return err
 	}
 
