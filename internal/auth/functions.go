@@ -6,8 +6,20 @@ import (
 	"errors"
 	"fmt"
 	"scenic-spots-api/internal/api"
+	"scenic-spots-api/internal/models"
 	"strings"
+
+	"golang.org/x/crypto/bcrypt"
 )
+
+func EncryptThePassword(userRegisterInfo *models.UserRegisterInfo) error {
+	hashed, err := bcrypt.GenerateFromPassword([]byte(userRegisterInfo.Password), bcrypt.DefaultCost)
+	if err != nil {
+		return fmt.Errorf("Error hashing password")
+	}
+	userRegisterInfo.Password = string(hashed)
+	return nil
+}
 
 func DecodeSegment(seg string) ([]byte, error) {
 	return base64.RawURLEncoding.DecodeString(seg)

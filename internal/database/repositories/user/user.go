@@ -9,30 +9,22 @@ import (
 	"scenic-spots-api/internal/models"
 )
 
-func AddUser(ctx context.Context, userRegisterInfo models.UserRegisterInfo) ([]models.User, error) {
-	if _, err := CheckIfEmailExists(ctx, userRegisterInfo.Email); err != nil {
-		return []models.User{}, err
-	}
-	if _, err := CheckIfUsernameExists(ctx, userRegisterInfo.Name); err != nil {
-		return []models.User{}, err
-	}
-
-	newUser := models.User{
-		Name:     userRegisterInfo.Name,
-		Email:    userRegisterInfo.Email,
-		Password: userRegisterInfo.Password,
-		Role:     "user", // by default
-	}
-
+func AddUser(ctx context.Context, newUser models.User) (models.User, error) {
 	addedUser, err := common.AddItem(ctx, models.UserAuthCollectionName, &newUser)
 	if err != nil {
-		return []models.User{}, err
+		return models.User{}, err
 	}
 
-	var result []models.User
-	result = append(result, *addedUser)
+	return *addedUser, nil
+}
 
-	return result, nil
+func FindUserById(ctx context.Context, id string) (models.User, error) {
+	spot, err := common.FindItemById[*models.User](ctx, models.UserAuthCollectionName, id)
+	if err != nil {
+		return models.User{}, err
+	}
+
+	return *spot, nil
 }
 
 func CheckIfEmailExists(ctx context.Context, email string) (*models.User, error) {
@@ -73,9 +65,5 @@ func getUserByField(ctx context.Context, fieldName, value string) (*models.User,
 }
 
 func DeleteUserById(ctx context.Context, id string) error {
-	if _, err := common.FindItemById[*models.User](ctx, models.UserAuthCollectionName, id); err != nil {
-		return err
-	}
-
 	return common.DeleteItemById(ctx, models.UserAuthCollectionName, id)
 }

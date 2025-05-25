@@ -25,15 +25,3 @@ func HandleRepoError(response http.ResponseWriter, err error) {
 		ErrorResponse(response, "Unexpected error: "+err.Error(), http.StatusInternalServerError)
 	}
 }
-
-func RequireAuthAndPermission(response http.ResponseWriter, request *http.Request, addedBy string) bool {
-	if err := IsAuthenticated(request); err != nil {
-		ErrorResponse(response, err.Error(), http.StatusUnauthorized)
-		return false
-	}
-	if err := CanEditAsset(request, addedBy); err != nil {
-		ErrorResponse(response, "Authorization error: "+err.Error(), http.StatusUnauthorized)
-		return false
-	}
-	return true
-}

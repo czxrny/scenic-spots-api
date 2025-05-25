@@ -3,8 +3,7 @@ package user
 import (
 	"net/http"
 	helpers "scenic-spots-api/internal/api/helpers"
-	"scenic-spots-api/internal/auth"
-	userRepo "scenic-spots-api/internal/database/repositories/user"
+	userService "scenic-spots-api/internal/api/service/user"
 	"scenic-spots-api/internal/models"
 	"scenic-spots-api/utils/logger"
 	"strings"
@@ -48,10 +47,6 @@ func UserById(response http.ResponseWriter, request *http.Request, id string) {
 			helpers.ErrorResponse(response, err.Error(), http.StatusUnauthorized)
 			return
 		}
-		if err := helpers.CanEditAsset(request, id); err != nil {
-			helpers.ErrorResponse(response, err.Error(), http.StatusUnauthorized)
-			return
-		}
 		deleteUserById(response, request, id)
 	default:
 		response.WriteHeader(http.StatusMethodNotAllowed)
@@ -65,7 +60,7 @@ func registerUser(response http.ResponseWriter, request *http.Request) {
 		return
 	}
 
-	result, err := auth.RegisterUser(request.Context(), userRegisterInfo)
+	result, err := userService.RegisterUser(request.Context(), userRegisterInfo)
 	if err != nil {
 		helpers.HandleRepoError(response, err)
 		return
@@ -81,7 +76,7 @@ func loginUser(response http.ResponseWriter, request *http.Request) {
 		return
 	}
 
-	result, err := auth.LoginUser(request.Context(), userCredentials)
+	result, err := userService.LoginUser(request.Context(), userCredentials)
 	if err != nil {
 		helpers.HandleRepoError(response, err)
 		return
@@ -95,8 +90,13 @@ func deleteUserById(response http.ResponseWriter, request *http.Request, userId 
 		helpers.ErrorResponse(response, "DELETE request must not contain a body", http.StatusBadRequest)
 		return
 	}
+	token, err := helpers.GetJWTToken(request)
+	if err != nil {
+		helpers.ErrorResponse(response, "Error while decoding header: "+err.Error(), http.StatusBadRequest)
+		return
+	}
 
-	err := userRepo.DeleteUserById(request.Context(), userId)
+	err = userService.DeleteUserById(request.Context(), token, userId)
 	if err != nil {
 		helpers.HandleRepoError(response, err)
 		return
