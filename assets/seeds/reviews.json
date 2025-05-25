@@ -1,66 +1,58 @@
 {
-"wO3mGQ6YFZkScHN5ZYpW":
-  {
-  "spotId": "tXgX69bYXerScIJlQqU9",
-  "rating": 4.5,
-  "content": "A beautiful castle with great history. The views from the top are amazing!",
-  "addedBy": "user1",
-  "createdAt": "2025-05-13T13:00:00Z"
-},
-"vH8wN5zX7ZTtsOK6oPqX":
-{
-  "spotId": "tXgX69bYXerScIJlQqU9",
-  "rating": 5.0,
-  "content": "One of the most magnificent castles I've ever visited. Highly recommended!",
-  "addedBy": "user2",
-  "createdAt": "2025-05-14T12:00:00Z"
-},
-"kP2zF8QsTkVwXsNyZzB2":
-{
-  "spotId": "F8qW56zXZUiydZ9H7df1",
-  "rating": 4.0,
-  "content": "The underground tour is impressive, but be ready for a lot of walking!",
-  "addedBy": "user3",
-  "createdAt": "2025-05-13T14:00:00Z"
-},
-"oD4fQ6MhZT3ZxUqKnZk8":
-{
-  "spotId": "F8qW56zXZUiydZ9H7df1",
-  "rating": 4.8,
-  "content": "A great experience, especially the underground chambers. It's fascinating!",
-  "addedBy": "user4",
-  "createdAt": "2025-05-14T15:00:00Z"
-},
-"bT0hP5vFqF8dZyWw7VqN":
-{
-  "spotId": "zM1H5I8TzKXqJ0M4FvYv",
-  "rating": 5.0,
-  "content": "Absolutely stunning! Perfect for nature lovers and hikers.",
-  "addedBy": "user5",
-  "createdAt": "2025-05-13T16:00:00Z"
-},
-"hN5mC2HtTh2vV6EzvRb7":
-{
-  "spotId": "QYsH9kFhTsh5tRVybcv3",
-  "rating": 4.7,
-  "content": "A deeply moving experience. It's hard to describe the emotions you feel when you visit.",
-  "addedBy": "user6",
-  "createdAt": "2025-05-13T17:00:00Z"
-},
-"jV0kN1J0VZ3hV5LQ5RxD":
-{
-  "spotId": "QYsH9kFhTsh5tRVybcv3",
-  "rating": 5.0,
-  "content": "One of the most important historical sites in the world. A must-see for everyone.",
-  "addedBy": "user7",
-  "createdAt": "2025-05-14T18:00:00Z"
-},
-"iB4dY6RjNc9F2JQtWjM3":
-{
-  "spotId": "mFf65c9IiHTH3FbQmG6y",
-  "rating": 4.9,
-  "content": "Incredible nature, one of the last true wildernesses in Europe. Very peaceful.",
-  "addedBy": "user8",
-  "createdAt": "2025-05-13T19:00:00Z"
-}
+  "wO3mGQ6YFZkScHN5ZYpW": {
+    "spotId": "tXgX69bYXerScIJlQqU9",
+    "rating": 4.5,
+    "content": "A beautiful castle with great history. The views from the top are amazing!",
+    "addedBy": "user1",
+    "createdAt": "2025-05-13T13:00:00Z"
+  },
+  "vH8wN5zX7ZTtsOK6oPqX": {
+    "spotId": "tXgX69bYXerScIJlQqU9",
+    "rating": 5.0,
+    "content": "One of the most magnificent castles I've ever visited. Highly recommended!",
+    "addedBy": "user2",
+    "createdAt": "2025-05-14T12:00:00Z"
+  },
+  "kP2zF8QsTkVwXsNyZzB2": {
+    "spotId": "F8qW56zXZUiydZ9H7df1",
+    "rating": 4.0,
+    "content": "The underground tour is impressive, but be ready for a lot of walking!",
+    "addedBy": "user1",
+    "createdAt": "2025-05-13T14:00:00Z"
+  },
+  "oD4fQ6MhZT3ZxUqKnZk8": {
+    "spotId": "F8qW56zXZUiydZ9H7df1",
+    "rating": 4.8,
+    "content": "A great experience, especially the underground chambers. It's fascinating!",
+    "addedBy": "user2",
+    "createdAt": "2025-05-14T15:00:00Z"
+  },
+  "bT0hP5vFqF8dZyWw7VqN": {
+    "spotId": "zM1H5I8TzKXqJ0M4FvYv",
+    "rating": 5.0,
+    "content": "Absolutely stunning! Perfect for nature lovers and hikers.",
+    "addedBy": "user1",
+    "createdAt": "2025-05-13T16:00:00Z"
+  },
+  "hN5mC2HtTh2vV6EzvRb7": {
+    "spotId": "QYsH9kFhTsh5tRVybcv3",
+    "rating": 4.7,
+    "content": "A deeply moving experience. It's hard to describe the emotions you feel when you visit.",
+    "addedBy": "user2",
+    "createdAt": "2025-05-13T17:00:00Z"
+  },
+  "jV0kN1J0VZ3hV5LQ5RxD": {
+    "spotId": "QYsH9kFhTsh5tRVybcv3",
+    "rating": 5.0,
+    "content": "One of the most important historical sites in the world. A must-see for everyone.",
+    "addedBy": "admin",
+    "createdAt": "2025-05-14T18:00:00Z"
+  },
+  "iB4dY6RjNc9F2JQtWjM3": {
+    "spotId": "mFf65c9IiHTH3FbQmG6y",
+    "rating": 4.9,
+    "content": "Incredible nature, one of the last true wildernesses in Europe. Very peaceful.",
+    "addedBy": "user1",
+    "createdAt": "2025-05-13T19:00:00Z"
+  }
 }

@@ -1,0 +1,22 @@
+{
+  "7kRpK1TnlSgpfgiYlSh4": {
+    "name": "admin", 
+    "email": "admin@example.com",
+    "password": "$2a$10$3YeqpO6vd.Z3l8xrBVPNbOKRo9zwYGivp15KKHOzusZroaek5Nl1a",
+    "role": "admin"
+  },
+  "y9AHPDr0ywBovDlqfT7R":
+  {
+    "name": "user1", 
+    "email": "user1@example.com",
+    "password": "$2a$10$U6srGPJ22ETv6ZoajUHvN.zVbtOnY2rhr.EmlkNugmuFDd1lNk6Cy",
+    "role": "user"
+  },
+  "QyjpJ8ukw1doWVyK31Zc":
+  {
+    "name": "user2", 
+    "email": "user2@example.com",
+    "password": "$2a$10$U6srGPJ22ETv6ZoajUHvN.zVbtOnY2rhr.EmlkNugmuFDd1lNk6Cy",
+    "role": "user"
+  }
+}

@@ -11,12 +11,15 @@ import (
 )
 
 func populateDatabase(ctx context.Context) error {
-	err := addExampleData[models.Spot](ctx, models.SpotCollectionName, os.Getenv("DB_SPOTS"))
-	if err != nil {
+	if err := addExampleData[models.Spot](ctx, models.SpotCollectionName, os.Getenv("DB_SPOTS")); err != nil {
 		return err
 	}
 
-	return addExampleData[models.Review](ctx, models.ReviewCollectionName, os.Getenv("DB_REVIEWS"))
+	if err := addExampleData[models.Review](ctx, models.ReviewCollectionName, os.Getenv("DB_REVIEWS")); err != nil {
+		return err
+	}
+
+	return addExampleData[models.User](ctx, models.UserAuthCollectionName, os.Getenv("DB_USERS"))
 }
 
 func addExampleData[T any](ctx context.Context, collectionName string, filePath string) error {
