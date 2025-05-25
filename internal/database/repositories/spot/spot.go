@@ -90,11 +90,7 @@ func UpdateSpot(ctx context.Context, id string, updatedSpot models.NewSpot) erro
 		{Path: "longitude", Value: updatedSpot.Longitude},
 		{Path: "category", Value: updatedSpot.Category},
 	})
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return err
 }
 
 func DeleteSpotById(ctx context.Context, id string) error {

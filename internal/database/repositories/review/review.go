@@ -9,7 +9,6 @@ import (
 	"scenic-spots-api/internal/models"
 	"scenic-spots-api/utils/generics"
 	"strconv"
-	"time"
 
 	"cloud.google.com/go/firestore"
 )
@@ -55,28 +54,13 @@ func GetReviews(ctx context.Context, params models.ReviewQueryParams) ([]models.
 	return result, nil
 }
 
-func AddReview(ctx context.Context, reviewInfo models.NewReview) ([]models.Review, error) {
-	if _, err := common.FindItemById[*models.Spot](ctx, models.SpotCollectionName, reviewInfo.SpotId); err != nil {
-		return []models.Review{}, err
-	}
-
-	review := models.Review{
-		SpotId:    reviewInfo.SpotId,
-		Rating:    reviewInfo.Rating,
-		Content:   reviewInfo.Content,
-		AddedBy:   "test user", /* TODO */
-		CreatedAt: time.Now(),
-	}
-
+func AddReview(ctx context.Context, review models.Review) (models.Review, error) {
 	addedReview, err := common.AddItem(ctx, models.SpotCollectionName, &review)
 	if err != nil {
-		return []models.Review{}, err
+		return models.Review{}, err
 	}
 
-	var result []models.Review
-	result = append(result, *addedReview)
-
-	return result, nil
+	return *addedReview, nil
 }
 
 func DeleteAllReviews(ctx context.Context, spotId string) error {
@@ -86,34 +70,22 @@ func DeleteAllReviews(ctx context.Context, spotId string) error {
 	return common.DeleteAllItems(ctx, query)
 }
 
-func FindReviewById(ctx context.Context, id string) ([]models.Review, error) {
-	review, err := common.FindItemById[*models.Review](ctx, models.ReviewCollectionName, id)
+func FindReviewById(ctx context.Context, id string) (models.Review, error) {
+	result, err := common.FindItemById[*models.Review](ctx, models.ReviewCollectionName, id)
 	if err != nil {
-		return []models.Review{}, err
+		return models.Review{}, err
 	}
 
-	var result []models.Review
-	result = append(result, *review)
-
-	return result, nil
+	return *result, nil
 }
 
-func UpdateReviewById(ctx context.Context, id string, updatedReview models.Review) ([]models.Review, error) {
-	var err error
-	result := []models.Review{}
-
+func UpdateReviewById(ctx context.Context, id string, updatedReview models.NewReview) error {
 	client := database.GetFirestoreClient()
-	_, err = client.Collection(models.ReviewCollectionName).Doc(id).Update(ctx, []firestore.Update{
+	_, err := client.Collection(models.ReviewCollectionName).Doc(id).Update(ctx, []firestore.Update{
 		{Path: "rating", Value: updatedReview.Rating},
 		{Path: "content", Value: updatedReview.Content},
 	})
-	if err != nil {
-		return []models.Review{}, err
-	}
-
-	result = append(result, updatedReview)
-
-	return result, nil
+	return err
 }
 
 func DeleteReviewById(ctx context.Context, id string) error {
