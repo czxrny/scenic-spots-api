@@ -10,7 +10,7 @@ import (
 )
 
 func LoginUser(ctx context.Context, credentials models.UserCredentials) (models.UserTokenResponse, error) {
-	user, err := userRepo.GetUserByEmail(ctx, credentials.Email)
+	user, err := userRepo.CheckIfEmailExists(ctx, credentials.Email)
 	if err != nil {
 		return models.UserTokenResponse{}, err
 	}
