@@ -21,6 +21,11 @@ type NewReview struct {
 	Content string  `json:"content" validate:"max=300"`
 }
 
+type ReviewInfo struct {
+	Rating  float32 `json:"rating" validate:"required,gte=0,lte=5"`
+	Content string  `json:"content" validate:"max=300"`
+}
+
 type ReviewQueryParams struct {
 	SpotId string
 	Limit  string

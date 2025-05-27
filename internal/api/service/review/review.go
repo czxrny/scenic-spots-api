@@ -69,7 +69,7 @@ func FindReviewById(ctx context.Context, id string) ([]models.Review, error) {
 	return result, nil
 }
 
-func UpdateReviewById(ctx context.Context, token string, newReviewInfo models.NewReview, reviewId string) ([]models.Review, error) {
+func UpdateReviewById(ctx context.Context, token string, newReviewInfo models.ReviewInfo, reviewId string) ([]models.Review, error) {
 	review, err := reviewRepo.FindReviewById(ctx, reviewId)
 	if err != nil {
 		return []models.Review{}, err

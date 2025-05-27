@@ -75,7 +75,7 @@ func FindReviewById(ctx context.Context, id string) (models.Review, error) {
 	return *result, nil
 }
 
-func UpdateReviewById(ctx context.Context, id string, updatedReview models.NewReview) error {
+func UpdateReviewById(ctx context.Context, id string, updatedReview models.ReviewInfo) error {
 	client := database.GetFirestoreClient()
 	_, err := client.Collection(models.ReviewCollectionName).Doc(id).Update(ctx, []firestore.Update{
 		{Path: "rating", Value: updatedReview.Rating},

@@ -46,7 +46,7 @@ func Review(response http.ResponseWriter, request *http.Request, spotId string) 
 				helpers.ErrorResponse(response, err.Error(), http.StatusUnauthorized)
 				return
 			}
-			updateReviewById(response, request, reviewId)
+			updateReviewById(response, request, spotId, reviewId)
 		case "DELETE":
 			if err := helpers.IsAuthenticated(request); err != nil {
 				helpers.ErrorResponse(response, err.Error(), http.StatusUnauthorized)
@@ -114,20 +114,20 @@ func getReviewById(response http.ResponseWriter, request *http.Request, id strin
 	helpers.WriteJSONResponse(response, http.StatusOK, review)
 }
 
-func updateReviewById(response http.ResponseWriter, request *http.Request, id string) {
+func updateReviewById(response http.ResponseWriter, request *http.Request, spotId string, reviewId string) {
 	token, err := helpers.GetJWTToken(request)
 	if err != nil {
 		helpers.ErrorResponse(response, "Error while decoding header: "+err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	var reviewInfo models.NewReview
+	var reviewInfo models.ReviewInfo
 	if err := helpers.DecodeAndValidateRequestBody(request, &reviewInfo); err != nil {
 		helpers.ErrorResponse(response, "Error while decoding request body: "+err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	updatedReview, err := reviewService.UpdateReviewById(request.Context(), token, reviewInfo, id)
+	updatedReview, err := reviewService.UpdateReviewById(request.Context(), token, reviewInfo, reviewId)
 	if err != nil {
 		helpers.ErrorResponse(response, "Unexpected error: "+err.Error(), http.StatusInternalServerError)
 		return
