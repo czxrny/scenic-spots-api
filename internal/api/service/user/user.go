@@ -3,15 +3,13 @@ package user
 import (
 	"context"
 	"scenic-spots-api/internal/auth"
+	"scenic-spots-api/internal/database/repositories/repoerrors"
 	userAuthRepo "scenic-spots-api/internal/database/repositories/user"
 	"scenic-spots-api/internal/models"
 )
 
 func RegisterUser(ctx context.Context, userRegisterInfo models.UserRegisterInfo) (models.UserTokenResponse, error) {
-	if _, err := userAuthRepo.CheckIfEmailExists(ctx, userRegisterInfo.Email); err != nil {
-		return models.UserTokenResponse{}, err
-	}
-	if _, err := userAuthRepo.CheckIfUsernameExists(ctx, userRegisterInfo.Name); err != nil {
+	if err := ensureCredentialsUniqueness(ctx, userRegisterInfo.Name, userRegisterInfo.Email); err != nil {
 		return models.UserTokenResponse{}, err
 	}
 
@@ -43,7 +41,7 @@ func RegisterUser(ctx context.Context, userRegisterInfo models.UserRegisterInfo)
 }
 
 func LoginUser(ctx context.Context, credentials models.UserCredentials) (models.UserTokenResponse, error) {
-	user, err := userAuthRepo.CheckIfEmailExists(ctx, credentials.Email)
+	user, err := userAuthRepo.GetUserByField(ctx, "email", credentials.Email)
 	if err != nil {
 		return models.UserTokenResponse{}, err
 	}
@@ -70,4 +68,18 @@ func DeleteUserById(ctx context.Context, token string, userId string) error {
 	}
 
 	return userAuthRepo.DeleteUserById(ctx, userId)
+}
+
+func ensureCredentialsUniqueness(ctx context.Context, userName string, email string) error {
+	if _, err := userAuthRepo.GetUserByField(ctx, "email", email); err != nil && err != repoerrors.ErrDoesNotExist {
+		return err
+	} else if err == nil {
+		return repoerrors.ErrAlreadyExists
+	}
+	if _, err := userAuthRepo.GetUserByField(ctx, "name", userName); err != nil && err != repoerrors.ErrDoesNotExist {
+		return err
+	} else if err == nil {
+		return repoerrors.ErrAlreadyExists
+	}
+	return nil
 }

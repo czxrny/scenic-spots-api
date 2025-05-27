@@ -2,7 +2,6 @@ package user
 
 import (
 	"context"
-	"fmt"
 	"scenic-spots-api/internal/database"
 	"scenic-spots-api/internal/database/repositories/common"
 	"scenic-spots-api/internal/database/repositories/repoerrors"
@@ -27,29 +26,11 @@ func FindUserById(ctx context.Context, id string) (models.User, error) {
 	return *spot, nil
 }
 
-func CheckIfEmailExists(ctx context.Context, email string) (*models.User, error) {
-	user, err := getUserByField(ctx, "email", email)
-	if err != nil && err != repoerrors.ErrDoesNotExist {
-		return nil, fmt.Errorf("error checking email: %w", err)
-	}
-	if user != nil {
-		return user, repoerrors.ErrEmailAlreadyExists
-	}
-	return nil, nil
+func DeleteUserById(ctx context.Context, id string) error {
+	return common.DeleteItemById(ctx, models.UserAuthCollectionName, id)
 }
 
-func CheckIfUsernameExists(ctx context.Context, username string) (*models.User, error) {
-	user, err := getUserByField(ctx, "name", username)
-	if err != nil && err != repoerrors.ErrDoesNotExist {
-		return nil, fmt.Errorf("error checking username: %w", err)
-	}
-	if user != nil {
-		return user, repoerrors.ErrUsernameAlreadyExists
-	}
-	return nil, nil
-}
-
-func getUserByField(ctx context.Context, fieldName, value string) (*models.User, error) {
+func GetUserByField(ctx context.Context, fieldName, value string) (*models.User, error) {
 	client := database.GetFirestoreClient()
 	query := client.Collection(models.UserAuthCollectionName).Where(fieldName, "==", value)
 
@@ -62,8 +43,4 @@ func getUserByField(ctx context.Context, fieldName, value string) (*models.User,
 	}
 
 	return results[0], nil
-}
-
-func DeleteUserById(ctx context.Context, id string) error {
-	return common.DeleteItemById(ctx, models.UserAuthCollectionName, id)
 }

@@ -5,11 +5,6 @@ import (
 	"fmt"
 )
 
-var (
-	ErrEmailAlreadyExists    = errors.New("user with this email already exists")
-	ErrUsernameAlreadyExists = errors.New("user with this username already exists")
-)
-
 // USED FOR /add METHOD FOR [/spot] ENDPOINT
 var ErrAlreadyExists = errors.New("item already exists")
 
