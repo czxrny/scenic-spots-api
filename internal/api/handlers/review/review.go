@@ -84,11 +84,11 @@ func addReview(response http.ResponseWriter, request *http.Request, spotId strin
 	}
 
 	var newReview models.NewReview
+	newReview.SpotId = spotId
 	if err := helpers.DecodeAndValidateRequestBody(request, &newReview); err != nil {
 		helpers.ErrorResponse(response, "Error while decoding request body: "+err.Error(), http.StatusBadRequest)
 		return
 	}
-	newReview.SpotId = spotId
 
 	found, err := reviewService.AddReview(request.Context(), token, newReview)
 	if err != nil {
