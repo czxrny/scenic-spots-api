@@ -9,7 +9,7 @@ import (
 )
 
 func ValidatePasswordAndReturnToken(ctx context.Context, userInfo models.User, password string) (string, error) {
-	if err := bcrypt.CompareHashAndPassword([]byte(password), []byte(userInfo.Password)); err != nil {
+	if err := bcrypt.CompareHashAndPassword([]byte(userInfo.Password), []byte(password)); err != nil {
 		return "", fmt.Errorf("Wrong password.")
 	}
 
