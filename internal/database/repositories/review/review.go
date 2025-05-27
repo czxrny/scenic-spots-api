@@ -31,10 +31,6 @@ func buildReviewQuery(collectionRef *firestore.CollectionRef, params models.Revi
 }
 
 func GetReviews(ctx context.Context, params models.ReviewQueryParams) ([]models.Review, error) {
-	if _, err := common.FindItemById[*models.Spot](ctx, models.SpotCollectionName, params.SpotId); err != nil {
-		return []models.Review{}, err
-	}
-
 	client := database.GetFirestoreClient()
 	collectionRef := client.Collection(models.ReviewCollectionName)
 

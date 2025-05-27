@@ -4,9 +4,11 @@ import (
 	"context"
 	"net/url"
 	"scenic-spots-api/internal/auth"
+	"scenic-spots-api/internal/database/repositories/repoerrors"
 	reviewRepo "scenic-spots-api/internal/database/repositories/review"
 	spotRepo "scenic-spots-api/internal/database/repositories/spot"
 	"scenic-spots-api/internal/models"
+	"strconv"
 	"time"
 )
 
@@ -31,8 +33,11 @@ func AddSpot(ctx context.Context, token string, newSpotInfo models.NewSpot) ([]m
 	if err != nil {
 		return []models.Spot{}, err
 	}
-	if err := spotRepo.CheckIfSpotAlreadyExists(ctx, newSpotInfo.Latitude, newSpotInfo.Longitude); err != nil {
+
+	if found, err := getNearbySpots(ctx, newSpotInfo.Latitude, newSpotInfo.Longitude); err != nil {
 		return []models.Spot{}, err
+	} else if len(found) > 0 {
+		return []models.Spot{}, repoerrors.ErrAlreadyExists
 	}
 
 	spot := models.Spot{
@@ -70,8 +75,10 @@ func FindSpotById(ctx context.Context, id string) ([]models.Spot, error) {
 }
 
 func UpdateSpotById(ctx context.Context, token string, newSpotInfo models.NewSpot, id string) ([]models.Spot, error) {
-	if err := spotRepo.CheckIfSpotAlreadyExists(ctx, newSpotInfo.Latitude, newSpotInfo.Longitude); err != nil {
+	if found, err := getNearbySpots(ctx, newSpotInfo.Latitude, newSpotInfo.Longitude); err != nil {
 		return []models.Spot{}, err
+	} else if len(found) > 0 && found[0].Id != id {
+		return []models.Spot{}, repoerrors.ErrAlreadyExists
 	}
 
 	spot, err := spotRepo.FindSpotById(ctx, id)
@@ -114,4 +121,19 @@ func DeleteSpotById(ctx context.Context, token string, id string) error {
 	}
 
 	return spotRepo.DeleteSpotById(ctx, id)
+}
+
+// Check if there are no spots in 100m radius!
+func getNearbySpots(ctx context.Context, latitude float64, longitude float64) ([]models.Spot, error) {
+	found, err := spotRepo.GetSpot(ctx, models.SpotQueryParams{
+		Name:      "",
+		Latitude:  strconv.FormatFloat(latitude, 'f', -1, 64),
+		Longitude: strconv.FormatFloat(longitude, 'f', -1, 64),
+		Radius:    "0.1",
+		Category:  "",
+	})
+	if err != nil {
+		return []models.Spot{}, err
+	}
+	return found, nil
 }

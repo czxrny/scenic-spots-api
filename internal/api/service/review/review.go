@@ -11,6 +11,10 @@ import (
 )
 
 func GetReview(ctx context.Context, spotId string, query url.Values) ([]models.Review, error) {
+	if _, err := spotRepo.FindSpotById(ctx, spotId); err != nil {
+		return []models.Review{}, err
+	}
+
 	params := models.ReviewQueryParams{
 		SpotId: spotId,
 		Limit:  query.Get("limit"),

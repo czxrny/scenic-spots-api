@@ -9,7 +9,6 @@ import (
 	"scenic-spots-api/internal/models"
 	"scenic-spots-api/utils/calc"
 	"scenic-spots-api/utils/generics"
-	"strconv"
 	"strings"
 
 	"cloud.google.com/go/firestore"
@@ -58,7 +57,6 @@ func GetSpot(ctx context.Context, params models.SpotQueryParams) ([]models.Spot,
 	}
 
 	result := generics.DereferenceAll(found)
-
 	return result, nil
 }
 
@@ -98,25 +96,4 @@ func DeleteSpotById(ctx context.Context, id string) error {
 	}
 
 	return common.DeleteItemById(ctx, models.SpotCollectionName, id)
-}
-
-// Checking if any spot in 100meter radius exists!
-func CheckIfSpotAlreadyExists(ctx context.Context, latitude float64, longitude float64) error {
-	client := database.GetFirestoreClient()
-	collectionRef := client.Collection(models.SpotCollectionName)
-
-	query, _ := buildSpotQuery(collectionRef, models.SpotQueryParams{
-		Name:      "",
-		Latitude:  strconv.FormatFloat(latitude, 'f', -1, 64),
-		Longitude: strconv.FormatFloat(longitude, 'f', -1, 64),
-		Radius:    "0.1",
-	})
-
-	docs := query.Documents(ctx)
-	results, _ := docs.GetAll()
-	if len(results) != 0 {
-		return repoerrors.ErrAlreadyExists
-	}
-
-	return nil
 }
