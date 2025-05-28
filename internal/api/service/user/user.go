@@ -58,12 +58,12 @@ func LoginUser(ctx context.Context, credentials models.UserCredentials) (models.
 }
 
 func DeleteUserById(ctx context.Context, token string, userId string) error {
-	_, err := userAuthRepo.FindUserById(ctx, userId)
+	user, err := userAuthRepo.FindUserById(ctx, userId)
 	if err != nil {
 		return err
 	}
 
-	if err := auth.IsAuthorizedToEditAsset(token, userId); err != nil {
+	if err := auth.IsAuthorizedToEditAsset(token, user.Name); err != nil {
 		return err
 	}
 
