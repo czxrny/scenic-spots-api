@@ -51,7 +51,7 @@ func GetReviews(ctx context.Context, params models.ReviewQueryParams) ([]models.
 }
 
 func AddReview(ctx context.Context, review models.Review) (models.Review, error) {
-	addedReview, err := common.AddItem(ctx, models.SpotCollectionName, &review)
+	addedReview, err := common.AddItem(ctx, models.ReviewCollectionName, &review)
 	if err != nil {
 		return models.Review{}, err
 	}
