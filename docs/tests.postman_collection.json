@@ -1,0 +1,5420 @@
+{
+	"info": {
+		"_postman_id": "0e4fd00e-1e25-4e3e-8509-1c3b73fc8696",
+		"name": "tests",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "42850537"
+	},
+	"item": [
+		{
+			"name": "spot",
+			"item": [
+				{
+					"name": "GET /spot",
+					"item": [
+						{
+							"name": "/spot - no query and no body - 200",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Valid empty GET request returns 200 code\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/spot",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"spot"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "/spot - body included in request - 400",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"GET request with non empty request body returns 400 code\", function () {\r",
+											"    pm.response.to.have.status(400);\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"test\": \"test\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/spot",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"spot"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "/spot - one query parameter - 400",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Specifing only one query parameter should return 400 code\", function () {\r",
+											"    pm.response.to.have.status(400);\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/spot?latitude=2",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"spot"
+									],
+									"query": [
+										{
+											"key": "latitude",
+											"value": "2"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "/spot - two query parameters - 400",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Specifing only two out of three query parameters should return 400 code\", function () {\r",
+											"    pm.response.to.have.status(400);\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/spot?latitude=2",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"spot"
+									],
+									"query": [
+										{
+											"key": "latitude",
+											"value": "2"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "/spot - all required query parameters - 200",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Specifing all of the three query parameters should return 200 code\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/spot?latitude=2&longitude=3&radius=2",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"spot"
+									],
+									"query": [
+										{
+											"key": "latitude",
+											"value": "2"
+										},
+										{
+											"key": "longitude",
+											"value": "3"
+										},
+										{
+											"key": "radius",
+											"value": "2"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "/spot - invalid query parameter type - 400",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Specifing parameter with invalid type should return 400 code\", function () {\r",
+											"    pm.response.to.have.status(400);\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/spot?latitude=2&longitude=3&radius=test",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"spot"
+									],
+									"query": [
+										{
+											"key": "latitude",
+											"value": "2"
+										},
+										{
+											"key": "longitude",
+											"value": "3"
+										},
+										{
+											"key": "radius",
+											"value": "test"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "POST /spot",
+					"item": [
+						{
+							"name": "/spot - valid JWT and correct body - 200",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Valid POST request with JWT header and correct request body returns 200 code\", function () {\r",
+											"    const jsonData = pm.response.json();\r",
+											"    if (Array.isArray(jsonData) && jsonData.length > 0 && jsonData[0].id) {\r",
+											"        const spotId = jsonData[0].id;\r",
+											"        const deleteUrl = pm.variables.get(\"base_url\") + \"/spot/\" + spotId;\r",
+											"\r",
+											"        pm.sendRequest({\r",
+											"            url: deleteUrl,\r",
+											"            method: \"DELETE\",\r",
+											"            header: {\r",
+											"                Authorization: \"Bearer \" + pm.environment.get(\"user1_valid_token\")\r",
+											"            }\r",
+											"        }, function (err, res) {\r",
+											"            if (err) {\r",
+											"                console.error(\"DELETE request failed\", err);\r",
+											"            } else {\r",
+											"                console.log(\"DELETE response status:\", res.code);\r",
+											"            }\r",
+											"        });\r",
+											"    }\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"const token = pm.environment.get(\"user1_valid_token\");\r",
+											"\r",
+											"if (token) {\r",
+											"    pm.request.headers.upsert({\r",
+											"        key: \"Authorization\",\r",
+											"        value: `Bearer ${token}`\r",
+											"    });\r",
+											"}\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"Test spot\",\r\n    \"description\": \"This is a test spot\",\r\n    \"latitude\": 1.0,\r\n    \"longitude\": 1.0,\r\n    \"category\": \"Test\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/spot",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"spot"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "/spot - no JWT provided - 401",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"/spot POST with empty Authorization header returns 401 code\", function () {\r",
+											"    pm.response.to.have.status(401);\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"Test spot\",\r\n    \"description\": \"This is a test spot\",\r\n    \"latitude\": 10.0,\r\n    \"longitude\": 10.0,\r\n    \"category\": \"Test\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/spot",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"spot"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "/spot - invalid JWT - 401",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"/spot POST with incorect Authorization JWT token returns 401 code\", function () {\r",
+											"    pm.response.to.have.status(401);\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"const token = pm.environment.get(\"fake_token\");\r",
+											"\r",
+											"if (token) {\r",
+											"    pm.request.headers.upsert({\r",
+											"        key: \"Authorization\",\r",
+											"        value: `Bearer ${token}`\r",
+											"    });\r",
+											"}"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"Test spot\",\r\n    \"description\": \"This is a test spot\",\r\n    \"latitude\": 1.0,\r\n    \"longitude\": 1.0,\r\n    \"category\": \"Test\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/spot",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"spot"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "/spot - empty body with valid JWT - 400",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"/spot POST with empty request body returns 400 code\", function () {\r",
+											"    pm.response.to.have.status(400);\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"const token = pm.environment.get(\"user1_valid_token\");\r",
+											"\r",
+											"if (token) {\r",
+											"    pm.request.headers.upsert({\r",
+											"        key: \"Authorization\",\r",
+											"        value: `Bearer ${token}`\r",
+											"    });\r",
+											"}"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/spot",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"spot"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "/spot - missing required field in body - 400",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"/spot POST with a field missing in request body returns 400 code\", function () {\r",
+											"    pm.response.to.have.status(400);\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"const token = pm.environment.get(\"user1_valid_token\");\r",
+											"\r",
+											"if (token) {\r",
+											"    pm.request.headers.upsert({\r",
+											"        key: \"Authorization\",\r",
+											"        value: `Bearer ${token}`\r",
+											"    });\r",
+											"}"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"Test spot\",\r\n    \"description\": \"This is a test spot\",\r\n    \"latitude\": 10.0,\r\n    \"longitude\": 10.0\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/spot",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"spot"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "/spot - coordinates conflict with existing spot - 409",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"/spot POST with request body with coordinates of a location that already exists returns 409 code\", function () {\r",
+											"    pm.response.to.have.status(409);\r",
+											"});\r",
+											"\r",
+											"const deleteUrl = pm.variables.get(\"base_url\") + \"/spot/\" + pm.environment.get(\"conflicting_spot_id\");\r",
+											"pm.sendRequest({\r",
+											"    url: deleteUrl,\r",
+											"    method: \"DELETE\",\r",
+											"    header: {\r",
+											"        \"Authorization\": \"Bearer \" + pm.environment.get(\"user1_valid_token\"),\r",
+											"    }\r",
+											"}, function (err, res) {\r",
+											"    if (err) {\r",
+											"        console.error(\"DELETE request failed\", err);\r",
+											"    } else {\r",
+											"        console.log(\"DELETE response status:\", res.code);\r",
+											"    }\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"const token = pm.environment.get(\"user1_valid_token\");\r",
+											"\r",
+											"if (token) {\r",
+											"    pm.request.headers.upsert({\r",
+											"        key: \"Authorization\",\r",
+											"        value: `Bearer ${token}`\r",
+											"    });\r",
+											"}\r",
+											"\r",
+											"const postUrl = pm.variables.get(\"base_url\") + \"/spot\";\r",
+											"pm.sendRequest({\r",
+											"    url: postUrl,\r",
+											"    method: \"POST\",\r",
+											"    header: {\r",
+											"        \"Authorization\": \"Bearer \" + pm.environment.get(\"user1_valid_token\"),\r",
+											"        \"Content-Type\": \"application/json\"\r",
+											"    },\r",
+											"    body: {\r",
+											"        mode: \"raw\",\r",
+											"        raw: JSON.stringify({\r",
+											"            \"name\": \"Test spot\",\r",
+											"            \"description\": \"This is a test spot\",\r",
+											"            \"latitude\": 1.0,\r",
+											"            \"longitude\": 1.0,\r",
+											"            \"category\": \"Test\"\r",
+											"        })\r",
+											"    }\r",
+											"}, function (err, res) {\r",
+											"    if (err) {\r",
+											"        console.error(\"POST request failed\", err);\r",
+											"    } else {\r",
+											"        console.log(\"POST response status:\", res.code);\r",
+											"\r",
+											"        if (res.code === 201 || res.code === 200) {\r",
+											"            const responseJson = res.json();\r",
+											"            const conflictingSpotId = responseJson[0]?.id;\r",
+											"            if (conflictingSpotId) {\r",
+											"                pm.environment.set(\"conflicting_spot_id\", conflictingSpotId);\r",
+											"                console.log(\"Saved conflicting_spot_id:\", conflictingSpotId);\r",
+											"            } else {\r",
+											"                console.warn(\"No conflicting_spot_id found in response\");\r",
+											"            }\r",
+											"        }\r",
+											"    }\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"Test spot\",\r\n    \"description\": \"This is a test spot\",\r\n    \"latitude\": 1.0,\r\n    \"longitude\": 1.0,\r\n    \"category\": \"Test\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/spot",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"spot"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "GET /spot/{id}",
+					"item": [
+						{
+							"name": "/spot/:id - valid request without query or body - 200",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Valid empty GET request returns 200 code\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"const deleteUrl = pm.variables.get(\"base_url\") + \"/spot/\" + pm.environment.get(\"test_spot_id\");\r",
+											"pm.sendRequest({\r",
+											"    url: deleteUrl,\r",
+											"    method: \"DELETE\",\r",
+											"    header: {\r",
+											"        \"Authorization\": \"Bearer \" + pm.environment.get(\"user1_valid_token\"),\r",
+											"    }\r",
+											"}, function (err, res) {\r",
+											"    if (err) {\r",
+											"        console.error(\"DELETE request failed\", err);\r",
+											"    } else {\r",
+											"        console.log(\"DELETE response status:\", res.code);\r",
+											"    }\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"const postUrl = pm.variables.get(\"base_url\") + \"/spot\";\r",
+											"pm.sendRequest({\r",
+											"    url: postUrl,\r",
+											"    method: \"POST\",\r",
+											"    header: {\r",
+											"        \"Authorization\": \"Bearer \" + pm.environment.get(\"user1_valid_token\"),\r",
+											"        \"Content-Type\": \"application/json\"\r",
+											"    },\r",
+											"    body: {\r",
+											"        mode: \"raw\",\r",
+											"        raw: JSON.stringify({\r",
+											"            \"name\": \"Test spot\",\r",
+											"            \"description\": \"This is a test spot\",\r",
+											"            \"latitude\": 1.0,\r",
+											"            \"longitude\": 1.0,\r",
+											"            \"category\": \"Test\"\r",
+											"        })\r",
+											"    }\r",
+											"}, function (err, res) {\r",
+											"    if (err) {\r",
+											"        console.error(\"POST request failed\", err);\r",
+											"    } else {\r",
+											"        console.log(\"POST response status:\", res.code);\r",
+											"\r",
+											"        if (res.code === 201 || res.code === 200) {\r",
+											"            const responseJson = res.json();\r",
+											"            const conflictingSpotId = responseJson[0]?.id;\r",
+											"            if (conflictingSpotId) {\r",
+											"                pm.environment.set(\"test_spot_id\", conflictingSpotId);\r",
+											"                console.log(\"Saved test_spot_id:\", conflictingSpotId);\r",
+											"            } else {\r",
+											"                console.warn(\"No test_spot_id found in response\");\r",
+											"            }\r",
+											"        }\r",
+											"    }\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/spot/{{test_spot_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"spot",
+										"{{test_spot_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "/spot/:id - request body included - 400",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"GET request with non empty request body returns 400 code\", function () {\r",
+											"    pm.response.to.have.status(400);\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"test\": \"test\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/spot/{{test_spot_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"spot",
+										"{{test_spot_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "/spot/:id - does not exist - 404",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"GET request with non existent spot id returns 404 code\", function () {\r",
+											"    pm.response.to.have.status(404);\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/spot/some_random_spot_id",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"spot",
+										"some_random_spot_id"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "PATCH /spot/{id}",
+					"item": [
+						{
+							"name": "/spot/:id - valid JWT and correct body - 200",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"const token = pm.environment.get(\"user1_valid_token\");\r",
+											"if (token) {\r",
+											"    pm.request.headers.upsert({\r",
+											"        key: \"Authorization\",\r",
+											"        value: `Bearer ${token}`\r",
+											"    });\r",
+											"}\r",
+											"\r",
+											"const postUrl = pm.variables.get(\"base_url\") + \"/spot\";\r",
+											"pm.sendRequest({\r",
+											"    url: postUrl,\r",
+											"    method: \"POST\",\r",
+											"    header: {\r",
+											"        \"Authorization\": \"Bearer \" + token,\r",
+											"        \"Content-Type\": \"application/json\"\r",
+											"    },\r",
+											"    body: {\r",
+											"        mode: \"raw\",\r",
+											"        raw: JSON.stringify({\r",
+											"            \"name\": \"Test spot\",\r",
+											"            \"description\": \"This is a test spot\",\r",
+											"            \"latitude\": 1.0,\r",
+											"            \"longitude\": 1.0,\r",
+											"            \"category\": \"Test\"\r",
+											"        })\r",
+											"    }\r",
+											"}, function (err, res) {\r",
+											"    if (err) {\r",
+											"        console.error(\"POST request failed\", err);\r",
+											"    } else {\r",
+											"        console.log(\"POST response status:\", res.code);\r",
+											"\r",
+											"        if (res.code === 201 || res.code === 200) {\r",
+											"            const responseJson = res.json();\r",
+											"            const conflictingSpotId = responseJson[0]?.id;\r",
+											"            if (conflictingSpotId) {\r",
+											"                pm.environment.set(\"test_spot_id\", conflictingSpotId);\r",
+											"                console.log(\"Saved test_spot_id:\", conflictingSpotId);\r",
+											"            } else {\r",
+											"                console.warn(\"No test_spot_id found in response\");\r",
+											"            }\r",
+											"        }\r",
+											"    }\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Valid empty POST request returns 200 code\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"const deleteUrl = pm.variables.get(\"base_url\") + \"/spot/\" + pm.environment.get(\"test_spot_id\");\r",
+											"pm.sendRequest({\r",
+											"    url: deleteUrl,\r",
+											"    method: \"DELETE\",\r",
+											"    header: {\r",
+											"        \"Authorization\": \"Bearer \" + pm.environment.get(\"user1_valid_token\"),\r",
+											"    }\r",
+											"}, function (err, res) {\r",
+											"    if (err) {\r",
+											"        console.error(\"DELETE request failed\", err);\r",
+											"    } else {\r",
+											"        console.log(\"DELETE response status:\", res.code);\r",
+											"    }\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"Test edited\",\r\n    \"description\": \"This is an edited description\",\r\n    \"latitude\": 1,\r\n    \"longitude\": 1,\r\n    \"category\": \"Test\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/spot/{{test_spot_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"spot",
+										"{{test_spot_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "/spot/:id - no JWT provided - 401",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"/spot PATCH with empty Authorization header returns 401 code\", function () {\r",
+											"    pm.response.to.have.status(401);\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"Test edited\",\r\n    \"description\": \"This is an edited description\",\r\n    \"latitude\": 1,\r\n    \"longitude\": 2,\r\n    \"category\": \"Test\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/spot/{{spot_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"spot",
+										"{{spot_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "/spot/:id - invalid JWT - 401",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"/spot/{id} PATCH with incorect Authorization JWT token returns 401 code\", function () {\r",
+											"    pm.response.to.have.status(401);\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"const token = pm.environment.get(\"fake_token\");\r",
+											"\r",
+											"if (token) {\r",
+											"    pm.request.headers.upsert({\r",
+											"        key: \"Authorization\",\r",
+											"        value: `Bearer ${token}`\r",
+											"    });\r",
+											"}"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"Test edited\",\r\n    \"description\": \"This is an edited description\",\r\n    \"latitude\": 20,\r\n    \"longitude\": 20,\r\n    \"category\": \"Test\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/spot/{{spot_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"spot",
+										"{{spot_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "/spot/:id - JWT of non-owner, not admin - 403",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"/spot/{id} unauthorized PATCH should return 403 code\", function () {\r",
+											"    pm.response.to.have.status(403);\r",
+											"});\r",
+											"\r",
+											"const deleteUrl = pm.variables.get(\"base_url\") + \"/spot/\" + pm.environment.get(\"test_spot_id\");\r",
+											"pm.sendRequest({\r",
+											"    url: deleteUrl,\r",
+											"    method: \"DELETE\",\r",
+											"    header: {\r",
+											"        \"Authorization\": \"Bearer \" + pm.environment.get(\"user2_valid_token\"),\r",
+											"    }\r",
+											"}, function (err, res) {\r",
+											"    if (err) {\r",
+											"        console.error(\"DELETE request failed\", err);\r",
+											"    } else {\r",
+											"        console.log(\"DELETE response status:\", res.code);\r",
+											"    }\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"const postUrl = pm.variables.get(\"base_url\") + \"/spot\";\r",
+											"pm.sendRequest({\r",
+											"    url: postUrl,\r",
+											"    method: \"POST\",\r",
+											"    header: {\r",
+											"        \"Authorization\": \"Bearer \" + pm.environment.get(\"user2_valid_token\"),\r",
+											"        \"Content-Type\": \"application/json\"\r",
+											"    },\r",
+											"    body: {\r",
+											"        mode: \"raw\",\r",
+											"        raw: JSON.stringify({\r",
+											"            \"name\": \"Test spot\",\r",
+											"            \"description\": \"This is a test spot\",\r",
+											"            \"latitude\": 1.0,\r",
+											"            \"longitude\": 1.0,\r",
+											"            \"category\": \"Test\"\r",
+											"        })\r",
+											"    }\r",
+											"}, function (err, res) {\r",
+											"    if (err) {\r",
+											"        console.error(\"POST request failed\", err);\r",
+											"    } else {\r",
+											"        console.log(\"POST response status:\", res.code);\r",
+											"\r",
+											"        if (res.code === 201 || res.code === 200) {\r",
+											"            const responseJson = res.json();\r",
+											"            const conflictingSpotId = responseJson[0]?.id;\r",
+											"            if (conflictingSpotId) {\r",
+											"                pm.environment.set(\"test_spot_id\", conflictingSpotId);\r",
+											"                console.log(\"Saved test_spot_id:\", conflictingSpotId);\r",
+											"            } else {\r",
+											"                console.warn(\"No test_spot_id found in response\");\r",
+											"            }\r",
+											"        }else {\r",
+											"            pm.environment.set(\"test_spot_id\", \"\");\r",
+											"        }\r",
+											"    }\r",
+											"});\r",
+											"\r",
+											"const token = pm.environment.get(\"user1_valid_token\");\r",
+											"\r",
+											"if (token) {\r",
+											"    pm.request.headers.upsert({\r",
+											"        key: \"Authorization\",\r",
+											"        value: `Bearer ${token}`\r",
+											"    });\r",
+											"}"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"Test edited\",\r\n    \"description\": \"This is an edited description\",\r\n    \"latitude\": 1,\r\n    \"longitude\": 1,\r\n    \"category\": \"Test\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/spot/{{test_spot_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"spot",
+										"{{test_spot_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "/spot/:id - does not exist - 404",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"GET request with non existent spot id returns 404 code\", function () {\r",
+											"    pm.response.to.have.status(404);\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"const token = pm.environment.get(\"user1_valid_token\");\r",
+											"if (token) {\r",
+											"    pm.request.headers.upsert({\r",
+											"        key: \"Authorization\",\r",
+											"        value: `Bearer ${token}`\r",
+											"    });\r",
+											"}"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"Test edited\",\r\n    \"description\": \"This is an edited description\",\r\n    \"latitude\": 1,\r\n    \"longitude\": 1,\r\n    \"category\": \"Test\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/spot/some_random_spot_id",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"spot",
+										"some_random_spot_id"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "/spot/:id - empty body with valid JWT - 400",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"const token = pm.environment.get(\"user1_valid_token\");\r",
+											"if (token) {\r",
+											"    pm.request.headers.upsert({\r",
+											"        key: \"Authorization\",\r",
+											"        value: `Bearer ${token}`\r",
+											"    });\r",
+											"}"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"/spot PATCH with empty request body returns 400 code\", function () {\r",
+											"    pm.response.to.have.status(400);\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "PATCH",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/spot/{{spot_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"spot",
+										"{{spot_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "/spot/:id - coordinates conflict with existing spot - 409",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"/spot POST with request body with coordinates of a location that already exists returns 409 code\", function () {\r",
+											"    pm.response.to.have.status(409);\r",
+											"});\r",
+											"\r",
+											"const deleteUrlSpot1 = pm.variables.get(\"base_url\") + \"/spot/\" + pm.environment.get(\"test_spot_id\");\r",
+											"pm.sendRequest({\r",
+											"    url: deleteUrlSpot1,\r",
+											"    method: \"DELETE\",\r",
+											"    header: {\r",
+											"        \"Authorization\": \"Bearer \" + pm.environment.get(\"user1_valid_token\"),\r",
+											"    }\r",
+											"}, function (err, res) {\r",
+											"    if (err) {\r",
+											"        console.error(\"DELETE request failed\", err);\r",
+											"    } else {\r",
+											"        console.log(\"DELETE response status:\", res.code);\r",
+											"    }\r",
+											"});\r",
+											"\r",
+											"const deleteUrlSpot2 = pm.variables.get(\"base_url\") + \"/spot/\" + pm.environment.get(\"additional_test_spot_id\");\r",
+											"pm.sendRequest({\r",
+											"    url: deleteUrlSpot2,\r",
+											"    method: \"DELETE\",\r",
+											"    header: {\r",
+											"        \"Authorization\": \"Bearer \" + pm.environment.get(\"user1_valid_token\"),\r",
+											"    }\r",
+											"}, function (err, res) {\r",
+											"    if (err) {\r",
+											"        console.error(\"DELETE request failed\", err);\r",
+											"    } else {\r",
+											"        console.log(\"DELETE response status:\", res.code);\r",
+											"    }\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"const postUrl = pm.variables.get(\"base_url\") + \"/spot\";\r",
+											"pm.sendRequest({\r",
+											"    url: postUrl,\r",
+											"    method: \"POST\",\r",
+											"    header: {\r",
+											"        \"Authorization\": \"Bearer \" + pm.environment.get(\"user1_valid_token\"),\r",
+											"        \"Content-Type\": \"application/json\"\r",
+											"    },\r",
+											"    body: {\r",
+											"        mode: \"raw\",\r",
+											"        raw: JSON.stringify({\r",
+											"            \"name\": \"Test spot\",\r",
+											"            \"description\": \"This is a test spot\",\r",
+											"            \"latitude\": 1.0,\r",
+											"            \"longitude\": 1.0,\r",
+											"            \"category\": \"Test\"\r",
+											"        })\r",
+											"    }\r",
+											"}, function (err, res) {\r",
+											"    if (err) {\r",
+											"        console.error(\"POST request failed\", err);\r",
+											"    } else {\r",
+											"        console.log(\"POST response status:\", res.code);\r",
+											"\r",
+											"        if (res.code === 201 || res.code === 200) {\r",
+											"            const responseJson = res.json();\r",
+											"            const conflictingSpotId = responseJson[0]?.id;\r",
+											"            if (conflictingSpotId) {\r",
+											"                pm.environment.set(\"test_spot_id\", conflictingSpotId);\r",
+											"                console.log(\"Saved test_spot_id:\", conflictingSpotId);\r",
+											"            } else {\r",
+											"                console.warn(\"No test_spot_id found in response\");\r",
+											"            }\r",
+											"        }\r",
+											"    }\r",
+											"});\r",
+											"\r",
+											"pm.sendRequest({\r",
+											"    url: postUrl,\r",
+											"    method: \"POST\",\r",
+											"    header: {\r",
+											"        \"Authorization\": \"Bearer \" + pm.environment.get(\"user1_valid_token\"),\r",
+											"        \"Content-Type\": \"application/json\"\r",
+											"    },\r",
+											"    body: {\r",
+											"        mode: \"raw\",\r",
+											"        raw: JSON.stringify({\r",
+											"            \"name\": \"Test spot with different data\",\r",
+											"            \"description\": \"This is a test spot\",\r",
+											"            \"latitude\": 2.0,\r",
+											"            \"longitude\": 2.0,\r",
+											"            \"category\": \"Test\"\r",
+											"        })\r",
+											"    }\r",
+											"}, function (err, res) {\r",
+											"    if (err) {\r",
+											"        console.error(\"POST request failed\", err);\r",
+											"    } else {\r",
+											"        console.log(\"POST response status:\", res.code);\r",
+											"\r",
+											"        if (res.code === 201 || res.code === 200) {\r",
+											"            const responseJson = res.json();\r",
+											"            const conflictingSpotId = responseJson[0]?.id;\r",
+											"            if (conflictingSpotId) {\r",
+											"                pm.environment.set(\"additional_test_spot_id\", conflictingSpotId);\r",
+											"                console.log(\"Saved additional_test_spot_id:\", conflictingSpotId);\r",
+											"            } else {\r",
+											"                console.warn(\"No additional_test_spot_id found in response\");\r",
+											"            }\r",
+											"        }\r",
+											"    }\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "jwt",
+									"jwt": [
+										{
+											"key": "payload",
+											"value": "{\r\n  \"exp\": {{jwt_expire}},\r\n  \"lid\": \"y9AHPDr0ywBovDlqfT7R\",\r\n  \"rol\": \"user\",\r\n  \"usr\": \"user1\"\r\n}",
+											"type": "string"
+										},
+										{
+											"key": "addTokenTo",
+											"value": "header",
+											"type": "string"
+										},
+										{
+											"key": "secret",
+											"value": "{{jwt_secret}}",
+											"type": "string"
+										},
+										{
+											"key": "header",
+											"value": "{\r\n\r\n\r\n}",
+											"type": "string"
+										},
+										{
+											"key": "algorithm",
+											"value": "HS256",
+											"type": "string"
+										},
+										{
+											"key": "isSecretBase64Encoded",
+											"value": false,
+											"type": "boolean"
+										},
+										{
+											"key": "headerPrefix",
+											"value": "Bearer",
+											"type": "string"
+										},
+										{
+											"key": "queryParamKey",
+											"value": "token",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"Test spot override\",\r\n    \"description\": \"This is a test spot override attempt\",\r\n    \"latitude\": 2.0,\r\n    \"longitude\": 2.0,\r\n    \"category\": \"Test\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/spot/{{test_spot_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"spot",
+										"{{test_spot_id}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "DELETE /spot/{id}",
+					"item": [
+						{
+							"name": "/spot/:id - valid JWT - 200",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"const token = pm.environment.get(\"user1_valid_token\");\r",
+											"if (token) {\r",
+											"    pm.request.headers.upsert({\r",
+											"        key: \"Authorization\",\r",
+											"        value: `Bearer ${token}`\r",
+											"    });\r",
+											"}\r",
+											"\r",
+											"const postUrl = pm.variables.get(\"base_url\") + \"/spot\";\r",
+											"pm.sendRequest({\r",
+											"    url: postUrl,\r",
+											"    method: \"POST\",\r",
+											"    header: {\r",
+											"        \"Authorization\": \"Bearer \" + token,\r",
+											"        \"Content-Type\": \"application/json\"\r",
+											"    },\r",
+											"    body: {\r",
+											"        mode: \"raw\",\r",
+											"        raw: JSON.stringify({\r",
+											"            \"name\": \"Test spot\",\r",
+											"            \"description\": \"This is a test spot\",\r",
+											"            \"latitude\": 1.0,\r",
+											"            \"longitude\": 1.0,\r",
+											"            \"category\": \"Test\"\r",
+											"        })\r",
+											"    }\r",
+											"}, function (err, res) {\r",
+											"    if (err) {\r",
+											"        console.error(\"POST request failed\", err);\r",
+											"    } else {\r",
+											"        console.log(\"POST response status:\", res.code);\r",
+											"\r",
+											"        if (res.code === 201 || res.code === 200) {\r",
+											"            const responseJson = res.json();\r",
+											"            const conflictingSpotId = responseJson[0]?.id;\r",
+											"            if (conflictingSpotId) {\r",
+											"                pm.environment.set(\"test_spot_id\", conflictingSpotId);\r",
+											"                console.log(\"Saved test_spot_id:\", conflictingSpotId);\r",
+											"            } else {\r",
+											"                console.warn(\"No test_spot_id found in response\");\r",
+											"            }\r",
+											"        }\r",
+											"    }\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"/spot valid DELETE returns 204 code\", function () {\r",
+											"    pm.response.to.have.status(204);\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/spot/{{test_spot_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"spot",
+										"{{test_spot_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "/spot/:id - no JWT provided - 401",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"/spot DELETE with empty Authorization header returns 401 code\", function () {\r",
+											"    pm.response.to.have.status(401);\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/spot/{{test_spot_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"spot",
+										"{{test_spot_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "/spot/:id - invalid JWT - 401",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"const token = pm.environment.get(\"fake_token\");\r",
+											"\r",
+											"if (token) {\r",
+											"    pm.request.headers.upsert({\r",
+											"        key: \"Authorization\",\r",
+											"        value: `Bearer ${token}`\r",
+											"    });\r",
+											"}"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"/spot/{id} DELETE with incorect Authorization JWT token returns 401 code\", function () {\r",
+											"    pm.response.to.have.status(401);\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/spot/{{test_spot_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"spot",
+										"{{test_spot_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "/spot/:id - request body included - 400",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"GET request with non empty request body returns 400 code\", function () {\r",
+											"    pm.response.to.have.status(400);\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"const token = pm.environment.get(\"user1_valid_token\");\r",
+											"if (token) {\r",
+											"    pm.request.headers.upsert({\r",
+											"        key: \"Authorization\",\r",
+											"        value: `Bearer ${token}`\r",
+											"    });\r",
+											"}\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"test\": \"test\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/spot/{{test_spot_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"spot",
+										"{{test_spot_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "/spot/:id - JWT of non-owner, not admin - 403",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"const postUrl = pm.variables.get(\"base_url\") + \"/spot\";\r",
+											"pm.sendRequest({\r",
+											"    url: postUrl,\r",
+											"    method: \"POST\",\r",
+											"    header: {\r",
+											"        \"Authorization\": \"Bearer \" + pm.environment.get(\"user2_valid_token\"),\r",
+											"        \"Content-Type\": \"application/json\"\r",
+											"    },\r",
+											"    body: {\r",
+											"        mode: \"raw\",\r",
+											"        raw: JSON.stringify({\r",
+											"            \"name\": \"Test spot\",\r",
+											"            \"description\": \"This is a test spot\",\r",
+											"            \"latitude\": 1.0,\r",
+											"            \"longitude\": 1.0,\r",
+											"            \"category\": \"Test\"\r",
+											"        })\r",
+											"    }\r",
+											"}, function (err, res) {\r",
+											"    if (err) {\r",
+											"        console.error(\"POST request failed\", err);\r",
+											"    } else {\r",
+											"        console.log(\"POST response status:\", res.code);\r",
+											"\r",
+											"        if (res.code === 201 || res.code === 200) {\r",
+											"            const responseJson = res.json();\r",
+											"            const conflictingSpotId = responseJson[0]?.id;\r",
+											"            if (conflictingSpotId) {\r",
+											"                pm.environment.set(\"test_spot_id\", conflictingSpotId);\r",
+											"                console.log(\"Saved test_spot_id:\", conflictingSpotId);\r",
+											"            } else {\r",
+											"                console.warn(\"No test_spot_id found in response\");\r",
+											"            }\r",
+											"        }else {\r",
+											"            pm.environment.set(\"test_spot_id\", \"\");\r",
+											"        }\r",
+											"    }\r",
+											"});\r",
+											"\r",
+											"const token = pm.environment.get(\"user1_valid_token\");\r",
+											"\r",
+											"if (token) {\r",
+											"    pm.request.headers.upsert({\r",
+											"        key: \"Authorization\",\r",
+											"        value: `Bearer ${token}`\r",
+											"    });\r",
+											"}"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"/spot/{id} unauthorized PATCH should return 403 code\", function () {\r",
+											"    pm.response.to.have.status(403);\r",
+											"});\r",
+											"\r",
+											"const deleteUrl = pm.variables.get(\"base_url\") + \"/spot/\" + pm.environment.get(\"test_spot_id\");\r",
+											"pm.sendRequest({\r",
+											"    url: deleteUrl,\r",
+											"    method: \"DELETE\",\r",
+											"    header: {\r",
+											"        \"Authorization\": \"Bearer \" + pm.environment.get(\"user2_valid_token\"),\r",
+											"    }\r",
+											"}, function (err, res) {\r",
+											"    if (err) {\r",
+											"        console.error(\"DELETE request failed\", err);\r",
+											"    } else {\r",
+											"        console.log(\"DELETE response status:\", res.code);\r",
+											"    }\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "jwt",
+									"jwt": [
+										{
+											"key": "payload",
+											"value": "{\r\n  \"exp\": {{jwt_expire}},\r\n  \"lid\": \"y9AHPDr0ywBovDlqfT7R\",\r\n  \"rol\": \"user\",\r\n  \"usr\": \"user1\"\r\n}",
+											"type": "string"
+										},
+										{
+											"key": "addTokenTo",
+											"value": "header",
+											"type": "string"
+										},
+										{
+											"key": "secret",
+											"value": "{{jwt_secret}}",
+											"type": "string"
+										},
+										{
+											"key": "header",
+											"value": "{\r\n\r\n\r\n}",
+											"type": "string"
+										},
+										{
+											"key": "algorithm",
+											"value": "HS256",
+											"type": "string"
+										},
+										{
+											"key": "isSecretBase64Encoded",
+											"value": false,
+											"type": "boolean"
+										},
+										{
+											"key": "headerPrefix",
+											"value": "Bearer",
+											"type": "string"
+										},
+										{
+											"key": "queryParamKey",
+											"value": "token",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/spot/{{test_spot_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"spot",
+										"{{test_spot_id}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "review",
+			"item": [
+				{
+					"name": "GET /spot/:id/review",
+					"item": [
+						{
+							"name": "/spot/:id/review - no query and no body - 200",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Valid empty GET request returns 200 code\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"const deleteUrlSpot = pm.variables.get(\"base_url\") + \"/spot/\" + pm.environment.get(\"test_spot_id\");\r",
+											"pm.sendRequest({\r",
+											"    url: deleteUrlSpot,\r",
+											"    method: \"DELETE\",\r",
+											"    header: {\r",
+											"        \"Authorization\": \"Bearer \" + pm.environment.get(\"user1_valid_token\"),\r",
+											"    }\r",
+											"}, function (err, res) {\r",
+											"    if (err) {\r",
+											"        console.error(\"DELETE request failed\", err);\r",
+											"    } else {\r",
+											"        console.log(\"DELETE response status:\", res.code);\r",
+											"    }\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"const postUrl = pm.variables.get(\"base_url\") + \"/spot\";\r",
+											"pm.sendRequest({\r",
+											"    url: postUrl,\r",
+											"    method: \"POST\",\r",
+											"    header: {\r",
+											"        \"Authorization\": \"Bearer \" + pm.environment.get(\"user1_valid_token\"),\r",
+											"        \"Content-Type\": \"application/json\"\r",
+											"    },\r",
+											"    body: {\r",
+											"        mode: \"raw\",\r",
+											"        raw: JSON.stringify({\r",
+											"            \"name\": \"Test spot\",\r",
+											"            \"description\": \"This is a test spot\",\r",
+											"            \"latitude\": 1.0,\r",
+											"            \"longitude\": 1.0,\r",
+											"            \"category\": \"Test\"\r",
+											"        })\r",
+											"    }\r",
+											"}, function (err, res) {\r",
+											"    if (err) {\r",
+											"        console.error(\"POST request failed\", err);\r",
+											"    } else {\r",
+											"        console.log(\"POST response status:\", res.code);\r",
+											"\r",
+											"        if (res.code === 201 || res.code === 200) {\r",
+											"            const responseJson = res.json();\r",
+											"            const conflictingSpotId = responseJson[0]?.id;\r",
+											"            if (conflictingSpotId) {\r",
+											"                pm.environment.set(\"test_spot_id\", conflictingSpotId);\r",
+											"                console.log(\"Saved test_spot_id:\", conflictingSpotId);\r",
+											"            } else {\r",
+											"                console.warn(\"No test_spot_id found in response\");\r",
+											"            }\r",
+											"        }else {\r",
+											"            pm.environment.set(\"test_spot_id\", \"\");\r",
+											"        }\r",
+											"    }\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/spot/{{test_spot_id}}/review",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"spot",
+										"{{test_spot_id}}",
+										"review"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "/spot/:id/review - does not exist - 404",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"GET request with non existent spot id returns 404 code\", function () {\r",
+											"    pm.response.to.have.status(404);\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/spot/some_random_spot_id/review",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"spot",
+										"some_random_spot_id",
+										"review"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "/spot/:id/review - body included in request - 400",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"GET request with non empty request body returns 400 code\", function () {\r",
+											"    pm.response.to.have.status(400);\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"packages": {},
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"test\": \"test\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/spot/{{test_spot_id}}/review",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"spot",
+										"{{test_spot_id}}",
+										"review"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "/spot/:id/review - limit query parameter - 200",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Specifing limit parameter should return 200 code\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"const deleteUrlSpot1 = pm.variables.get(\"base_url\") + \"/spot/\" + pm.environment.get(\"test_spot_id\");\r",
+											"pm.sendRequest({\r",
+											"    url: deleteUrlSpot1,\r",
+											"    method: \"DELETE\",\r",
+											"    header: {\r",
+											"        \"Authorization\": \"Bearer \" + pm.environment.get(\"user1_valid_token\"),\r",
+											"    }\r",
+											"}, function (err, res) {\r",
+											"    if (err) {\r",
+											"        console.error(\"DELETE request failed\", err);\r",
+											"    } else {\r",
+											"        console.log(\"DELETE response status:\", res.code);\r",
+											"    }\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"const postUrl = pm.variables.get(\"base_url\") + \"/spot\";\r",
+											"pm.sendRequest({\r",
+											"    url: postUrl,\r",
+											"    method: \"POST\",\r",
+											"    header: {\r",
+											"        \"Authorization\": \"Bearer \" + pm.environment.get(\"user1_valid_token\"),\r",
+											"        \"Content-Type\": \"application/json\"\r",
+											"    },\r",
+											"    body: {\r",
+											"        mode: \"raw\",\r",
+											"        raw: JSON.stringify({\r",
+											"            \"name\": \"Test spot\",\r",
+											"            \"description\": \"This is a test spot\",\r",
+											"            \"latitude\": 1.0,\r",
+											"            \"longitude\": 1.0,\r",
+											"            \"category\": \"Test\"\r",
+											"        })\r",
+											"    }\r",
+											"}, function (err, res) {\r",
+											"    if (err) {\r",
+											"        console.error(\"POST request failed\", err);\r",
+											"    } else {\r",
+											"        console.log(\"POST response status:\", res.code);\r",
+											"\r",
+											"        if (res.code === 201 || res.code === 200) {\r",
+											"            const responseJson = res.json();\r",
+											"            const conflictingSpotId = responseJson[0]?.id;\r",
+											"            if (conflictingSpotId) {\r",
+											"                pm.environment.set(\"test_spot_id\", conflictingSpotId);\r",
+											"                console.log(\"Saved test_spot_id:\", conflictingSpotId);\r",
+											"            } else {\r",
+											"                console.warn(\"No test_spot_id found in response\");\r",
+											"            }\r",
+											"        }\r",
+											"    }\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/spot/{{test_spot_id}}/review?limit=2",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"spot",
+										"{{test_spot_id}}",
+										"review"
+									],
+									"query": [
+										{
+											"key": "limit",
+											"value": "2"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "/spot/:id/review - invalid query parameter type - 400",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Specifing parameter with invalid type should return 400 code\", function () {\r",
+											"    pm.response.to.have.status(400);\r",
+											"});\r",
+											"\r",
+											"const deleteUrlSpot1 = pm.variables.get(\"base_url\") + \"/spot/\" + pm.environment.get(\"test_spot_id\");\r",
+											"pm.sendRequest({\r",
+											"    url: deleteUrlSpot1,\r",
+											"    method: \"DELETE\",\r",
+											"    header: {\r",
+											"        \"Authorization\": \"Bearer \" + pm.environment.get(\"user1_valid_token\"),\r",
+											"    }\r",
+											"}, function (err, res) {\r",
+											"    if (err) {\r",
+											"        console.error(\"DELETE request failed\", err);\r",
+											"    } else {\r",
+											"        console.log(\"DELETE response status:\", res.code);\r",
+											"    }\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"const postUrl = pm.variables.get(\"base_url\") + \"/spot\";\r",
+											"pm.sendRequest({\r",
+											"    url: postUrl,\r",
+											"    method: \"POST\",\r",
+											"    header: {\r",
+											"        \"Authorization\": \"Bearer \" + pm.environment.get(\"user1_valid_token\"),\r",
+											"        \"Content-Type\": \"application/json\"\r",
+											"    },\r",
+											"    body: {\r",
+											"        mode: \"raw\",\r",
+											"        raw: JSON.stringify({\r",
+											"            \"name\": \"Test spot\",\r",
+											"            \"description\": \"This is a test spot\",\r",
+											"            \"latitude\": 1.0,\r",
+											"            \"longitude\": 1.0,\r",
+											"            \"category\": \"Test\"\r",
+											"        })\r",
+											"    }\r",
+											"}, function (err, res) {\r",
+											"    if (err) {\r",
+											"        console.error(\"POST request failed\", err);\r",
+											"    } else {\r",
+											"        console.log(\"POST response status:\", res.code);\r",
+											"\r",
+											"        if (res.code === 201 || res.code === 200) {\r",
+											"            const responseJson = res.json();\r",
+											"            const conflictingSpotId = responseJson[0]?.id;\r",
+											"            if (conflictingSpotId) {\r",
+											"                pm.environment.set(\"test_spot_id\", conflictingSpotId);\r",
+											"                console.log(\"Saved test_spot_id:\", conflictingSpotId);\r",
+											"            } else {\r",
+											"                console.warn(\"No test_spot_id found in response\");\r",
+											"            }\r",
+											"        }\r",
+											"    }\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/spot/{{test_spot_id}}/review?limit=aaa",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"spot",
+										"{{test_spot_id}}",
+										"review"
+									],
+									"query": [
+										{
+											"key": "limit",
+											"value": "aaa"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "POST /spot/:id/review",
+					"item": [
+						{
+							"name": "/spot/:id/review - valid JWT and correct body - 200",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Valid POST request with JWT header and correct request body returns 200 code\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"}); \r",
+											"const deleteUrl = pm.variables.get(\"base_url\") + \"/spot/\" + pm.environment.get(\"test_spot_id\");\r",
+											"\r",
+											"pm.sendRequest({\r",
+											"    url: deleteUrl,\r",
+											"    method: \"DELETE\",\r",
+											"    header: {\r",
+											"        Authorization: \"Bearer \" + pm.environment.get(\"user1_valid_token\")\r",
+											"    }\r",
+											"}, function (err, res) {\r",
+											"    if (err) {\r",
+											"        console.error(\"DELETE request failed\", err);\r",
+											"    } else {\r",
+											"        console.log(\"DELETE response status:\", res.code);\r",
+											"    }\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"const postUrl = pm.variables.get(\"base_url\") + \"/spot\";\r",
+											"pm.sendRequest({\r",
+											"    url: postUrl,\r",
+											"    method: \"POST\",\r",
+											"    header: {\r",
+											"        \"Authorization\": \"Bearer \" + pm.environment.get(\"user1_valid_token\"),\r",
+											"        \"Content-Type\": \"application/json\"\r",
+											"    },\r",
+											"    body: {\r",
+											"        mode: \"raw\",\r",
+											"        raw: JSON.stringify({\r",
+											"            \"name\": \"Test spot\",\r",
+											"            \"description\": \"This is a test spot\",\r",
+											"            \"latitude\": 1.0,\r",
+											"            \"longitude\": 1.0,\r",
+											"            \"category\": \"Test\"\r",
+											"        })\r",
+											"    }\r",
+											"}, function (err, res) {\r",
+											"    if (err) {\r",
+											"        console.error(\"POST request failed\", err);\r",
+											"    } else {\r",
+											"        console.log(\"POST response status:\", res.code);\r",
+											"\r",
+											"        if (res.code === 201 || res.code === 200) {\r",
+											"            const responseJson = res.json();\r",
+											"            const conflictingSpotId = responseJson[0]?.id;\r",
+											"            if (conflictingSpotId) {\r",
+											"                pm.environment.set(\"test_spot_id\", conflictingSpotId);\r",
+											"                console.log(\"Saved test_spot_id:\", conflictingSpotId);\r",
+											"            } else {\r",
+											"                console.warn(\"No test_spot_id found in response\");\r",
+											"            }\r",
+											"        }else {\r",
+											"            pm.environment.set(\"test_spot_id\", \"\");\r",
+											"        }\r",
+											"    }\r",
+											"});\r",
+											"\r",
+											"const token = pm.environment.get(\"user1_valid_token\");\r",
+											"\r",
+											"if (token) {\r",
+											"    pm.request.headers.upsert({\r",
+											"        key: \"Authorization\",\r",
+											"        value: `Bearer ${token}`\r",
+											"    });\r",
+											"}\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"rating\": 1.0,\r\n    \"content\": \"This is a test review.\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/spot/{{test_spot_id}}/review",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"spot",
+										"{{test_spot_id}}",
+										"review"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "/spot/:id/review - no JWT provided - 401",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"/spot/id/review POST with empty Authorization header returns 401 code\", function () {\r",
+											"    pm.response.to.have.status(401);\r",
+											"});\r",
+											"\r",
+											"const deleteUrl = pm.variables.get(\"base_url\") + \"/spot/\" + pm.environment.get(\"test_spot_id\");\r",
+											"\r",
+											"pm.sendRequest({\r",
+											"    url: deleteUrl,\r",
+											"    method: \"DELETE\",\r",
+											"    header: {\r",
+											"        Authorization: \"Bearer \" + pm.environment.get(\"user1_valid_token\")\r",
+											"    }\r",
+											"}, function (err, res) {\r",
+											"    if (err) {\r",
+											"        console.error(\"DELETE request failed\", err);\r",
+											"    } else {\r",
+											"        console.log(\"DELETE response status:\", res.code);\r",
+											"    }\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"const postUrl = pm.variables.get(\"base_url\") + \"/spot\";\r",
+											"pm.sendRequest({\r",
+											"    url: postUrl,\r",
+											"    method: \"POST\",\r",
+											"    header: {\r",
+											"        \"Authorization\": \"Bearer \" + pm.environment.get(\"user1_valid_token\"),\r",
+											"        \"Content-Type\": \"application/json\"\r",
+											"    },\r",
+											"    body: {\r",
+											"        mode: \"raw\",\r",
+											"        raw: JSON.stringify({\r",
+											"            \"name\": \"Test spot\",\r",
+											"            \"description\": \"This is a test spot\",\r",
+											"            \"latitude\": 1.0,\r",
+											"            \"longitude\": 1.0,\r",
+											"            \"category\": \"Test\"\r",
+											"        })\r",
+											"    }\r",
+											"}, function (err, res) {\r",
+											"    if (err) {\r",
+											"        console.error(\"POST request failed\", err);\r",
+											"    } else {\r",
+											"        console.log(\"POST response status:\", res.code);\r",
+											"\r",
+											"        if (res.code === 201 || res.code === 200) {\r",
+											"            const responseJson = res.json();\r",
+											"            const conflictingSpotId = responseJson[0]?.id;\r",
+											"            if (conflictingSpotId) {\r",
+											"                pm.environment.set(\"test_spot_id\", conflictingSpotId);\r",
+											"                console.log(\"Saved test_spot_id:\", conflictingSpotId);\r",
+											"            } else {\r",
+											"                console.warn(\"No test_spot_id found in response\");\r",
+											"            }\r",
+											"        }else {\r",
+											"            pm.environment.set(\"test_spot_id\", \"\");\r",
+											"        }\r",
+											"    }\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"Test spot\",\r\n    \"description\": \"This is a test spot\",\r\n    \"latitude\": 10.0,\r\n    \"longitude\": 10.0,\r\n    \"category\": \"Test\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/spot/{{test_spot_id}}/review",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"spot",
+										"{{test_spot_id}}",
+										"review"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "/spot/:id/review - invalid JWT - 401",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"/spot/id/review POST with incorect Authorization JWT token returns 401 code\", function () {\r",
+											"    pm.response.to.have.status(401);\r",
+											"});\r",
+											"\r",
+											"const deleteUrl = pm.variables.get(\"base_url\") + \"/spot/\" + pm.environment.get(\"test_spot_id\");\r",
+											"\r",
+											"pm.sendRequest({\r",
+											"    url: deleteUrl,\r",
+											"    method: \"DELETE\",\r",
+											"    header: {\r",
+											"        Authorization: \"Bearer \" + pm.environment.get(\"user1_valid_token\")\r",
+											"    }\r",
+											"}, function (err, res) {\r",
+											"    if (err) {\r",
+											"        console.error(\"DELETE request failed\", err);\r",
+											"    } else {\r",
+											"        console.log(\"DELETE response status:\", res.code);\r",
+											"    }\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"const token = pm.environment.get(\"fake_token\");\r",
+											"\r",
+											"if (token) {\r",
+											"    pm.request.headers.upsert({\r",
+											"        key: \"Authorization\",\r",
+											"        value: `Bearer ${token}`\r",
+											"    });\r",
+											"}\r",
+											"\r",
+											"const postUrl = pm.variables.get(\"base_url\") + \"/spot\";\r",
+											"pm.sendRequest({\r",
+											"    url: postUrl,\r",
+											"    method: \"POST\",\r",
+											"    header: {\r",
+											"        \"Authorization\": \"Bearer \" + pm.environment.get(\"user1_valid_token\"),\r",
+											"        \"Content-Type\": \"application/json\"\r",
+											"    },\r",
+											"    body: {\r",
+											"        mode: \"raw\",\r",
+											"        raw: JSON.stringify({\r",
+											"            \"name\": \"Test spot\",\r",
+											"            \"description\": \"This is a test spot\",\r",
+											"            \"latitude\": 1.0,\r",
+											"            \"longitude\": 1.0,\r",
+											"            \"category\": \"Test\"\r",
+											"        })\r",
+											"    }\r",
+											"}, function (err, res) {\r",
+											"    if (err) {\r",
+											"        console.error(\"POST request failed\", err);\r",
+											"    } else {\r",
+											"        console.log(\"POST response status:\", res.code);\r",
+											"\r",
+											"        if (res.code === 201 || res.code === 200) {\r",
+											"            const responseJson = res.json();\r",
+											"            const conflictingSpotId = responseJson[0]?.id;\r",
+											"            if (conflictingSpotId) {\r",
+											"                pm.environment.set(\"test_spot_id\", conflictingSpotId);\r",
+											"                console.log(\"Saved test_spot_id:\", conflictingSpotId);\r",
+											"            } else {\r",
+											"                console.warn(\"No test_spot_id found in response\");\r",
+											"            }\r",
+											"        }else {\r",
+											"            pm.environment.set(\"test_spot_id\", \"\");\r",
+											"        }\r",
+											"    }\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"Test spot\",\r\n    \"description\": \"This is a test spot\",\r\n    \"latitude\": 1.0,\r\n    \"longitude\": 1.0,\r\n    \"category\": \"Test\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/spot/{{test_spot_id}}/review",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"spot",
+										"{{test_spot_id}}",
+										"review"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "/spot/:id/review - empty body with valid JWT - 400",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"/spot/id/review POST with empty request body returns 400 code\", function () {\r",
+											"    pm.response.to.have.status(400);\r",
+											"});\r",
+											"\r",
+											"const deleteUrl = pm.variables.get(\"base_url\") + \"/spot/\" + pm.environment.get(\"test_spot_id\");\r",
+											"\r",
+											"pm.sendRequest({\r",
+											"    url: deleteUrl,\r",
+											"    method: \"DELETE\",\r",
+											"    header: {\r",
+											"        Authorization: \"Bearer \" + pm.environment.get(\"user1_valid_token\")\r",
+											"    }\r",
+											"}, function (err, res) {\r",
+											"    if (err) {\r",
+											"        console.error(\"DELETE request failed\", err);\r",
+											"    } else {\r",
+											"        console.log(\"DELETE response status:\", res.code);\r",
+											"    }\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"const token = pm.environment.get(\"user1_valid_token\");\r",
+											"\r",
+											"if (token) {\r",
+											"    pm.request.headers.upsert({\r",
+											"        key: \"Authorization\",\r",
+											"        value: `Bearer ${token}`\r",
+											"    });\r",
+											"}\r",
+											"\r",
+											"const postUrl = pm.variables.get(\"base_url\") + \"/spot\";\r",
+											"pm.sendRequest({\r",
+											"    url: postUrl,\r",
+											"    method: \"POST\",\r",
+											"    header: {\r",
+											"        \"Authorization\": \"Bearer \" + pm.environment.get(\"user1_valid_token\"),\r",
+											"        \"Content-Type\": \"application/json\"\r",
+											"    },\r",
+											"    body: {\r",
+											"        mode: \"raw\",\r",
+											"        raw: JSON.stringify({\r",
+											"            \"name\": \"Test spot\",\r",
+											"            \"description\": \"This is a test spot\",\r",
+											"            \"latitude\": 1.0,\r",
+											"            \"longitude\": 1.0,\r",
+											"            \"category\": \"Test\"\r",
+											"        })\r",
+											"    }\r",
+											"}, function (err, res) {\r",
+											"    if (err) {\r",
+											"        console.error(\"POST request failed\", err);\r",
+											"    } else {\r",
+											"        console.log(\"POST response status:\", res.code);\r",
+											"\r",
+											"        if (res.code === 201 || res.code === 200) {\r",
+											"            const responseJson = res.json();\r",
+											"            const conflictingSpotId = responseJson[0]?.id;\r",
+											"            if (conflictingSpotId) {\r",
+											"                pm.environment.set(\"test_spot_id\", conflictingSpotId);\r",
+											"                console.log(\"Saved test_spot_id:\", conflictingSpotId);\r",
+											"            } else {\r",
+											"                console.warn(\"No test_spot_id found in response\");\r",
+											"            }\r",
+											"        }else {\r",
+											"            pm.environment.set(\"test_spot_id\", \"\");\r",
+											"        }\r",
+											"    }\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/spot/{{test_spot_id}}/review",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"spot",
+										"{{test_spot_id}}",
+										"review"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "/spot/:id/review  - missing rating field in body - 400",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"/spot/id/review POST with a field missing in request body returns 400 code\", function () {\r",
+											"    pm.response.to.have.status(400);\r",
+											"});\r",
+											"\r",
+											"const deleteUrl = pm.variables.get(\"base_url\") + \"/spot/\" + pm.environment.get(\"test_spot_id\");\r",
+											"\r",
+											"pm.sendRequest({\r",
+											"    url: deleteUrl,\r",
+											"    method: \"DELETE\",\r",
+											"    header: {\r",
+											"        Authorization: \"Bearer \" + pm.environment.get(\"user1_valid_token\")\r",
+											"    }\r",
+											"}, function (err, res) {\r",
+											"    if (err) {\r",
+											"        console.error(\"DELETE request failed\", err);\r",
+											"    } else {\r",
+											"        console.log(\"DELETE response status:\", res.code);\r",
+											"    }\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"const token = pm.environment.get(\"user1_valid_token\");\r",
+											"\r",
+											"if (token) {\r",
+											"    pm.request.headers.upsert({\r",
+											"        key: \"Authorization\",\r",
+											"        value: `Bearer ${token}`\r",
+											"    });\r",
+											"}\r",
+											"\r",
+											"const postUrl = pm.variables.get(\"base_url\") + \"/spot\";\r",
+											"pm.sendRequest({\r",
+											"    url: postUrl,\r",
+											"    method: \"POST\",\r",
+											"    header: {\r",
+											"        \"Authorization\": \"Bearer \" + pm.environment.get(\"user1_valid_token\"),\r",
+											"        \"Content-Type\": \"application/json\"\r",
+											"    },\r",
+											"    body: {\r",
+											"        mode: \"raw\",\r",
+											"        raw: JSON.stringify({\r",
+											"            \"name\": \"Test spot\",\r",
+											"            \"description\": \"This is a test spot\",\r",
+											"            \"latitude\": 1.0,\r",
+											"            \"longitude\": 1.0,\r",
+											"            \"category\": \"Test\"\r",
+											"        })\r",
+											"    }\r",
+											"}, function (err, res) {\r",
+											"    if (err) {\r",
+											"        console.error(\"POST request failed\", err);\r",
+											"    } else {\r",
+											"        console.log(\"POST response status:\", res.code);\r",
+											"\r",
+											"        if (res.code === 201 || res.code === 200) {\r",
+											"            const responseJson = res.json();\r",
+											"            const conflictingSpotId = responseJson[0]?.id;\r",
+											"            if (conflictingSpotId) {\r",
+											"                pm.environment.set(\"test_spot_id\", conflictingSpotId);\r",
+											"                console.log(\"Saved test_spot_id:\", conflictingSpotId);\r",
+											"            } else {\r",
+											"                console.warn(\"No test_spot_id found in response\");\r",
+											"            }\r",
+											"        }else {\r",
+											"            pm.environment.set(\"test_spot_id\", \"\");\r",
+											"        }\r",
+											"    }\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"content\": \"No rating!\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/spot/{{test_spot_id}}/review",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"spot",
+										"{{test_spot_id}}",
+										"review"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "GET /spot/:id/review/:rId",
+					"item": [
+						{
+							"name": "/spot/:id/review/:rId - valid request without query or body - 200",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Valid empty GET request returns 200 code\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"const deleteUrl = pm.variables.get(\"base_url\") + \"/spot/\" + pm.environment.get(\"test_spot_id\");\r",
+											"pm.sendRequest({\r",
+											"    url: deleteUrl,\r",
+											"    method: \"DELETE\",\r",
+											"    header: {\r",
+											"        \"Authorization\": \"Bearer \" + pm.environment.get(\"user1_valid_token\"),\r",
+											"    }\r",
+											"}, function (err, res) {\r",
+											"    if (err) {\r",
+											"        console.error(\"DELETE request failed\", err);\r",
+											"    } else {\r",
+											"        console.log(\"DELETE response status:\", res.code);\r",
+											"    }\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"const postSpotUrl = pm.variables.get(\"base_url\") + \"/spot\";\r",
+											"pm.sendRequest({\r",
+											"    url: postSpotUrl,\r",
+											"    method: \"POST\",\r",
+											"    header: {\r",
+											"        \"Authorization\": \"Bearer \" + pm.environment.get(\"user1_valid_token\"),\r",
+											"        \"Content-Type\": \"application/json\"\r",
+											"    },\r",
+											"    body: {\r",
+											"        mode: \"raw\",\r",
+											"        raw: JSON.stringify({\r",
+											"            \"name\": \"Test spot\",\r",
+											"            \"description\": \"This is a test spot\",\r",
+											"            \"latitude\": 1.0,\r",
+											"            \"longitude\": 1.0,\r",
+											"            \"category\": \"Test\"\r",
+											"        })\r",
+											"    }\r",
+											"}, function (err, res) {\r",
+											"    if (err) {\r",
+											"        console.error(\"POST request failed\", err);\r",
+											"    } else {\r",
+											"        console.log(\"POST response status:\", res.code);\r",
+											"\r",
+											"        if (res.code === 201 || res.code === 200) {\r",
+											"            const responseJson = res.json();\r",
+											"            const conflictingSpotId = responseJson[0]?.id;\r",
+											"            if (conflictingSpotId) {\r",
+											"                pm.environment.set(\"test_spot_id\", conflictingSpotId);\r",
+											"                console.log(\"Saved test_spot_id:\", conflictingSpotId);\r",
+											"\r",
+											"                const postReviewUrl = pm.variables.get(\"base_url\") + \"/spot/\" + pm.environment.get(\"test_spot_id\") + \"/review\";\r",
+											"                pm.sendRequest({\r",
+											"                    url: postReviewUrl,\r",
+											"                    method: \"POST\",\r",
+											"                    header: {\r",
+											"                        \"Authorization\": \"Bearer \" + pm.environment.get(\"user1_valid_token\"),\r",
+											"                        \"Content-Type\": \"application/json\"\r",
+											"                    },\r",
+											"                    body: {\r",
+											"                        mode: \"raw\",\r",
+											"                        raw: JSON.stringify({\r",
+											"                            \"content\": \"This is a test review.\",\r",
+											"                            \"rating\": 1.0\r",
+											"                        })\r",
+											"                    }\r",
+											"                }, function (err, res) {\r",
+											"                    if (err) {\r",
+											"                        console.error(\"POST request failed\", err);\r",
+											"                    } else {\r",
+											"                        console.log(\"POST response status:\", res.code);\r",
+											"\r",
+											"                        if (res.code === 201 || res.code === 200) {\r",
+											"                            const responseJson = res.json();\r",
+											"                            const conflictingSpotId = responseJson[0]?.id;\r",
+											"                            if (conflictingSpotId) {\r",
+											"                                pm.environment.set(\"test_review_id\", conflictingSpotId);\r",
+											"                                console.log(\"Saved test_review_id:\", conflictingSpotId);\r",
+											"                            } else {\r",
+											"                                console.warn(\"No test_review_id found in response\");\r",
+											"                            }\r",
+											"                        }\r",
+											"                    }\r",
+											"                });\r",
+											"            } else {\r",
+											"                console.warn(\"No test_spot_id found in response\");\r",
+											"            }\r",
+											"        }\r",
+											"    }\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/spot/{{test_spot_id}}/review/{{test_review_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"spot",
+										"{{test_spot_id}}",
+										"review",
+										"{{test_review_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "/spot/:id/review/:rId - request body included - 400",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"GET request with non empty request body returns 400 code\", function () {\r",
+											"    pm.response.to.have.status(400);\r",
+											"});\r",
+											"\r",
+											"const deleteUrl = pm.variables.get(\"base_url\") + \"/spot/\" + pm.environment.get(\"test_spot_id\");\r",
+											"pm.sendRequest({\r",
+											"    url: deleteUrl,\r",
+											"    method: \"DELETE\",\r",
+											"    header: {\r",
+											"        \"Authorization\": \"Bearer \" + pm.environment.get(\"user1_valid_token\"),\r",
+											"    }\r",
+											"}, function (err, res) {\r",
+											"    if (err) {\r",
+											"        console.error(\"DELETE request failed\", err);\r",
+											"    } else {\r",
+											"        console.log(\"DELETE response status:\", res.code);\r",
+											"    }\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"const postSpotUrl = pm.variables.get(\"base_url\") + \"/spot\";\r",
+											"pm.sendRequest({\r",
+											"    url: postSpotUrl,\r",
+											"    method: \"POST\",\r",
+											"    header: {\r",
+											"        \"Authorization\": \"Bearer \" + pm.environment.get(\"user1_valid_token\"),\r",
+											"        \"Content-Type\": \"application/json\"\r",
+											"    },\r",
+											"    body: {\r",
+											"        mode: \"raw\",\r",
+											"        raw: JSON.stringify({\r",
+											"            \"name\": \"Test spot\",\r",
+											"            \"description\": \"This is a test spot\",\r",
+											"            \"latitude\": 1.0,\r",
+											"            \"longitude\": 1.0,\r",
+											"            \"category\": \"Test\"\r",
+											"        })\r",
+											"    }\r",
+											"}, function (err, res) {\r",
+											"    if (err) {\r",
+											"        console.error(\"POST request failed\", err);\r",
+											"    } else {\r",
+											"        console.log(\"POST response status:\", res.code);\r",
+											"\r",
+											"        if (res.code === 201 || res.code === 200) {\r",
+											"            const responseJson = res.json();\r",
+											"            const conflictingSpotId = responseJson[0]?.id;\r",
+											"            if (conflictingSpotId) {\r",
+											"                pm.environment.set(\"test_spot_id\", conflictingSpotId);\r",
+											"                console.log(\"Saved test_spot_id:\", conflictingSpotId);\r",
+											"\r",
+											"                const postReviewUrl = pm.variables.get(\"base_url\") + \"/spot/\" + pm.environment.get(\"test_spot_id\") + \"/review\";\r",
+											"                pm.sendRequest({\r",
+											"                    url: postReviewUrl,\r",
+											"                    method: \"POST\",\r",
+											"                    header: {\r",
+											"                        \"Authorization\": \"Bearer \" + pm.environment.get(\"user1_valid_token\"),\r",
+											"                        \"Content-Type\": \"application/json\"\r",
+											"                    },\r",
+											"                    body: {\r",
+											"                        mode: \"raw\",\r",
+											"                        raw: JSON.stringify({\r",
+											"                            \"content\": \"This is a test review.\",\r",
+											"                            \"rating\": 1.0\r",
+											"                        })\r",
+											"                    }\r",
+											"                }, function (err, res) {\r",
+											"                    if (err) {\r",
+											"                        console.error(\"POST request failed\", err);\r",
+											"                    } else {\r",
+											"                        console.log(\"POST response status:\", res.code);\r",
+											"\r",
+											"                        if (res.code === 201 || res.code === 200) {\r",
+											"                            const responseJson = res.json();\r",
+											"                            const conflictingSpotId = responseJson[0]?.id;\r",
+											"                            if (conflictingSpotId) {\r",
+											"                                pm.environment.set(\"test_review_id\", conflictingSpotId);\r",
+											"                                console.log(\"Saved test_review_id:\", conflictingSpotId);\r",
+											"                            } else {\r",
+											"                                console.warn(\"No test_review_id found in response\");\r",
+											"                            }\r",
+											"                        }\r",
+											"                    }\r",
+											"                });\r",
+											"            } else {\r",
+											"                console.warn(\"No test_spot_id found in response\");\r",
+											"            }\r",
+											"        }\r",
+											"    }\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"test\": \"test\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/spot/{{test_spot_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"spot",
+										"{{test_spot_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "/spot/:id/review/:rId - does not exist - 404",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"GET request with non existent spot id returns 404 code\", function () {\r",
+											"    pm.response.to.have.status(404);\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/spot/some_random_spot_id",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"spot",
+										"some_random_spot_id"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "PATCH /spot/:id/review/:rId",
+					"item": [
+						{
+							"name": "/spot/:id/review/:rId - valid JWT and correct body - 200",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"const token = pm.environment.get(\"user1_valid_token\");\r",
+											"if (token) {\r",
+											"    pm.request.headers.upsert({\r",
+											"        key: \"Authorization\",\r",
+											"        value: `Bearer ${token}`\r",
+											"    });\r",
+											"}\r",
+											"\r",
+											"const postSpotUrl = pm.variables.get(\"base_url\") + \"/spot\";\r",
+											"pm.sendRequest({\r",
+											"    url: postSpotUrl,\r",
+											"    method: \"POST\",\r",
+											"    header: {\r",
+											"        \"Authorization\": \"Bearer \" + pm.environment.get(\"user1_valid_token\"),\r",
+											"        \"Content-Type\": \"application/json\"\r",
+											"    },\r",
+											"    body: {\r",
+											"        mode: \"raw\",\r",
+											"        raw: JSON.stringify({\r",
+											"            \"name\": \"Test spot\",\r",
+											"            \"description\": \"This is a test spot\",\r",
+											"            \"latitude\": 1.0,\r",
+											"            \"longitude\": 1.0,\r",
+											"            \"category\": \"Test\"\r",
+											"        })\r",
+											"    }\r",
+											"}, function (err, res) {\r",
+											"    if (err) {\r",
+											"        console.error(\"POST request failed\", err);\r",
+											"    } else {\r",
+											"        console.log(\"POST response status:\", res.code);\r",
+											"\r",
+											"        if (res.code === 201 || res.code === 200) {\r",
+											"            const responseJson = res.json();\r",
+											"            const conflictingSpotId = responseJson[0]?.id;\r",
+											"            if (conflictingSpotId) {\r",
+											"                pm.environment.set(\"test_spot_id\", conflictingSpotId);\r",
+											"                console.log(\"Saved test_spot_id:\", conflictingSpotId);\r",
+											"\r",
+											"                const postReviewUrl = pm.variables.get(\"base_url\") + \"/spot/\" + pm.environment.get(\"test_spot_id\") + \"/review\";\r",
+											"                pm.sendRequest({\r",
+											"                    url: postReviewUrl,\r",
+											"                    method: \"POST\",\r",
+											"                    header: {\r",
+											"                        \"Authorization\": \"Bearer \" + pm.environment.get(\"user1_valid_token\"),\r",
+											"                        \"Content-Type\": \"application/json\"\r",
+											"                    },\r",
+											"                    body: {\r",
+											"                        mode: \"raw\",\r",
+											"                        raw: JSON.stringify({\r",
+											"                            \"content\": \"This is a test review.\",\r",
+											"                            \"rating\": 1.0\r",
+											"                        })\r",
+											"                    }\r",
+											"                }, function (err, res) {\r",
+											"                    if (err) {\r",
+											"                        console.error(\"POST request failed\", err);\r",
+											"                    } else {\r",
+											"                        console.log(\"POST response status:\", res.code);\r",
+											"\r",
+											"                        if (res.code === 201 || res.code === 200) {\r",
+											"                            const responseJson = res.json();\r",
+											"                            const conflictingSpotId = responseJson[0]?.id;\r",
+											"                            if (conflictingSpotId) {\r",
+											"                                pm.environment.set(\"test_review_id\", conflictingSpotId);\r",
+											"                                console.log(\"Saved test_review_id:\", conflictingSpotId);\r",
+											"                            } else {\r",
+											"                                console.warn(\"No test_review_id found in response\");\r",
+											"                            }\r",
+											"                        }\r",
+											"                    }\r",
+											"                });\r",
+											"            } else {\r",
+											"                console.warn(\"No test_spot_id found in response\");\r",
+											"            }\r",
+											"        }\r",
+											"    }\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Valid empty PATCH request returns 200 code\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"const deleteUrl = pm.variables.get(\"base_url\") + \"/spot/\" + pm.environment.get(\"test_spot_id\");\r",
+											"pm.sendRequest({\r",
+											"    url: deleteUrl,\r",
+											"    method: \"DELETE\",\r",
+											"    header: {\r",
+											"        \"Authorization\": \"Bearer \" + pm.environment.get(\"user1_valid_token\"),\r",
+											"    }\r",
+											"}, function (err, res) {\r",
+											"    if (err) {\r",
+											"        console.error(\"DELETE request failed\", err);\r",
+											"    } else {\r",
+											"        console.log(\"DELETE response status:\", res.code);\r",
+											"    }\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"rating\": 1.0,\r\n    \"content\": \"This is a test review.\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/spot/{{test_spot_id}}/review/{{test_review_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"spot",
+										"{{test_spot_id}}",
+										"review",
+										"{{test_review_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "/spot/:id/review/:rId - no JWT provided - 401",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"/spot/{id}/review/{rId} PATCH with empty Authorization header returns 401 code\", function () {\r",
+											"    pm.response.to.have.status(401);\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"rating\": 1.0,\r\n    \"content\": \"This is a test review.\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/spot/{{spot_id}}/review/{{test_review_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"spot",
+										"{{spot_id}}",
+										"review",
+										"{{test_review_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "/spot/:id/review/:rId - invalid JWT - 401",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"/spot/{id}/review/{rId} PATCH with incorect Authorization JWT token returns 401 code\", function () {\r",
+											"    pm.response.to.have.status(401);\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"const token = pm.environment.get(\"fake_token\");\r",
+											"\r",
+											"if (token) {\r",
+											"    pm.request.headers.upsert({\r",
+											"        key: \"Authorization\",\r",
+											"        value: `Bearer ${token}`\r",
+											"    });\r",
+											"}"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"rating\": 1.0,\r\n    \"content\": \"This is a test review.\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/spot/{{spot_id}}/review/{{test_review_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"spot",
+										"{{spot_id}}",
+										"review",
+										"{{test_review_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "/spot/:id/review/:rId - JWT of non-owner, not admin - 403",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"/spot/{id}/review/{rId} unauthorized PATCH should return 403 code\", function () {\r",
+											"    pm.response.to.have.status(403);\r",
+											"});\r",
+											"\r",
+											"const deleteUrl = pm.variables.get(\"base_url\") + \"/spot/\" + pm.environment.get(\"test_spot_id\");\r",
+											"pm.sendRequest({\r",
+											"    url: deleteUrl,\r",
+											"    method: \"DELETE\",\r",
+											"    header: {\r",
+											"        \"Authorization\": \"Bearer \" + pm.environment.get(\"user1_valid_token\"),\r",
+											"    }\r",
+											"}, function (err, res) {\r",
+											"    if (err) {\r",
+											"        console.error(\"DELETE request failed\", err);\r",
+											"    } else {\r",
+											"        console.log(\"DELETE response status:\", res.code);\r",
+											"    }\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"const token = pm.environment.get(\"user1_valid_token\");\r",
+											"if (token) {\r",
+											"    pm.request.headers.upsert({\r",
+											"        key: \"Authorization\",\r",
+											"        value: `Bearer ${token}`\r",
+											"    });\r",
+											"}\r",
+											"\r",
+											"const postSpotUrl = pm.variables.get(\"base_url\") + \"/spot\";\r",
+											"pm.sendRequest({\r",
+											"    url: postSpotUrl,\r",
+											"    method: \"POST\",\r",
+											"    header: {\r",
+											"        \"Authorization\": \"Bearer \" + pm.environment.get(\"user1_valid_token\"),\r",
+											"        \"Content-Type\": \"application/json\"\r",
+											"    },\r",
+											"    body: {\r",
+											"        mode: \"raw\",\r",
+											"        raw: JSON.stringify({\r",
+											"            \"name\": \"Test spot\",\r",
+											"            \"description\": \"This is a test spot\",\r",
+											"            \"latitude\": 1.0,\r",
+											"            \"longitude\": 1.0,\r",
+											"            \"category\": \"Test\"\r",
+											"        })\r",
+											"    }\r",
+											"}, function (err, res) {\r",
+											"    if (err) {\r",
+											"        console.error(\"POST request failed\", err);\r",
+											"    } else {\r",
+											"        console.log(\"POST response status:\", res.code);\r",
+											"\r",
+											"        if (res.code === 201 || res.code === 200) {\r",
+											"            const responseJson = res.json();\r",
+											"            const conflictingSpotId = responseJson[0]?.id;\r",
+											"            if (conflictingSpotId) {\r",
+											"                pm.environment.set(\"test_spot_id\", conflictingSpotId);\r",
+											"                console.log(\"Saved test_spot_id:\", conflictingSpotId);\r",
+											"\r",
+											"                const postReviewUrl = pm.variables.get(\"base_url\") + \"/spot/\" + pm.environment.get(\"test_spot_id\") + \"/review\";\r",
+											"                pm.sendRequest({\r",
+											"                    url: postReviewUrl,\r",
+											"                    method: \"POST\",\r",
+											"                    header: {\r",
+											"                        \"Authorization\": \"Bearer \" + pm.environment.get(\"user2_valid_token\"),\r",
+											"                        \"Content-Type\": \"application/json\"\r",
+											"                    },\r",
+											"                    body: {\r",
+											"                        mode: \"raw\",\r",
+											"                        raw: JSON.stringify({\r",
+											"                            \"content\": \"This is a test review.\",\r",
+											"                            \"rating\": 1.0\r",
+											"                        })\r",
+											"                    }\r",
+											"                }, function (err, res) {\r",
+											"                    if (err) {\r",
+											"                        console.error(\"POST request failed\", err);\r",
+											"                    } else {\r",
+											"                        console.log(\"POST response status:\", res.code);\r",
+											"\r",
+											"                        if (res.code === 201 || res.code === 200) {\r",
+											"                            const responseJson = res.json();\r",
+											"                            const conflictingSpotId = responseJson[0]?.id;\r",
+											"                            if (conflictingSpotId) {\r",
+											"                                pm.environment.set(\"test_review_id\", conflictingSpotId);\r",
+											"                                console.log(\"Saved test_review_id:\", conflictingSpotId);\r",
+											"                            } else {\r",
+											"                                console.warn(\"No test_review_id found in response\");\r",
+											"                            }\r",
+											"                        }\r",
+											"                    }\r",
+											"                });\r",
+											"            } else {\r",
+											"                console.warn(\"No test_spot_id found in response\");\r",
+											"            }\r",
+											"        }\r",
+											"    }\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"rating\": 1.0,\r\n    \"content\": \"This is a test review.\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/spot/{{test_spot_id}}/review/{{test_review_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"spot",
+										"{{test_spot_id}}",
+										"review",
+										"{{test_review_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "/spot/:id/review/:rId - does not exist - 404",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"GET request with non existent review id returns 404 code\", function () {\r",
+											"    pm.response.to.have.status(404);\r",
+											"});\r",
+											"\r",
+											"const deleteUrlSpot = pm.variables.get(\"base_url\") + \"/spot/\" + pm.environment.get(\"test_spot_id\");\r",
+											"pm.sendRequest({\r",
+											"    url: deleteUrlSpot,\r",
+											"    method: \"DELETE\",\r",
+											"    header: {\r",
+											"        \"Authorization\": \"Bearer \" + pm.environment.get(\"user1_valid_token\"),\r",
+											"    }\r",
+											"}, function (err, res) {\r",
+											"    if (err) {\r",
+											"        console.error(\"DELETE request failed\", err);\r",
+											"    } else {\r",
+											"        console.log(\"DELETE response status:\", res.code);\r",
+											"    }\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"const token = pm.environment.get(\"user1_valid_token\");\r",
+											"if (token) {\r",
+											"    pm.request.headers.upsert({\r",
+											"        key: \"Authorization\",\r",
+											"        value: `Bearer ${token}`\r",
+											"    });\r",
+											"}\r",
+											"\r",
+											"const postUrl = pm.variables.get(\"base_url\") + \"/spot\";\r",
+											"pm.sendRequest({\r",
+											"    url: postUrl,\r",
+											"    method: \"POST\",\r",
+											"    header: {\r",
+											"        \"Authorization\": \"Bearer \" + pm.environment.get(\"user1_valid_token\"),\r",
+											"        \"Content-Type\": \"application/json\"\r",
+											"    },\r",
+											"    body: {\r",
+											"        mode: \"raw\",\r",
+											"        raw: JSON.stringify({\r",
+											"            \"name\": \"Test spot\",\r",
+											"            \"description\": \"This is a test spot\",\r",
+											"            \"latitude\": 1.0,\r",
+											"            \"longitude\": 1.0,\r",
+											"            \"category\": \"Test\"\r",
+											"        })\r",
+											"    }\r",
+											"}, function (err, res) {\r",
+											"    if (err) {\r",
+											"        console.error(\"POST request failed\", err);\r",
+											"    } else {\r",
+											"        console.log(\"POST response status:\", res.code);\r",
+											"\r",
+											"        if (res.code === 201 || res.code === 200) {\r",
+											"            const responseJson = res.json();\r",
+											"            const conflictingSpotId = responseJson[0]?.id;\r",
+											"            if (conflictingSpotId) {\r",
+											"                pm.environment.set(\"test_spot_id\", conflictingSpotId);\r",
+											"                console.log(\"Saved test_spot_id:\", conflictingSpotId);\r",
+											"            } else {\r",
+											"                console.warn(\"No test_spot_id found in response\");\r",
+											"            }\r",
+											"        }else {\r",
+											"            pm.environment.set(\"test_spot_id\", \"\");\r",
+											"        }\r",
+											"    }\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"rating\": 1.0,\r\n    \"content\": \"This is a test review.\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/spot/{{test_spot_id}}/review/some_random_review_id",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"spot",
+										"{{test_spot_id}}",
+										"review",
+										"some_random_review_id"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "/spot/:id/review/:rId - empty body with valid JWT - 400",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"const token = pm.environment.get(\"user1_valid_token\");\r",
+											"if (token) {\r",
+											"    pm.request.headers.upsert({\r",
+											"        key: \"Authorization\",\r",
+											"        value: `Bearer ${token}`\r",
+											"    });\r",
+											"}\r",
+											"\r",
+											"const postSpotUrl = pm.variables.get(\"base_url\") + \"/spot\";\r",
+											"pm.sendRequest({\r",
+											"    url: postSpotUrl,\r",
+											"    method: \"POST\",\r",
+											"    header: {\r",
+											"        \"Authorization\": \"Bearer \" + pm.environment.get(\"user1_valid_token\"),\r",
+											"        \"Content-Type\": \"application/json\"\r",
+											"    },\r",
+											"    body: {\r",
+											"        mode: \"raw\",\r",
+											"        raw: JSON.stringify({\r",
+											"            \"name\": \"Test spot\",\r",
+											"            \"description\": \"This is a test spot\",\r",
+											"            \"latitude\": 1.0,\r",
+											"            \"longitude\": 1.0,\r",
+											"            \"category\": \"Test\"\r",
+											"        })\r",
+											"    }\r",
+											"}, function (err, res) {\r",
+											"    if (err) {\r",
+											"        console.error(\"POST request failed\", err);\r",
+											"    } else {\r",
+											"        console.log(\"POST response status:\", res.code);\r",
+											"\r",
+											"        if (res.code === 201 || res.code === 200) {\r",
+											"            const responseJson = res.json();\r",
+											"            const conflictingSpotId = responseJson[0]?.id;\r",
+											"            if (conflictingSpotId) {\r",
+											"                pm.environment.set(\"test_spot_id\", conflictingSpotId);\r",
+											"                console.log(\"Saved test_spot_id:\", conflictingSpotId);\r",
+											"\r",
+											"                const postReviewUrl = pm.variables.get(\"base_url\") + \"/spot/\" + pm.environment.get(\"test_spot_id\") + \"/review\";\r",
+											"                pm.sendRequest({\r",
+											"                    url: postReviewUrl,\r",
+											"                    method: \"POST\",\r",
+											"                    header: {\r",
+											"                        \"Authorization\": \"Bearer \" + pm.environment.get(\"user1_valid_token\"),\r",
+											"                        \"Content-Type\": \"application/json\"\r",
+											"                    },\r",
+											"                    body: {\r",
+											"                        mode: \"raw\",\r",
+											"                        raw: JSON.stringify({\r",
+											"                            \"content\": \"This is a test review.\",\r",
+											"                            \"rating\": 1.0\r",
+											"                        })\r",
+											"                    }\r",
+											"                }, function (err, res) {\r",
+											"                    if (err) {\r",
+											"                        console.error(\"POST request failed\", err);\r",
+											"                    } else {\r",
+											"                        console.log(\"POST response status:\", res.code);\r",
+											"\r",
+											"                        if (res.code === 201 || res.code === 200) {\r",
+											"                            const responseJson = res.json();\r",
+											"                            const conflictingSpotId = responseJson[0]?.id;\r",
+											"                            if (conflictingSpotId) {\r",
+											"                                pm.environment.set(\"test_review_id\", conflictingSpotId);\r",
+											"                                console.log(\"Saved test_review_id:\", conflictingSpotId);\r",
+											"                            } else {\r",
+											"                                console.warn(\"No test_review_id found in response\");\r",
+											"                            }\r",
+											"                        }\r",
+											"                    }\r",
+											"                });\r",
+											"            } else {\r",
+											"                console.warn(\"No test_spot_id found in response\");\r",
+											"            }\r",
+											"        }\r",
+											"    }\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"/spot PATCH with empty request body returns 400 code\", function () {\r",
+											"    pm.response.to.have.status(400);\r",
+											"});\r",
+											"\r",
+											"const deleteUrl = pm.variables.get(\"base_url\") + \"/spot/\" + pm.environment.get(\"test_spot_id\");\r",
+											"pm.sendRequest({\r",
+											"    url: deleteUrl,\r",
+											"    method: \"DELETE\",\r",
+											"    header: {\r",
+											"        \"Authorization\": \"Bearer \" + pm.environment.get(\"user1_valid_token\"),\r",
+											"    }\r",
+											"}, function (err, res) {\r",
+											"    if (err) {\r",
+											"        console.error(\"DELETE request failed\", err);\r",
+											"    } else {\r",
+											"        console.log(\"DELETE response status:\", res.code);\r",
+											"    }\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "PATCH",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/spot/{{spot_id}}/review/{{test_review_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"spot",
+										"{{spot_id}}",
+										"review",
+										"{{test_review_id}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "DELETE /spot/:id/review/:rId",
+					"item": [
+						{
+							"name": "/spot/:id - valid JWT - 200",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"const token = pm.environment.get(\"user1_valid_token\");\r",
+											"if (token) {\r",
+											"    pm.request.headers.upsert({\r",
+											"        key: \"Authorization\",\r",
+											"        value: `Bearer ${token}`\r",
+											"    });\r",
+											"}\r",
+											"\r",
+											"const postSpotUrl = pm.variables.get(\"base_url\") + \"/spot\";\r",
+											"pm.sendRequest({\r",
+											"    url: postSpotUrl,\r",
+											"    method: \"POST\",\r",
+											"    header: {\r",
+											"        \"Authorization\": \"Bearer \" + pm.environment.get(\"user1_valid_token\"),\r",
+											"        \"Content-Type\": \"application/json\"\r",
+											"    },\r",
+											"    body: {\r",
+											"        mode: \"raw\",\r",
+											"        raw: JSON.stringify({\r",
+											"            \"name\": \"Test spot\",\r",
+											"            \"description\": \"This is a test spot\",\r",
+											"            \"latitude\": 1.0,\r",
+											"            \"longitude\": 1.0,\r",
+											"            \"category\": \"Test\"\r",
+											"        })\r",
+											"    }\r",
+											"}, function (err, res) {\r",
+											"    if (err) {\r",
+											"        console.error(\"POST request failed\", err);\r",
+											"    } else {\r",
+											"        console.log(\"POST response status:\", res.code);\r",
+											"\r",
+											"        if (res.code === 201 || res.code === 200) {\r",
+											"            const responseJson = res.json();\r",
+											"            const conflictingSpotId = responseJson[0]?.id;\r",
+											"            if (conflictingSpotId) {\r",
+											"                pm.environment.set(\"test_spot_id\", conflictingSpotId);\r",
+											"                console.log(\"Saved test_spot_id:\", conflictingSpotId);\r",
+											"\r",
+											"                const postReviewUrl = pm.variables.get(\"base_url\") + \"/spot/\" + pm.environment.get(\"test_spot_id\") + \"/review\";\r",
+											"                pm.sendRequest({\r",
+											"                    url: postReviewUrl,\r",
+											"                    method: \"POST\",\r",
+											"                    header: {\r",
+											"                        \"Authorization\": \"Bearer \" + pm.environment.get(\"user1_valid_token\"),\r",
+											"                        \"Content-Type\": \"application/json\"\r",
+											"                    },\r",
+											"                    body: {\r",
+											"                        mode: \"raw\",\r",
+											"                        raw: JSON.stringify({\r",
+											"                            \"content\": \"This is a test review.\",\r",
+											"                            \"rating\": 1.0\r",
+											"                        })\r",
+											"                    }\r",
+											"                }, function (err, res) {\r",
+											"                    if (err) {\r",
+											"                        console.error(\"POST request failed\", err);\r",
+											"                    } else {\r",
+											"                        console.log(\"POST response status:\", res.code);\r",
+											"\r",
+											"                        if (res.code === 201 || res.code === 200) {\r",
+											"                            const responseJson = res.json();\r",
+											"                            const conflictingSpotId = responseJson[0]?.id;\r",
+											"                            if (conflictingSpotId) {\r",
+											"                                pm.environment.set(\"test_review_id\", conflictingSpotId);\r",
+											"                                console.log(\"Saved test_review_id:\", conflictingSpotId);\r",
+											"                            } else {\r",
+											"                                console.warn(\"No test_review_id found in response\");\r",
+											"                            }\r",
+											"                        }\r",
+											"                    }\r",
+											"                });\r",
+											"            } else {\r",
+											"                console.warn(\"No test_spot_id found in response\");\r",
+											"            }\r",
+											"        }\r",
+											"    }\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"/spot/id/review/rId valid DELETE returns 204 code\", function () {\r",
+											"    pm.response.to.have.status(204);\r",
+											"});\r",
+											"\r",
+											"const deleteUrl = pm.variables.get(\"base_url\") + \"/spot/\" + pm.environment.get(\"test_spot_id\");\r",
+											"pm.sendRequest({\r",
+											"    url: deleteUrl,\r",
+											"    method: \"DELETE\",\r",
+											"    header: {\r",
+											"        \"Authorization\": \"Bearer \" + pm.environment.get(\"user1_valid_token\"),\r",
+											"    }\r",
+											"}, function (err, res) {\r",
+											"    if (err) {\r",
+											"        console.error(\"DELETE request failed\", err);\r",
+											"    } else {\r",
+											"        console.log(\"DELETE response status:\", res.code);\r",
+											"    }\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/spot/{{test_spot_id}}/review/{{test_review_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"spot",
+										"{{test_spot_id}}",
+										"review",
+										"{{test_review_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "/spot/:id - no JWT provided - 401",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"/spot/id/review/rId DELETE with empty Authorization header returns 401 code\", function () {\r",
+											"    pm.response.to.have.status(401);\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/spot/{{test_spot_id}}/review/{{test_review_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"spot",
+										"{{test_spot_id}}",
+										"review",
+										"{{test_review_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "/spot/:id - invalid JWT - 401",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"const token = pm.environment.get(\"fake_token\");\r",
+											"\r",
+											"if (token) {\r",
+											"    pm.request.headers.upsert({\r",
+											"        key: \"Authorization\",\r",
+											"        value: `Bearer ${token}`\r",
+											"    });\r",
+											"}"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"/spot/id/review/rId DELETE with incorect Authorization JWT token returns 401 code\", function () {\r",
+											"    pm.response.to.have.status(401);\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/spot/{{test_spot_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"spot",
+										"{{test_spot_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "/spot/:id - request body included - 400",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"GET request with non empty request body returns 400 code\", function () {\r",
+											"    pm.response.to.have.status(400);\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"const token = pm.environment.get(\"user1_valid_token\");\r",
+											"if (token) {\r",
+											"    pm.request.headers.upsert({\r",
+											"        key: \"Authorization\",\r",
+											"        value: `Bearer ${token}`\r",
+											"    });\r",
+											"}\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"test\": \"test\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/spot/{{test_spot_id}}/review/{{test_review_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"spot",
+										"{{test_spot_id}}",
+										"review",
+										"{{test_review_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "/spot/:id - JWT of non-owner, not admin - 403",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"const postSpotUrl = pm.variables.get(\"base_url\") + \"/spot\";\r",
+											"pm.sendRequest({\r",
+											"    url: postSpotUrl,\r",
+											"    method: \"POST\",\r",
+											"    header: {\r",
+											"        \"Authorization\": \"Bearer \" + pm.environment.get(\"user2_valid_token\"),\r",
+											"        \"Content-Type\": \"application/json\"\r",
+											"    },\r",
+											"    body: {\r",
+											"        mode: \"raw\",\r",
+											"        raw: JSON.stringify({\r",
+											"            \"name\": \"Test spot\",\r",
+											"            \"description\": \"This is a test spot\",\r",
+											"            \"latitude\": 1.0,\r",
+											"            \"longitude\": 1.0,\r",
+											"            \"category\": \"Test\"\r",
+											"        })\r",
+											"    }\r",
+											"}, function (err, res) {\r",
+											"    if (err) {\r",
+											"        console.error(\"POST request failed\", err);\r",
+											"    } else {\r",
+											"        console.log(\"POST response status:\", res.code);\r",
+											"\r",
+											"        if (res.code === 201 || res.code === 200) {\r",
+											"            const responseJson = res.json();\r",
+											"            const conflictingSpotId = responseJson[0]?.id;\r",
+											"            if (conflictingSpotId) {\r",
+											"                pm.environment.set(\"test_spot_id\", conflictingSpotId);\r",
+											"                console.log(\"Saved test_spot_id:\", conflictingSpotId);\r",
+											"\r",
+											"                const postReviewUrl = pm.variables.get(\"base_url\") + \"/spot/\" + pm.environment.get(\"test_spot_id\") + \"/review\";\r",
+											"                pm.sendRequest({\r",
+											"                    url: postReviewUrl,\r",
+											"                    method: \"POST\",\r",
+											"                    header: {\r",
+											"                        \"Authorization\": \"Bearer \" + pm.environment.get(\"user2_valid_token\"),\r",
+											"                        \"Content-Type\": \"application/json\"\r",
+											"                    },\r",
+											"                    body: {\r",
+											"                        mode: \"raw\",\r",
+											"                        raw: JSON.stringify({\r",
+											"                            \"content\": \"This is a test review.\",\r",
+											"                            \"rating\": 1.0\r",
+											"                        })\r",
+											"                    }\r",
+											"                }, function (err, res) {\r",
+											"                    if (err) {\r",
+											"                        console.error(\"POST request failed\", err);\r",
+											"                    } else {\r",
+											"                        console.log(\"POST response status:\", res.code);\r",
+											"\r",
+											"                        if (res.code === 201 || res.code === 200) {\r",
+											"                            const responseJson = res.json();\r",
+											"                            const conflictingSpotId = responseJson[0]?.id;\r",
+											"                            if (conflictingSpotId) {\r",
+											"                                pm.environment.set(\"test_review_id\", conflictingSpotId);\r",
+											"                                console.log(\"Saved test_review_id:\", conflictingSpotId);\r",
+											"                            } else {\r",
+											"                                console.warn(\"No test_review_id found in response\");\r",
+											"                            }\r",
+											"                        }\r",
+											"                    }\r",
+											"                });\r",
+											"            } else {\r",
+											"                console.warn(\"No test_spot_id found in response\");\r",
+											"            }\r",
+											"        }\r",
+											"    }\r",
+											"});\r",
+											"\r",
+											"const token = pm.environment.get(\"user1_valid_token\");\r",
+											"\r",
+											"if (token) {\r",
+											"    pm.request.headers.upsert({\r",
+											"        key: \"Authorization\",\r",
+											"        value: `Bearer ${token}`\r",
+											"    });\r",
+											"}"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"/spot/{id} unauthorized PATCH should return 403 code\", function () {\r",
+											"    pm.response.to.have.status(403);\r",
+											"});\r",
+											"\r",
+											"const deleteUrl = pm.variables.get(\"base_url\") + \"/spot/\" + pm.environment.get(\"test_spot_id\");\r",
+											"pm.sendRequest({\r",
+											"    url: deleteUrl,\r",
+											"    method: \"DELETE\",\r",
+											"    header: {\r",
+											"        \"Authorization\": \"Bearer \" + pm.environment.get(\"user2_valid_token\"),\r",
+											"    }\r",
+											"}, function (err, res) {\r",
+											"    if (err) {\r",
+											"        console.error(\"DELETE request failed\", err);\r",
+											"    } else {\r",
+											"        console.log(\"DELETE response status:\", res.code);\r",
+											"    }\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "jwt",
+									"jwt": [
+										{
+											"key": "payload",
+											"value": "{\r\n  \"exp\": {{jwt_expire}},\r\n  \"lid\": \"y9AHPDr0ywBovDlqfT7R\",\r\n  \"rol\": \"user\",\r\n  \"usr\": \"user1\"\r\n}",
+											"type": "string"
+										},
+										{
+											"key": "addTokenTo",
+											"value": "header",
+											"type": "string"
+										},
+										{
+											"key": "secret",
+											"value": "{{jwt_secret}}",
+											"type": "string"
+										},
+										{
+											"key": "header",
+											"value": "{\r\n\r\n\r\n}",
+											"type": "string"
+										},
+										{
+											"key": "algorithm",
+											"value": "HS256",
+											"type": "string"
+										},
+										{
+											"key": "isSecretBase64Encoded",
+											"value": false,
+											"type": "boolean"
+										},
+										{
+											"key": "headerPrefix",
+											"value": "Bearer",
+											"type": "string"
+										},
+										{
+											"key": "queryParamKey",
+											"value": "token",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/spot/{{test_spot_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"spot",
+										"{{test_spot_id}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "user",
+			"item": [
+				{
+					"name": "POST /user/register",
+					"item": [
+						{
+							"name": "/user/register - valid request - 200",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Valid POST request with JWT header and correct request body returns 200 code\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"}); \r",
+											"const jsonData = pm.response.json();\r",
+											"const userId = jsonData.localId;\r",
+											"const token = jsonData.token;\r",
+											"const deleteUrl = pm.variables.get(\"base_url\") + \"/user/\" + userId;\r",
+											"\r",
+											"pm.sendRequest({\r",
+											"    url: deleteUrl,\r",
+											"    method: \"DELETE\",\r",
+											"    header: {\r",
+											"        Authorization: \"Bearer \" + token\r",
+											"    }\r",
+											"}, function (err, res) {\r",
+											"    if (err) {\r",
+											"        console.error(\"DELETE request failed\", err);\r",
+											"    } else {\r",
+											"        console.log(\"DELETE response status:\", res.code);\r",
+											"    }\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"test_user_x\",\r\n    \"email\": \"test_user_x@example.com\",\r\n    \"password\": \"user123\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/user/register",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"user",
+										"register"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "/user/register - empty request body - 400",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"/user/register POST with empty request body returns 400 code\", function () {\r",
+											"    pm.response.to.have.status(400);\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/user/register",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"user",
+										"register"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "/user/register - incomplete request body - 400",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"/user/register POST with a field missing in request body returns 400 code\", function () {\r",
+											"    pm.response.to.have.status(400);\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"test_user\",\r\n    \"email\": \"test_user@example.com\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/user/register",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"user",
+										"register"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "/user/register - invalid email - 400",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"/user/register POST with invalid email inside request body returns 400 code\", function () {\r",
+											"    pm.response.to.have.status(400);\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"test_user\",\r\n    \"email\": \"test_userexample.com\",\r\n    \"password\": \"user123\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/user/register",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"user",
+										"register"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "/user/register - email already exists - 409",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.sendRequest({\r",
+											"    url: \"http://localhost:8080/user/register\",\r",
+											"    method: \"POST\",\r",
+											"    body: {\r",
+											"        mode: \"raw\",\r",
+											"        raw: JSON.stringify({\r",
+											"            \"name\": \"test_user\",\r",
+											"            \"email\": \"test_user@example.com\",\r",
+											"            \"password\": \"user123\"\r",
+											"        })\r",
+											"    }\r",
+											"}, function (err, res) {\r",
+											"    if (err) {\r",
+											"        console.error(\"POST request failed\", err);\r",
+											"    } else {\r",
+											"        console.log(\"POST response status:\", res.code);\r",
+											"\r",
+											"        if (res.code === 201 || res.code === 200) {\r",
+											"            const responseJson = res.json();\r",
+											"            const testUserId = responseJson.localId;\r",
+											"            const token = responseJson.token;\r",
+											"            if (testUserId) {\r",
+											"                pm.environment.set(\"test_user_id\", testUserId);\r",
+											"                pm.environment.set(\"test_token\", token);\r",
+											"                console.log(\"Saved test_spot_id:\", conflictingSpotId);\r",
+											"            } else {\r",
+											"                console.warn(\"No test_spot_id found in response\");\r",
+											"            }\r",
+											"        }else {\r",
+											"            pm.environment.set(\"test_spot_id\", \"\");\r",
+											"        }\r",
+											"    }\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"/user/register POST with email linked to existing user returns 409 code\", function () {\r",
+											"    pm.response.to.have.status(409);\r",
+											"});\r",
+											"\r",
+											"const deleteUrl = pm.variables.get(\"base_url\") + \"/user/\" + pm.environment.get(\"test_user_id\");\r",
+											"pm.sendRequest({\r",
+											"    url: deleteUrl,\r",
+											"    method: \"DELETE\",\r",
+											"    header: {\r",
+											"        Authorization: \"Bearer \" + pm.environment.get(\"test_token\")\r",
+											"    }\r",
+											"}, function (err, res) {\r",
+											"    if (err) {\r",
+											"        console.error(\"DELETE request failed\", err);\r",
+											"    } else {\r",
+											"        console.log(\"DELETE response status:\", res.code);\r",
+											"    }\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"test_user\",\r\n    \"email\": \"test_user@example.com\",\r\n    \"password\": \"user123\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/user/register",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"user",
+										"register"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "/user/register - username already exists - 409",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.sendRequest({\r",
+											"    url: \"http://localhost:8080/user/register\",\r",
+											"    method: \"POST\",\r",
+											"    body: {\r",
+											"        mode: \"raw\",\r",
+											"        raw: JSON.stringify({\r",
+											"            \"name\": \"test_user\",\r",
+											"            \"email\": \"test_user@example.com\",\r",
+											"            \"password\": \"user123\"\r",
+											"        })\r",
+											"    }\r",
+											"}, function (err, res) {\r",
+											"    if (err) {\r",
+											"        console.error(\"POST request failed\", err);\r",
+											"    } else {\r",
+											"        console.log(\"POST response status:\", res.code);\r",
+											"\r",
+											"        if (res.code === 201 || res.code === 200) {\r",
+											"            const responseJson = res.json();\r",
+											"            const testUserId = responseJson.localId;\r",
+											"            const token = responseJson.token;\r",
+											"            if (testUserId) {\r",
+											"                pm.environment.set(\"test_user_id\", testUserId);\r",
+											"                pm.environment.set(\"test_token\", token);\r",
+											"                console.log(\"Saved test_spot_id:\", conflictingSpotId);\r",
+											"            } else {\r",
+											"                console.warn(\"No test_spot_id found in response\");\r",
+											"            }\r",
+											"        }else {\r",
+											"            pm.environment.set(\"test_spot_id\", \"\");\r",
+											"        }\r",
+											"    }\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"/user/register POST with username linked to existing user returns 409 code\", function () {\r",
+											"    pm.response.to.have.status(409);\r",
+											"});\r",
+											"\r",
+											"const deleteUrl = pm.variables.get(\"base_url\") + \"/user/\" + pm.environment.get(\"test_user_id\");\r",
+											"pm.sendRequest({\r",
+											"    url: deleteUrl,\r",
+											"    method: \"DELETE\",\r",
+											"    header: {\r",
+											"        Authorization: \"Bearer \" + pm.environment.get(\"test_token\")\r",
+											"    }\r",
+											"}, function (err, res) {\r",
+											"    if (err) {\r",
+											"        console.error(\"DELETE request failed\", err);\r",
+											"    } else {\r",
+											"        console.log(\"DELETE response status:\", res.code);\r",
+											"    }\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"test_user\",\r\n    \"email\": \"test_user@example.com\",\r\n    \"password\": \"user123\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/user/register",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"user",
+										"register"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "/user/register - password too short - 400",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"/user/register POST with too short password in request returns 400 code\", function () {\r",
+											"    pm.response.to.have.status(400);\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"test_user\",\r\n    \"email\": \"test_user@example.com\",\r\n    \"password\": \"us\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/user/register",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"user",
+										"register"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "POST /user/login",
+					"item": [
+						{
+							"name": "/user/login - correct credentials - 200",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.sendRequest({\r",
+											"    url: \"http://localhost:8080/user/register\",\r",
+											"    method: \"POST\",\r",
+											"    body: {\r",
+											"        mode: \"raw\",\r",
+											"        raw: JSON.stringify({\r",
+											"            \"name\": \"test_user\",\r",
+											"            \"email\": \"test_user@example.com\",\r",
+											"            \"password\": \"user123\"\r",
+											"        })\r",
+											"    }\r",
+											"}, function (err, res) {\r",
+											"    if (err) {\r",
+											"        console.error(\"POST request failed\", err);\r",
+											"    } else {\r",
+											"        console.log(\"POST response status:\", res.code);\r",
+											"\r",
+											"        if (res.code === 201 || res.code === 200) {\r",
+											"            const responseJson = res.json();\r",
+											"            const testUserId = responseJson.localId;\r",
+											"            const token = responseJson.token;\r",
+											"            if (testUserId) {\r",
+											"                pm.environment.set(\"test_user_id\", testUserId);\r",
+											"                pm.environment.set(\"test_token\", token);\r",
+											"                console.log(\"Saved test_spot_id:\", conflictingSpotId);\r",
+											"            } else {\r",
+											"                console.warn(\"No test_spot_id found in response\");\r",
+											"            }\r",
+											"        }else {\r",
+											"            pm.environment.set(\"test_spot_id\", \"\");\r",
+											"        }\r",
+											"    }\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"/user/login POST with correct credentials of an existing user returns 200 code\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"const deleteUrl = pm.variables.get(\"base_url\") + \"/user/\" + pm.environment.get(\"test_user_id\");\r",
+											"pm.sendRequest({\r",
+											"    url: deleteUrl,\r",
+											"    method: \"DELETE\",\r",
+											"    header: {\r",
+											"        Authorization: \"Bearer \" + pm.environment.get(\"test_token\")\r",
+											"    }\r",
+											"}, function (err, res) {\r",
+											"    if (err) {\r",
+											"        console.error(\"DELETE request failed\", err);\r",
+											"    } else {\r",
+											"        console.log(\"DELETE response status:\", res.code);\r",
+											"    }\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"test_user\",\r\n    \"email\": \"test_user@example.com\",\r\n    \"password\": \"user123\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/user/login",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"user",
+										"login"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "/user/register - incomplete request body - 400",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"/user/login POST with incomplete request body returns 400 code\", function () {\r",
+											"    pm.response.to.have.status(400);\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"email\": \"user1@example.com\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/user/login",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"user",
+										"login"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "/user/register - empty request body - 400",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"/user/login POST with empty request body returns 400 code\", function () {\r",
+											"    pm.response.to.have.status(400);\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/user/login",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"user",
+										"login"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "/user/login - wrong password - 401",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.sendRequest({\r",
+											"    url: \"http://localhost:8080/user/register\",\r",
+											"    method: \"POST\",\r",
+											"    body: {\r",
+											"        mode: \"raw\",\r",
+											"        raw: JSON.stringify({\r",
+											"            \"name\": \"test_user\",\r",
+											"            \"email\": \"test_user@example.com\",\r",
+											"            \"password\": \"user123\"\r",
+											"        })\r",
+											"    }\r",
+											"}, function (err, res) {\r",
+											"    if (err) {\r",
+											"        console.error(\"POST request failed\", err);\r",
+											"    } else {\r",
+											"        console.log(\"POST response status:\", res.code);\r",
+											"\r",
+											"        if (res.code === 201 || res.code === 200) {\r",
+											"            const responseJson = res.json();\r",
+											"            const testUserId = responseJson.localId;\r",
+											"            const token = responseJson.token;\r",
+											"            if (testUserId) {\r",
+											"                pm.environment.set(\"test_user_id\", testUserId);\r",
+											"                pm.environment.set(\"test_token\", token);\r",
+											"                console.log(\"Saved test_spot_id:\", conflictingSpotId);\r",
+											"            } else {\r",
+											"                console.warn(\"No test_spot_id found in response\");\r",
+											"            }\r",
+											"        }else {\r",
+											"            pm.environment.set(\"test_spot_id\", \"\");\r",
+											"        }\r",
+											"    }\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"/user/login POST with wrong password returns 401 code\", function () {\r",
+											"    pm.response.to.have.status(401);\r",
+											"});\r",
+											"\r",
+											"const deleteUrl = pm.variables.get(\"base_url\") + \"/user/\" + pm.environment.get(\"test_user_id\");\r",
+											"pm.sendRequest({\r",
+											"    url: deleteUrl,\r",
+											"    method: \"DELETE\",\r",
+											"    header: {\r",
+											"        Authorization: \"Bearer \" + pm.environment.get(\"test_token\")\r",
+											"    }\r",
+											"}, function (err, res) {\r",
+											"    if (err) {\r",
+											"        console.error(\"DELETE request failed\", err);\r",
+											"    } else {\r",
+											"        console.log(\"DELETE response status:\", res.code);\r",
+											"    }\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"email\": \"test_user@example.com\",\r\n    \"password\": \"use123\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/user/login",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"user",
+										"login"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "/user/login - non-existent user - 401",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"/user/login POST with attempt to log as inexistent user returns 401 code\", function () {\r",
+											"    pm.response.to.have.status(401);\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"email\": \"user798@example.com\",\r\n    \"password\": \"user123\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/user/login",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"user",
+										"login"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "DELETE /user/:id",
+					"item": [
+						{
+							"name": "/user/:id - valid token of the user being deleted - 200",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.sendRequest({\r",
+											"    url: \"http://localhost:8080/user/register\",\r",
+											"    method: \"POST\",\r",
+											"    body: {\r",
+											"        mode: \"raw\",\r",
+											"        raw: JSON.stringify({\r",
+											"            \"name\": \"test_user\",\r",
+											"            \"email\": \"test_user@example.com\",\r",
+											"            \"password\": \"user123\"\r",
+											"        })\r",
+											"    }\r",
+											"}, function (err, res) {\r",
+											"    if (err) {\r",
+											"        console.error(\"POST request failed\", err);\r",
+											"    } else {\r",
+											"        console.log(\"POST response status:\", res.code);\r",
+											"\r",
+											"        if (res.code === 201 || res.code === 200) {\r",
+											"            const responseJson = res.json();\r",
+											"            const testUserId = responseJson.localId;\r",
+											"            const token = responseJson.token;\r",
+											"            if (testUserId) {\r",
+											"                pm.environment.set(\"test_user_id\", testUserId);\r",
+											"                pm.environment.set(\"test_token\", token);\r",
+											"                console.log(\"Saved test_spot_id:\", conflictingSpotId);\r",
+											"            } else {\r",
+											"                console.warn(\"No test_spot_id found in response\");\r",
+											"            }\r",
+											"        }else {\r",
+											"            pm.environment.set(\"test_spot_id\", \"\");\r",
+											"        }\r",
+											"    }\r",
+											"});\r",
+											"\r",
+											"pm.request.headers.upsert({\r",
+											"    key: \"Authorization\",\r",
+											"    value: `Bearer ${pm.environment.get(\"test_token\")}`\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"/user/{id} DELETE with valid JWT returns 204 code\", function () {\r",
+											"    pm.response.to.have.status(204);\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/user/{{test_user_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"user",
+										"{{test_user_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "/user/:id - no token provided - 401",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"/user/{id} DELETE with no JWT provided returns 401 code\", function () {\r",
+											"    pm.response.to.have.status(401);\r",
+											"});\r",
+											"\r",
+											"const deleteUrl = pm.variables.get(\"base_url\") + \"/user/\" + pm.environment.get(\"test_user_id\");\r",
+											"pm.sendRequest({\r",
+											"    url: deleteUrl,\r",
+											"    method: \"DELETE\",\r",
+											"    header: {\r",
+											"        Authorization: \"Bearer \" + pm.environment.get(\"test_token\")\r",
+											"    }\r",
+											"}, function (err, res) {\r",
+											"    if (err) {\r",
+											"        console.error(\"DELETE request failed\", err);\r",
+											"    } else {\r",
+											"        console.log(\"DELETE response status:\", res.code);\r",
+											"    }\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.sendRequest({\r",
+											"    url: \"http://localhost:8080/user/register\",\r",
+											"    method: \"POST\",\r",
+											"    body: {\r",
+											"        mode: \"raw\",\r",
+											"        raw: JSON.stringify({\r",
+											"            \"name\": \"test_user\",\r",
+											"            \"email\": \"test_user@example.com\",\r",
+											"            \"password\": \"user123\"\r",
+											"        })\r",
+											"    }\r",
+											"}, function (err, res) {\r",
+											"    if (err) {\r",
+											"        console.error(\"POST request failed\", err);\r",
+											"    } else {\r",
+											"        console.log(\"POST response status:\", res.code);\r",
+											"\r",
+											"        if (res.code === 201 || res.code === 200) {\r",
+											"            const responseJson = res.json();\r",
+											"            const testUserId = responseJson.localId;\r",
+											"            const token = responseJson.token;\r",
+											"            if (testUserId) {\r",
+											"                pm.environment.set(\"test_user_id\", testUserId);\r",
+											"                pm.environment.set(\"test_token\", token);\r",
+											"                console.log(\"Saved test_spot_id:\", conflictingSpotId);\r",
+											"            } else {\r",
+											"                console.warn(\"No test_spot_id found in response\");\r",
+											"            }\r",
+											"        }else {\r",
+											"            pm.environment.set(\"test_spot_id\", \"\");\r",
+											"        }\r",
+											"    }\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/user/{{test_user_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"user",
+										"{{test_user_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "/user/:id - unauthorized to delete - 403",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.sendRequest({\r",
+											"    url: \"http://localhost:8080/user/register\",\r",
+											"    method: \"POST\",\r",
+											"    body: {\r",
+											"        mode: \"raw\",\r",
+											"        raw: JSON.stringify({\r",
+											"            \"name\": \"test_user\",\r",
+											"            \"email\": \"test_user@example.com\",\r",
+											"            \"password\": \"user123\"\r",
+											"        })\r",
+											"    }\r",
+											"}, function (err, res) {\r",
+											"    if (err) {\r",
+											"        console.error(\"POST request failed\", err);\r",
+											"    } else {\r",
+											"        console.log(\"POST response status:\", res.code);\r",
+											"\r",
+											"        if (res.code === 201 || res.code === 200) {\r",
+											"            const responseJson = res.json();\r",
+											"            const testUserId = responseJson.localId;\r",
+											"            const token = responseJson.token;\r",
+											"            if (testUserId) {\r",
+											"                pm.environment.set(\"test_user_id\", testUserId);\r",
+											"                pm.environment.set(\"test_token\", token);\r",
+											"                console.log(\"Saved test_spot_id:\", conflictingSpotId);\r",
+											"            } else {\r",
+											"                console.warn(\"No test_spot_id found in response\");\r",
+											"            }\r",
+											"        }else {\r",
+											"            pm.environment.set(\"test_spot_id\", \"\");\r",
+											"        }\r",
+											"    }\r",
+											"});\r",
+											"\r",
+											"pm.request.headers.upsert({\r",
+											"    key: \"Authorization\",\r",
+											"    value: `Bearer ${pm.environment.get(\"user1_valid_token\")}`\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"/user/{id} DELETE with JWT that does not authorize to delete returns 403 code\", function () {\r",
+											"    pm.response.to.have.status(403);\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/user/{{test_user_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"user",
+										"{{test_user_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "/user/:id - invalid token - 401",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"/user/{id} DELETE with no JWT provided returns 401 code\", function () {\r",
+											"    pm.response.to.have.status(401);\r",
+											"});\r",
+											"\r",
+											"const deleteUrl = pm.variables.get(\"base_url\") + \"/user/\" + pm.environment.get(\"test_user_id\");\r",
+											"pm.sendRequest({\r",
+											"    url: deleteUrl,\r",
+											"    method: \"DELETE\",\r",
+											"    header: {\r",
+											"        Authorization: \"Bearer \" + pm.environment.get(\"test_token\")\r",
+											"    }\r",
+											"}, function (err, res) {\r",
+											"    if (err) {\r",
+											"        console.error(\"DELETE request failed\", err);\r",
+											"    } else {\r",
+											"        console.log(\"DELETE response status:\", res.code);\r",
+											"    }\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.sendRequest({\r",
+											"    url: \"http://localhost:8080/user/register\",\r",
+											"    method: \"POST\",\r",
+											"    body: {\r",
+											"        mode: \"raw\",\r",
+											"        raw: JSON.stringify({\r",
+											"            \"name\": \"test_user\",\r",
+											"            \"email\": \"test_user@example.com\",\r",
+											"            \"password\": \"user123\"\r",
+											"        })\r",
+											"    }\r",
+											"}, function (err, res) {\r",
+											"    if (err) {\r",
+											"        console.error(\"POST request failed\", err);\r",
+											"    } else {\r",
+											"        console.log(\"POST response status:\", res.code);\r",
+											"\r",
+											"        if (res.code === 201 || res.code === 200) {\r",
+											"            const responseJson = res.json();\r",
+											"            const testUserId = responseJson.localId;\r",
+											"            const token = responseJson.token;\r",
+											"            if (testUserId) {\r",
+											"                pm.environment.set(\"test_user_id\", testUserId);\r",
+											"                pm.environment.set(\"test_token\", token);\r",
+											"                console.log(\"Saved test_spot_id:\", conflictingSpotId);\r",
+											"            } else {\r",
+											"                console.warn(\"No test_spot_id found in response\");\r",
+											"            }\r",
+											"        }else {\r",
+											"            pm.environment.set(\"test_spot_id\", \"\");\r",
+											"        }\r",
+											"    }\r",
+											"});\r",
+											"\r",
+											"pm.request.headers.upsert({\r",
+											"    key: \"Authorization\",\r",
+											"    value: `Bearer ${pm.environment.get(\"fake_token\")}`\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/user/{{test_user_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"user",
+										"{{test_user_id}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		}
+	]
+}
