@@ -69,7 +69,7 @@ func getReview(response http.ResponseWriter, request *http.Request, spotId strin
 
 	found, err := reviewService.GetReview(request.Context(), spotId, request.URL.Query())
 	if err != nil {
-		helpers.HandleRepoError(response, err)
+		helpers.HandleErrors(response, err)
 		return
 	}
 
@@ -92,7 +92,7 @@ func addReview(response http.ResponseWriter, request *http.Request, spotId strin
 
 	found, err := reviewService.AddReview(request.Context(), token, newReview)
 	if err != nil {
-		helpers.HandleRepoError(response, err)
+		helpers.HandleErrors(response, err)
 		return
 	}
 
@@ -107,7 +107,7 @@ func getReviewById(response http.ResponseWriter, request *http.Request, id strin
 
 	review, err := reviewService.FindReviewById(request.Context(), id)
 	if err != nil {
-		helpers.HandleRepoError(response, err)
+		helpers.HandleErrors(response, err)
 		return
 	}
 
@@ -129,7 +129,7 @@ func updateReviewById(response http.ResponseWriter, request *http.Request, spotI
 
 	updatedReview, err := reviewService.UpdateReviewById(request.Context(), token, reviewInfo, reviewId)
 	if err != nil {
-		helpers.ErrorResponse(response, "Unexpected error: "+err.Error(), http.StatusInternalServerError)
+		helpers.HandleErrors(response, err)
 		return
 	}
 
@@ -149,7 +149,7 @@ func deleteReviewById(response http.ResponseWriter, request *http.Request, id st
 
 	err = reviewService.DeleteReviewById(request.Context(), token, id)
 	if err != nil {
-		helpers.HandleRepoError(response, err)
+		helpers.HandleErrors(response, err)
 		return
 	}
 

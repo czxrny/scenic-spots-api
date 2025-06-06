@@ -2,6 +2,8 @@ package user
 
 import (
 	"context"
+	"errors"
+	"scenic-spots-api/internal/api/apierrors"
 	"scenic-spots-api/internal/auth"
 	"scenic-spots-api/internal/database/repositories/repoerrors"
 	userAuthRepo "scenic-spots-api/internal/database/repositories/user"
@@ -43,6 +45,9 @@ func RegisterUser(ctx context.Context, userRegisterInfo models.UserRegisterInfo)
 func LoginUser(ctx context.Context, credentials models.UserCredentials) (models.UserTokenResponse, error) {
 	user, err := userAuthRepo.GetUserByField(ctx, "email", credentials.Email)
 	if err != nil {
+		if errors.Is(err, repoerrors.ErrDoesNotExist) {
+			return models.UserTokenResponse{}, apierrors.ErrInvalidCredentials
+		}
 		return models.UserTokenResponse{}, err
 	}
 

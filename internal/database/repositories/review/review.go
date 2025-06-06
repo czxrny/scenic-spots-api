@@ -3,9 +3,9 @@ package review
 import (
 	"context"
 	"fmt"
+	"scenic-spots-api/internal/api/apierrors"
 	"scenic-spots-api/internal/database"
 	common "scenic-spots-api/internal/database/repositories/common"
-	"scenic-spots-api/internal/database/repositories/repoerrors"
 	"scenic-spots-api/internal/models"
 	"scenic-spots-api/utils/generics"
 	"strconv"
@@ -36,7 +36,7 @@ func GetReviews(ctx context.Context, params models.ReviewQueryParams) ([]models.
 
 	query, err := buildReviewQuery(collectionRef, params)
 	if err != nil {
-		return []models.Review{}, &repoerrors.InvalidQueryParameterError{
+		return []models.Review{}, &apierrors.InvalidQueryParameterError{
 			Message: err.Error(),
 		}
 	}

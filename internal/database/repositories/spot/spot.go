@@ -2,10 +2,9 @@ package spot
 
 import (
 	"context"
-	"fmt"
+	"scenic-spots-api/internal/api/apierrors"
 	"scenic-spots-api/internal/database"
 	common "scenic-spots-api/internal/database/repositories/common"
-	"scenic-spots-api/internal/database/repositories/repoerrors"
 	"scenic-spots-api/internal/models"
 	"scenic-spots-api/utils/calc"
 	"scenic-spots-api/utils/generics"
@@ -20,10 +19,8 @@ func buildSpotQuery(collectionRef *firestore.CollectionRef, params models.SpotQu
 	if params.Name != "" {
 		query = query.Where("name", "==", strings.ToLower(params.Name))
 	}
-	if params.Latitude != "" || params.Longitude != "" || params.Radius != "" {
-		if params.Latitude == "" || params.Longitude == "" || params.Radius == "" {
-			return firestore.Query{}, fmt.Errorf("invalid parameter: latitude, longitude, and radius must all be provided together")
-		}
+
+	if params.Latitude != "" {
 		coordinates, err := calc.CoordinatesAfterRadius(params.Latitude, params.Longitude, params.Radius)
 		if err != nil {
 			return firestore.Query{}, err
@@ -33,6 +30,7 @@ func buildSpotQuery(collectionRef *firestore.CollectionRef, params models.SpotQu
 			Where("longitude", "<=", coordinates.MaxLon).
 			Where("longitude", ">=", coordinates.MinLon)
 	}
+
 	if params.Category != "" {
 		query = query.Where("category", "==", strings.ToLower(params.Category))
 	}
@@ -46,7 +44,7 @@ func GetSpot(ctx context.Context, params models.SpotQueryParams) ([]models.Spot,
 
 	query, err := buildSpotQuery(collectionRef, params)
 	if err != nil {
-		return []models.Spot{}, &repoerrors.InvalidQueryParameterError{
+		return []models.Spot{}, &apierrors.InvalidQueryParameterError{
 			Message: err.Error(),
 		}
 	}
@@ -56,8 +54,7 @@ func GetSpot(ctx context.Context, params models.SpotQueryParams) ([]models.Spot,
 		return []models.Spot{}, err
 	}
 
-	result := generics.DereferenceAll(found)
-	return result, nil
+	return generics.DereferenceAll(found), nil
 }
 
 func AddSpot(ctx context.Context, spot models.Spot) (models.Spot, error) {

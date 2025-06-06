@@ -62,7 +62,7 @@ func registerUser(response http.ResponseWriter, request *http.Request) {
 
 	result, err := userService.RegisterUser(request.Context(), userRegisterInfo)
 	if err != nil {
-		helpers.HandleRepoError(response, err)
+		helpers.HandleErrors(response, err)
 		return
 	}
 
@@ -78,7 +78,7 @@ func loginUser(response http.ResponseWriter, request *http.Request) {
 
 	result, err := userService.LoginUser(request.Context(), userCredentials)
 	if err != nil {
-		helpers.HandleRepoError(response, err)
+		helpers.HandleErrors(response, err)
 		return
 	}
 
@@ -98,7 +98,7 @@ func deleteUserById(response http.ResponseWriter, request *http.Request, userId 
 
 	err = userService.DeleteUserById(request.Context(), token, userId)
 	if err != nil {
-		helpers.HandleRepoError(response, err)
+		helpers.HandleErrors(response, err)
 		return
 	}
 

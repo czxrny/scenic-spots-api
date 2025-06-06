@@ -3,6 +3,7 @@ package spot
 import (
 	"context"
 	"net/url"
+	"scenic-spots-api/internal/api/apierrors"
 	"scenic-spots-api/internal/auth"
 	"scenic-spots-api/internal/database/repositories/repoerrors"
 	reviewRepo "scenic-spots-api/internal/database/repositories/review"
@@ -21,11 +22,16 @@ func GetSpot(ctx context.Context, query url.Values) ([]models.Spot, error) {
 		Category:  query.Get("category"),
 	}
 
-	found, err := spotRepo.GetSpot(ctx, params)
-	if err != nil {
-		return []models.Spot{}, err
+	if (params.Latitude != "" || params.Longitude != "" || params.Radius != "") &&
+		(params.Latitude == "" || params.Longitude == "" || params.Radius == "") {
+		return nil, apierrors.ErrInvalidQueryParameters
 	}
-	return found, nil
+
+	spots, err := spotRepo.GetSpot(ctx, params)
+	if err != nil {
+		return nil, err
+	}
+	return spots, nil
 }
 
 func AddSpot(ctx context.Context, token string, newSpotInfo models.NewSpot) ([]models.Spot, error) {

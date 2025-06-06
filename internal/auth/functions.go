@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"scenic-spots-api/internal/api"
+	"scenic-spots-api/internal/api/apierrors"
 	"scenic-spots-api/internal/models"
 	"strings"
 
@@ -38,7 +38,7 @@ func IsAuthorizedToEditAsset(token string, originalUser string) error {
 	}
 
 	if user != originalUser && role != "admin" {
-		return api.ErrIsUnauthorized
+		return apierrors.ErrIsUnauthorized
 	}
 
 	return nil

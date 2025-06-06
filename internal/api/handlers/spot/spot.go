@@ -79,7 +79,7 @@ func getSpot(response http.ResponseWriter, request *http.Request) {
 
 	found, err := spotService.GetSpot(request.Context(), request.URL.Query())
 	if err != nil {
-		helpers.HandleRepoError(response, err)
+		helpers.HandleErrors(response, err)
 		return
 	}
 	helpers.WriteJSONResponse(response, http.StatusOK, found)
@@ -100,7 +100,7 @@ func addSpot(response http.ResponseWriter, request *http.Request) {
 
 	result, err := spotService.AddSpot(request.Context(), token, spot)
 	if err != nil {
-		helpers.HandleRepoError(response, err)
+		helpers.HandleErrors(response, err)
 		return
 	}
 
@@ -115,7 +115,7 @@ func getSpotById(response http.ResponseWriter, request *http.Request, id string)
 
 	result, err := spotService.FindSpotById(request.Context(), id)
 	if err != nil {
-		helpers.HandleRepoError(response, err)
+		helpers.HandleErrors(response, err)
 		return
 	}
 
@@ -137,7 +137,7 @@ func updateSpotById(response http.ResponseWriter, request *http.Request, id stri
 
 	result, err := spotService.UpdateSpotById(request.Context(), token, spot, id)
 	if err != nil {
-		helpers.HandleRepoError(response, err)
+		helpers.HandleErrors(response, err)
 		return
 	}
 
@@ -157,7 +157,7 @@ func deleteSpotById(response http.ResponseWriter, request *http.Request, id stri
 
 	err = spotService.DeleteSpotById(request.Context(), token, id)
 	if err != nil {
-		helpers.HandleRepoError(response, err)
+		helpers.HandleErrors(response, err)
 		return
 	}
 
