@@ -20,10 +20,10 @@ tags:
   - name: photo
     description: Methods for spots photos
   - name: user
-    description: In development – endpoints for user management will be added soon
-  
+    description: Methods for user authentication and managment.
+
 paths:
-##################################################################################
+  ##################################################################################
   /spot:
     post:
       tags:
@@ -34,21 +34,21 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/NewSpot'
+              $ref: "#/components/schemas/NewSpot"
         required: true
       responses:
-        '201':
+        "201":
           description: Successful operation
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Spot'
-        '400':
+                $ref: "#/components/schemas/Spot"
+        "400":
           description: Invalid parameters
-        '409':
-          description: Spot already exists in the database 
-        '422':
-          description: Validation exception
+        "401":
+          description: Validation error
+        "409":
+          description: Spot already exists in the database
         default:
           description: Unexpected error
           content:
@@ -84,39 +84,37 @@ paths:
           description: Radius in kilometers around in specified latitude and longitude. Required if longitude and latitude are provided.
           schema:
             type: number
-            format: float    
+            format: float
         - name: category
           in: query
           description: Category of the spot (optional).
           schema:
             type: string
       responses:
-        '200':
+        "200":
           description: Successful operation
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Spot'
-        '400':
+                  $ref: "#/components/schemas/Spot"
+        "400":
           description: Invalid parameters
-        '422':
-          description: Validation exception
         default:
           description: Unexpected error
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
-##################################################################################
+  ##################################################################################
   /spot/{id}:
     patch:
-        tags:
-          - spot
-        summary: Update an existing spot.
-        description: Update an existing spot by Id.
-        parameters:
+      tags:
+        - spot
+      summary: Update an existing spot.
+      description: Update an existing spot by Id.
+      parameters:
         - name: id
           in: path
           required: true
@@ -124,36 +122,35 @@ paths:
           schema:
             type: integer
             format: int64
-        requestBody:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/NewSpot"
+        required: true
+      responses:
+        "200":
+          description: Successful operation
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Spot'
-          required: true
-        responses:
-          '200':
-            description: Successful operation
-            content:
-              application/json:
-                schema:
-                  $ref: '#/components/schemas/Spot'
-              application/xml:
-                schema:
-                  $ref: '#/components/schemas/Spot'
-          '400':
-            description: Invalid spot id
-          '404':
-            description: Spot not found
-          '409':
-            description: Spot already exists in the database 
-          '422':
-            description: Validation exception
-          default:
-            description: Unexpected error
-            content:
-              application/json:
-                schema:
-                  $ref: "#/components/schemas/Error"
+                $ref: "#/components/schemas/Spot"
+        "400":
+          description: Invalid parameters 
+        "401":
+          description: Validation error
+        "403":
+          description: Unauthorized to edit the asset
+        "404":
+          description: Spot not found
+        "409":
+          description: Spot already exists in the database
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
     ##################################################################################
     get:
       tags:
@@ -169,18 +166,18 @@ paths:
             type: integer
             format: int64
       responses:
-        '200':
+        "200":
           description: Successfully retrieved the spot
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Spot'
-        '400':
-          description: Invalid spot id
-        '404':
+                $ref: "#/components/schemas/Spot"
+        "400":
+          description: Invalid parameters
+        "404":
           description: Spot not found
-        '500':
-          description: Internal server error
+        default:
+          description: Unexpected error
           content:
             application/json:
               schema:
@@ -199,15 +196,23 @@ paths:
           schema:
             type: string
       responses:
-        '204':
+        "204":
           description: Spot successfully deleted (no content)
-        '400':
-          description: Invalid spot ID
-        '404':
+        "400":
+          description: Invalid parameters 
+        "401":
+          description: Validation error
+        "403":
+          description: Unauthorized to edit the asset
+        "404":
           description: Spot not found
-        '500':
-          description: Internal server error
-##################################################################################
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  ##################################################################################
   /spot/{id}/photo:
     get:
       tags:
@@ -222,7 +227,7 @@ paths:
           schema:
             type: string
       responses:
-        '200':
+        "200":
           description: List of photos URLs for the spot.
           content:
             application/json:
@@ -235,12 +240,16 @@ paths:
                       type: string
                       format: uri
                     description: List of URLs to the uploaded photos.
-        '400':
-          description: Invalid ID
-        '404':
+        "400":
+          description: Invalid parameters 
+        "404":
           description: Spot not found
-        '500':
-          description: Internal server error
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
     ##################################################################################
     put:
       tags:
@@ -267,7 +276,7 @@ paths:
                     format: binary
                   maxItems: 3
       responses:
-        '200':
+        "200":
           description: Successfully added photos to the spot.
           content:
             application/json:
@@ -280,56 +289,65 @@ paths:
                       type: string
                       format: uri
                     description: List of URLs to the uploaded photos.
-        '400':
-          description: Invalid ID or photo format
-        '404':
+        "400":
+          description: Invalid parameters 
+        "404":
           description: Spot not found
-        '500':
-          description: Internal server error
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
     ##################################################################################
     delete:
-        tags:
-          - photo
-        summary: Delete photos from a spot.
-        description: Deletes specified photos from the spot. If no query parameters get passed, all of the photos get deleted.
-        parameters:
-          - name: id
-            in: path
-            required: true
-            description: The ID of the spot of which photos get deleted.
-            schema:
-              type: string
-          - name: photoId
-            in: query
-            required: false
-            description: If specified, deletes only this photo. If omitted, deletes all photos for the given spot.
-            schema:
-              type: string
-        responses:
-          '200':
-            description: Successfully deleted the photos.
-            content:
-              application/json:
-                schema:
-                  type: array
-                  items:
-                    type: object
-                    properties:
-                      id:
-                        type: string
-                        description: ID of the deleted photo.
-          '400':
-            description: Invalid ID or photo format
-          '404':
-            description: Spot not found
-          '500':
-            description: Internal server error
-################################################################################## 
+      tags:
+        - photo
+      summary: Delete photos from a spot.
+      description: Deletes specified photos from the spot. If no query parameters get passed, all of the photos get deleted.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The ID of the spot of which photos get deleted.
+          schema:
+            type: string
+        - name: photoId
+          in: query
+          required: false
+          description: If specified, deletes only this photo. If omitted, deletes all photos for the given spot.
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Successfully deleted the photos.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                      description: ID of the deleted photo.
+        "400":
+          description: Invalid parameters 
+        "404":
+          description: Spot not found
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  ##################################################################################
   /spot/{id}/review:
     post:
       tags:
         - review
       summary: Add a review for a spot.
+      description: Add a new review for a specific spot.
       parameters:
         - name: id
           in: path
@@ -340,16 +358,18 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/NewReview'
+              $ref: "#/components/schemas/NewReview"
       responses:
-        '201':
+        "201":
           description: Review created
-        '400':
+        "400":
           description: Invalid parameters
-        '404':
+        "401":
+          description: Validation error
+        "404":
           description: Spot not found
-        '500':
-          description: Internal server error
+        default:
+          description: Unexpected error
           content:
             application/json:
               schema:
@@ -359,6 +379,7 @@ paths:
       tags:
         - review
       summary: Get reviews for a specific spot.
+      description: Get all reviews for a specific spot. Use limit query parameter to specify the amount of spots returned.
       parameters:
         - name: id
           in: path
@@ -371,30 +392,30 @@ paths:
             type: integer
           description: Number of reviews to return (default - all).
       responses:
-        '200':
+        "200":
           description: A list of reviews
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Review'
-        '400':
+                  $ref: "#/components/schemas/Review"
+        "400":
           description: Invalid parameters
-        '404':
+        "404":
           description: Spot not found
-        '500':
-          description: Internal server error
+        default:
+          description: Unexpected error
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
-    ################################################################################## 
+    ##################################################################################
     delete:
       tags:
         - review
-      summary: Delete a review for a specific spot
-      description: Deletes a review identified by review ID for a given spot.
+      summary: Delete all reviews for a specific spot
+      description: Deletes a of the reviews posted for specified spot.
       parameters:
         - name: spotId
           in: path
@@ -409,30 +430,38 @@ paths:
           schema:
             type: string
       responses:
-        '204':
+        "204":
           description: Review successfully deleted
           content:
-              application/json:
-                schema:
-                  type: object
-                  properties:
-                    id:
-                      type: string
-                      description: ID of the deleted review.
-        '404':
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    description: ID of the deleted review.
+        "400":
+          description: Invalid parameters 
+        "401":
+          description: Validation error
+        "403":
+          description: Unauthorized to edit the asset
+        "404":
           description: Review or spot not found
-        '400':
-          description: Invalid ID(s) supplied
-        '500':
-          description: Internal server error
-################################################################################## 
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  ##################################################################################
   /spot/{id}/review/{rId}:
     patch:
-        tags:
-          - review
-        summary: Update an existing review.
-        description: Update an existing review by Id.
-        parameters:
+      tags:
+        - review
+      summary: Update an existing review.
+      description: Update an existing review by its Id.
+      parameters:
         - name: spotId
           in: path
           required: true
@@ -440,34 +469,33 @@ paths:
           schema:
             type: integer
             format: int64
-        requestBody:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/NewReview"
+        required: true
+      responses:
+        "200":
+          description: Successful operation
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/NewReview'
-          required: true
-        responses:
-          '200':
-            description: Successful operation
-            content:
-              application/json:
-                schema:
-                  $ref: '#/components/schemas/Review'
-              application/xml:
-                schema:
-                  $ref: '#/components/schemas/Review'
-          '400':
-            description: Invalid spot id
-          '404':
-            description: Spot not found
-          '422':
-            description: Validation exception
-          default:
-            description: Unexpected error
-            content:
-              application/json:
-                schema:
-                  $ref: "#/components/schemas/Error"
+                $ref: "#/components/schemas/Review"
+        "400":
+          description: Invalid parameters
+        "401":
+          description: Validation error
+        "403":
+          description: Unauthorized to edit the asset
+        "404":
+          description: Spot not found
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
     ##################################################################################
     get:
       tags:
@@ -490,47 +518,141 @@ paths:
             type: integer
             format: int64
       responses:
-        '200':
+        "200":
           description: Successfully retrieved the spot
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Review'
-        '400':
+                $ref: "#/components/schemas/Review"
+        "400":
           description: Invalid spot id
-        '404':
+        "404":
           description: Review not found
-        '500':
-          description: Internal server error
+        default:
+          description: Unexpected error
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
     delete:
-        tags:
-          - review
-        summary: Delete a review.
-        description: Deletes a specific review by its ID.
-        parameters:
-          - name: id
-            in: path
-            required: true
-            description: The ID of the review to delete.
+      tags:
+        - review
+      summary: Delete a review.
+      description: Deletes a specific review by its ID.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The ID of the review to delete.
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Spot successfully deleted (no content)
+        "400":
+          description: Invalid review ID
+        "401":
+          description: Validation error
+        "403":
+          description: Unauthorized to edit the asset
+        "404":
+          description: Review not found
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  ##################################################################################
+  /user/register:
+     post:
+      tags:
+        - user
+      summary: Register new user.
+      description: Pass user register info, create new user in database and get JWT token.
+      requestBody:
+        content:
+          application/json:
             schema:
-              type: string
-        responses:
-          '204':
-            description: Spot successfully deleted (no content)
-          '400':
-            description: Invalid review ID
-          '404':
-            description: Review not found
-          '500':
-            description: Internal server error
-  ##################################################################################             
+              $ref: "#/components/schemas/UserRegisterInfo"
+        required: true
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserTokenResponse"
+        "400":
+          description: Bad request body
+        "401":
+          description: Invalid credentials
+        "409":
+          description: Username/email already exist in the database
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  ##################################################################################
+  /user/login:
+    post:
+      tags:
+        - user
+      summary: Login with user credentials.
+      description: Pass user login credentials to get JWT token.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserCredentials"
+        required: true
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserTokenResponse"
+        "400":
+          description: Bad request body
+        "401":
+          description: Invalid credentials
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  ##################################################################################
+  /user/{id}:
+    delete:
+      tags:
+        - user
+      summary: Delete user.
+      description: Delete specified user. Requires JWT token with exact same user ID, or admin role.
+      responses:
+        "204":
+          description: User successfully deleted (no content)
+        "400":
+          description: Invalid user ID
+        "401":
+          description: Validation error
+        "403":
+          description: Unauthorized to edit the asset
+        "404":
+          description: User not found
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  ##################################################################################
 components:
   schemas:
-  ##################################################################################
+    ##################################################################################
     Spot:
       type: object
       properties:
@@ -565,7 +687,7 @@ components:
             type: string
             format: uri
             example: "https://example.com/photo1.jpg"
-        addedBy:
+        userId:
           type: string
           description: User ID of the person who added the spot.
           example: "user_abc123"
@@ -573,14 +695,7 @@ components:
           type: string
           format: date-time
           example: "2025-04-23T12:00:00Z"
-      required:
-        - name
-        - latitude
-        - longitude
-        - category
-        - addedBy
-        - createdAt
-  ##################################################################################
+    ##################################################################################
     NewSpot:
       type: object
       description: Used for adding new spots. Includes the same information as the Spot, excluding the ID as it is generated automatically by the API, photos - as they are added after the "raw" information, and addedBy (userID). Note that NewSpot is also used for updatin datag.
@@ -605,34 +720,72 @@ components:
           type: string
           description: Specifies the type of the spot.
           example: Lake
-      required: 
+      required:
         - name
         - latitude
         - longitude
         - category
-  ##################################################################################
+    ##################################################################################
     User:
-          type: object
-          properties:
-            id:
-              type: integer
-              format: int64
-              example: 10
-            username:
-              type: string
-              example: theUser
-            email:
-              type: string
-              example: john@email.com
-            password:
-              type: string
-              example: '12345'
-            spotsPosted:
-              type: integer
-              description: Amount of spots that were posted in the database by the user.
-              format: int32
-              example: 1
-  ##################################################################################
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 10
+        name:
+          type: string
+          example: theUser
+        email:
+          type: string
+          example: john@email.com
+        password:
+          type: string
+          example: "12345"
+    ##################################################################################
+    UserRegisterInfo:
+      type: object
+      properties:
+        name:
+          type: string
+          example: theUser
+        email:
+          type: string
+          example: john@email.com
+        password:
+          type: string
+          example: "12345"
+      required:
+        - name
+        - email
+        - password
+    ##################################################################################
+    UserCredentials:
+      type: object
+      properties:
+        email:
+          type: string
+          example: john@email.com
+        password:
+          type: string
+          example: "12345"
+      required:
+        - email
+        - password
+    ##################################################################################
+    UserTokenResponse:
+      type: object
+      properties:
+        token:
+          type: string
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImlhdCI6MTUxNjIzOTAyMn0.KMUFsIDTnFmyG3nMiGM6H9FNFUROf3wh7SmqJp-QV30
+        localId:
+          type: string
+          example: "y9AHPDr0ywBovDlqfT7R"
+      required:
+        - email
+        - password
+    ##################################################################################
     Review:
       type: object
       properties:
@@ -658,7 +811,7 @@ components:
           type: string
           format: date-time
           example: "2025-04-23T12:00:00Z"
-  ##################################################################################
+    ##################################################################################
     NewReview:
       type: object
       required:
@@ -674,19 +827,6 @@ components:
         content:
           type: string
           example: "Worth visiting!"
-  ##################################################################################
-    Photos:
-      type: object
-      required:
-        - id
-        - url
-      properties:
-        id:
-          type: string
-          example: 1
-        url:
-          type: string
-          example: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/Google_Chrome_icon_%28February_2022%29.svg/1200px-Google_Chrome_icon_%28February_2022%29.svg.png"
     ##################################################################################
     Error:
       type: object
