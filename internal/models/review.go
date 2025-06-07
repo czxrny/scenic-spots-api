@@ -27,6 +27,7 @@ type ReviewInfo struct {
 }
 
 type ReviewQueryParams struct {
-	SpotId string
-	Limit  string
+	SpotId  string
+	Limit   string
+	AddedBy string
 }

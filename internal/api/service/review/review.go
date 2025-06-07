@@ -16,8 +16,9 @@ func GetReview(ctx context.Context, spotId string, query url.Values) ([]models.R
 	}
 
 	params := models.ReviewQueryParams{
-		SpotId: spotId,
-		Limit:  query.Get("limit"),
+		SpotId:  spotId,
+		Limit:   query.Get("limit"),
+		AddedBy: query.Get("addedBy"),
 	}
 
 	found, err := reviewRepo.GetReviews(ctx, params)

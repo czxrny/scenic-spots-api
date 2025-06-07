@@ -27,6 +27,11 @@ func buildReviewQuery(collectionRef *firestore.CollectionRef, params models.Revi
 		}
 		query = query.Limit(limit)
 	}
+
+	if params.AddedBy != "" {
+		query = query.Where("addedBy", "==", params.AddedBy)
+	}
+
 	return query, nil
 }
 
