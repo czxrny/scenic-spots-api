@@ -90,6 +90,11 @@ paths:
           description: Category of the spot (optional).
           schema:
             type: string
+        - name: addedBy
+          in: query
+          description: Filter the response by username (optional).
+          schema:
+            type: string
       responses:
         "200":
           description: Successful operation
@@ -391,6 +396,11 @@ paths:
           schema:
             type: integer
           description: Number of reviews to return (default - all).
+        - name: addedBy
+          in: query
+          description: Filter the response by username (optional).
+          schema:
+            type: string
       responses:
         "200":
           description: A list of reviews
