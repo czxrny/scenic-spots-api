@@ -20,6 +20,7 @@ func GetSpot(ctx context.Context, query url.Values) ([]models.Spot, error) {
 		Longitude: query.Get("longitude"),
 		Radius:    query.Get("radius"),
 		Category:  query.Get("category"),
+		AddedBy:   query.Get("addedBy"),
 	}
 
 	if (params.Latitude != "" || params.Longitude != "" || params.Radius != "") &&

@@ -32,4 +32,5 @@ type SpotQueryParams struct {
 	Longitude string
 	Radius    string
 	Category  string
+	AddedBy   string
 }

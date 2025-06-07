@@ -35,6 +35,10 @@ func buildSpotQuery(collectionRef *firestore.CollectionRef, params models.SpotQu
 		query = query.Where("category", "==", strings.ToLower(params.Category))
 	}
 
+	if params.AddedBy != "" {
+		query = query.Where("addedBy", "==", params.AddedBy)
+	}
+
 	return query, nil
 }
 
