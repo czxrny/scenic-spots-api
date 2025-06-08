@@ -6,8 +6,8 @@
     "longitude": 16.2828,
     "category": "Castle",
     "photos": [
-      "https://example.com/photos/zamek_ksiaz1.jpg",
-      "https://example.com/photos/zamek_ksiaz2.jpg"
+      "https://www.ahojprzygodo.com/wp-content/uploads/2024/10/241030074217-ahoj-przygodo-blog-zamek-ksiaz-nocleg-hotel-walbrzych.jpg", 
+      "https://www.ksiaz.walbrzych.pl/data/cache/900x600/1511427952_Ksiaz_Sala_Maksymiliana_Level_1_1000.jpg"
     ],
     "addedBy": "admin",
     "createdAt": "2025-05-13T12:00:00Z"
@@ -19,8 +19,8 @@
     "longitude": 20.0737,
     "category": "Mine",
     "photos": [
-      "https://example.com/photos/wieliczka1.jpg",
-      "https://example.com/photos/wieliczka2.jpg"
+      "https://www.kopalniawieliczka.eu/wp-content/uploads/2020/11/Komora-Erazma-Baracza-_fot_R_Stachurski-CA2A5175.jpg",
+      "https://dzieciakinapoklad.pl/wp-content/uploads/2022/04/Kopalnia-soli-WieliczkaIMG_2340-2024x1518.jpg"
     ],
     "addedBy": "user1",
     "createdAt": "2025-05-13T12:00:00Z"
@@ -32,21 +32,20 @@
     "longitude": 19.9989,
     "category": "Mountain",
     "photos": [
-      "https://example.com/photos/tatry1.jpg",
-      "https://example.com/photos/tatry2.jpg"
+      "https://brubeck.pl/wp-content/uploads/2024/06/slowacja-wysokie-tatry.webp"
     ],
     "addedBy": "user2",
     "createdAt": "2025-05-13T12:00:00Z"
   },
   "QYsH9kFhTsh5tRVybcv3": {
-    "name": "Auschwitz-Birkenau Memorial",
-    "description": "A historical site that serves as a reminder of the atrocities of World War II.",
-    "latitude": 50.0359,
-    "longitude": 19.1783,
-    "category": "Museum",
+    "name": "Zalew Balaton (Trzebinia)",
+    "description": "A popular water reservoir in a former quarry, known as the 'Polish Balaton'. Perfect for swimming, diving, climbing, and recreation.",
+    "latitude": 50.1642,
+    "longitude": 19.4636,
+    "category": "Lake",
     "photos": [
-      "https://example.com/photos/auschwitz1.jpg",
-      "https://example.com/photos/auschwitz2.jpg"
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Trzebinia_-_Balaton_-_panorama_%2803%29.jpg/1200px-Trzebinia_-_Balaton_-_panorama_%2803%29.jpg",
+      "https://jura.travel/Media/Default/.MainStorage/ContentItemDocumentTypeRecord/n5a5yfk0.dfm/JTr_10f-CF015771-74.jpg"
     ],
     "addedBy": "user2",
     "createdAt": "2025-05-13T12:00:00Z"
@@ -58,8 +57,8 @@
     "longitude": 23.8475,
     "category": "Nature Reserve",
     "photos": [
-      "https://example.com/photos/bialowieza1.jpg",
-      "https://example.com/photos/bialowieza2.jpg"
+      "https://puszcza.pracownia.org.pl/upload/filemanager/puszcza/Bialowieski-PN-Kamien-2000-Janusz-Korbel.jpg",
+      "https://ocdn.eu/images/pulscms/Yzc7MDA_/c5230a43-1c15-40da-a8a5-991c7a17d3f4.jpeg"
     ],
     "addedBy": "user1",
     "createdAt": "2025-05-13T12:00:00Z"
