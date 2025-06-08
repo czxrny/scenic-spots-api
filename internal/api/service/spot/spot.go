@@ -35,16 +35,16 @@ func GetSpot(ctx context.Context, query url.Values) ([]models.Spot, error) {
 	return spots, nil
 }
 
-func AddSpot(ctx context.Context, token string, newSpotInfo models.NewSpot) ([]models.Spot, error) {
+func AddSpot(ctx context.Context, token string, newSpotInfo models.NewSpot) (models.Spot, error) {
 	userName, err := auth.ExtractFromToken(token, "usr")
 	if err != nil {
-		return []models.Spot{}, err
+		return models.Spot{}, err
 	}
 
 	if found, err := getNearbySpots(ctx, newSpotInfo.Latitude, newSpotInfo.Longitude); err != nil {
-		return []models.Spot{}, err
+		return models.Spot{}, err
 	} else if len(found) > 0 {
-		return []models.Spot{}, repoerrors.ErrAlreadyExists
+		return models.Spot{}, repoerrors.ErrAlreadyExists
 	}
 
 	spot := models.Spot{
@@ -60,45 +60,39 @@ func AddSpot(ctx context.Context, token string, newSpotInfo models.NewSpot) ([]m
 
 	addedSpot, err := spotRepo.AddSpot(ctx, spot)
 	if err != nil {
-		return []models.Spot{}, err
+		return models.Spot{}, err
 	}
 
-	var result []models.Spot
-	result = append(result, addedSpot)
-
-	return result, nil
+	return addedSpot, nil
 }
 
-func FindSpotById(ctx context.Context, id string) ([]models.Spot, error) {
+func FindSpotById(ctx context.Context, id string) (models.Spot, error) {
 	spot, err := spotRepo.FindSpotById(ctx, id)
 	if err != nil {
-		return []models.Spot{}, err
+		return models.Spot{}, err
 	}
 
-	var result []models.Spot
-	result = append(result, spot)
-
-	return result, nil
+	return spot, nil
 }
 
-func UpdateSpotById(ctx context.Context, token string, newSpotInfo models.NewSpot, id string) ([]models.Spot, error) {
+func UpdateSpotById(ctx context.Context, token string, newSpotInfo models.NewSpot, id string) (models.Spot, error) {
 	if found, err := getNearbySpots(ctx, newSpotInfo.Latitude, newSpotInfo.Longitude); err != nil {
-		return []models.Spot{}, err
+		return models.Spot{}, err
 	} else if len(found) > 0 && found[0].Id != id {
-		return []models.Spot{}, repoerrors.ErrAlreadyExists
+		return models.Spot{}, repoerrors.ErrAlreadyExists
 	}
 
 	spot, err := spotRepo.FindSpotById(ctx, id)
 	if err != nil {
-		return []models.Spot{}, err
+		return models.Spot{}, err
 	}
 
 	if err := auth.IsAuthorizedToEditAsset(token, spot.AddedBy); err != nil {
-		return []models.Spot{}, err
+		return models.Spot{}, err
 	}
 
 	if err := spotRepo.UpdateSpot(ctx, id, newSpotInfo); err != nil {
-		return []models.Spot{}, err
+		return models.Spot{}, err
 	}
 
 	spot.Name = newSpotInfo.Name
@@ -107,10 +101,7 @@ func UpdateSpotById(ctx context.Context, token string, newSpotInfo models.NewSpo
 	spot.Longitude = newSpotInfo.Longitude
 	spot.Category = newSpotInfo.Category
 
-	var result []models.Spot
-	result = append(result, spot)
-
-	return result, nil
+	return spot, nil
 }
 
 func DeleteSpotById(ctx context.Context, token string, id string) error {
