@@ -1,92 +1,94 @@
-# SCENIC SPOTS API
+# Scenic Spots API
 
-The “Scenic Spots API” project aims to enable intuitive communication with a client application by providing data about picturesque locations in a selected area — such as viewpoints, lakes, rivers, trails, and routes with beautiful scenery, as well as other types of “hidden natural gems“.
-
-### ❗Please check /doc/swagger.yaml for endpoint documentation❗
-
-## 📁 Project structure
-
-- `cmd/` – main app entrance (`main.go`)
-- `internal/` - initialization, handlers, database connection + functions, authorization, and logger
-- `docs/` – documentation
-- `utils/` - reusable tools
-- `assets/` - sample data for database.
-
-# ✅ TODO – Scenic Spots API (Project Roadmap)
-
-> A structured development plan for the REST API project written in Go, using Swagger for documentation and Firebase (Firestore + Storage) for data and media management.
+The Scenic Spots API project provides an intuitive interface for client applications to access data about various scenic locations within a selected area. This includes viewpoints, lakes, rivers, trails, routes with beautiful scenery, and other hidden natural gems.
 
 ---
 
-## 🔧 Project Setup & Structure
+## About the Project
 
-- [x] Initialize Git repository and Go module (`go mod init`)
-- [x] Define clean folder structure (`cmd/`, `internal/`, `api/`, `docs/`, etc.)
-- [x] Add `README.md` with project description
-- [x] Create initial Swagger/OpenAPI file (`docs/swagger.yaml`)
+The API enables seamless retrieval of detailed information on natural attractions, making it easier to discover and explore beautiful spots.
 
----
+## How it works
 
-## 📄 API Documentation (Swagger / OpenAPI)
+The API provides the following main endpoints:
 
-- [x] Define main schemas:
-  - [x] `Spot` – full spot data
-  - [x] `NewSpot` – required fields for creation
-  - [x] `Review` – reviews per spot
-- [x] Spot endpoints:
-  - [x] `GET /spot` – search or list all scenic spots with filters
-  - [x] `GET /spot/{id}` – get a specific spot by ID
-  - [x] `POST /spot` – create a new spot
-  - [x] `PUT /spot/{id}` – update spot data
-  - [x] `DELETE /spot/{id}` – delete a spot
-- [x] Spot photos:
-  - [x] `PUT /spot/{id}/addPhoto` – upload up to 3 images (multipart/form-data)
-  - [x] Return uploaded image URLs (hosted on Firebase/GCP)
-- [x] Review endpoints:
-  - [x] `POST /spot/{id}/review` – submit a review
-  - [x] `GET /spot/{id}/review` – list reviews for a spot
-  - [x] `DELETE /spot/{id}/review/{reviewId}` – delete a specific review
-- [ ] User endpoints:
-  - [x] `POST /user/register` – registers a new user with email and password, returns a JWT
-  - [x] `POST /user/login` – authenticates a user and returns a JWT
-  - [ ] `PATCH /user/updateCredentials` – updates the user's email or password (requires JWT)
-  - [ ] `GET /user/{id}` – retrieves user profile information by user ID (UID)
-  - [ ] `PATCH /user/{id}` – updates user profile data (e.g., name, description)
-  - [x] `DELETE /user/{id}` – deletes the user account from User_Auth and User_Profile
+- `/spot` – Search and create scenic spots.
 
----
+- `/spot/{id}` – Search, update, and delete scenic spot specified by the ID.
 
-## 🧠 Backend Implementation (Go)
+- `/spot/{id}/review` – Submit, list, and delete reviews.
 
-- [x] App entrypoint (`main.go`), router and API handler setup
-- [x] Firestore integration for data storage
-- [x] Spot related endpoints implementation
-- [x] Review related endpoints implementation
-- [ ] Firebase Storage integration for image hosting
-- [ ] Photos related endpoints implementation
-- [ ] Data validation and error handling (400, 404, 500, etc.)
+- `/spot/{id}/review/{rId}` – Search, update, and delete reviews specified by of a scenic spot specified the ID.
 
----
+- `/user` – User registration, login, profile management, and account updates.
 
-## 🔐 Authentication & User Management
+For detailed information on request methods, parameters, request/response formats, and authorization, please refer to the [swagger.yaml](docs/swagger.yaml) file.
 
-- [x] Plan and define `User` model
-- [x] Implement JWT
-- [ ] Add security schemes to Swagger (`securitySchemes`).
-- [x] Design user-related endpoints (login, register, etc.)
 
----
+## Project Structure
 
-## 🌐 Deployment & Final Touches
+- `cmd/` – Contains the main application entry point (`main.go`).
 
-- [ ] Deploy backend (e.g. Google Cloud Run or App Engine)
-- [ ] Add integration tests (Postman / Go test)
-- [ ] Code cleanup, documentation, refactor
+- `internal/` – Includes initialization logic, HTTP handlers, database connection and functions, authorization, and logging components.
 
----
+- `docs/` – Holds the API endpoint and database documentation.
 
-## 📄 Used Technologies:
-- Firebase Firestore
+- `utils/` – Contains reusable utility tools.
+
+- `assets/` – Database seed files.
+
+## Technologies Used
+
+- Firebase Firestore (Cloud)
 - Firebase Emulator
 
-**🔄 Status**: Currently working on code refactor and separating business logic from handlers.
+---
+
+## Getting started
+
+### 1. Configuartion
+
+Before running the backend server, make sure to configure the necessary environment variables inside the `.env.example` file, then rename it to `.env`
+
+### 2. Firebase Emulator (Optional)
+
+For local development, you can use the Firebase emulator to simulate Firestore and Storage services:
+
+- Ensure you have the Firebase CLI installed on your system.
+- Initialize the emulator in the project root directory:
+
+```bash
+firebase init
+```
+
+During setup, select Firestore and Storage to configure the emulator.
+
+Then, start the emulator with:
+```bash
+firebase emulators:start
+```
+
+> Running the emulator allows the backend to connect to local instances of Firestore and Storage instead of the live Firebase services.
+
+### 3. Starting the API
+
+To run the backend server, execute the following commands:
+
+```bash
+cd scenic-spots-api
+go run cmd/main.go
+```
+
+This will start the API server on the configured port, making the endpoints available for client use.
+
+---
+
+## Postman tests
+
+To run the Postman test:
+
+1. Run the `tests/postman/setup.py` python script to initalize the enviroment variables needed for the tests.
+2. Import the newly created `tests.postman_enviroment.json` and the [tests.postman_collection.json](tests/postman/postman-files/tests.postman_collection.json) into your Postman workspace.
+3. Right click on the `tests` collection and select `Run` to run all of the tests.
+
+> Remember to launch the backend before running the tests!
