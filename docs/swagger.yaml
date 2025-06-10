@@ -10,17 +10,15 @@ info:
     name: Apache 2.0
     url: https://www.apache.org/licenses/LICENSE-2.0.html
   version: 1.0.1
-servers:
-  - url: https://google.com
 tags:
   - name: spot
     description: All of the methods for the spots
   - name: review
     description: Methods for posting and getting reviews
-  - name: photo
-    description: Methods for spots photos
   - name: user
     description: Methods for user authentication and managment.
+  - name: photo
+    description: Methods for spots photos. Yet to be implemented.
 
 paths:
   ##################################################################################
@@ -29,7 +27,9 @@ paths:
       tags:
         - spot
       summary: Add a new spot.
-      description: Adds a new spot. Requires longitude, latitude and a category of the spot. New spot is indexed automatically. Photos can be added later.
+      description: Adds a new spot. Requires longitude, latitude and a category of the spot. New spot is indexed automatically. Photos can be added later. Requires a JWT Token.
+      security:
+      - bearerAuth: []
       requestBody:
         content:
           application/json:
@@ -118,7 +118,9 @@ paths:
       tags:
         - spot
       summary: Update an existing spot.
-      description: Update an existing spot by Id.
+      description: Update an existing spot by Id. requires a JWT Token an admin / owner of the spot to edit.
+      security:
+      - bearerAuth: []
       parameters:
         - name: id
           in: path
@@ -192,7 +194,9 @@ paths:
       tags:
         - spot
       summary: Delete a spot.
-      description: Deletes a specific spot by its ID, deleting all of the images and reviews connected to it.
+      description: Deletes a specific spot by its ID, deleting all of the images and reviews connected to it. Requires a JWT Token an admin / owner of the spot.
+      security:
+      - bearerAuth: []
       parameters:
         - name: id
           in: path
@@ -218,141 +222,14 @@ paths:
               schema:
                 $ref: "#/components/schemas/Error"
   ##################################################################################
-  /spot/{id}/photo:
-    get:
-      tags:
-        - photo
-      summary: Get photos for the spot.
-      description: Get URLs of all of the photos of an existing spot.
-      parameters:
-        - name: id
-          in: path
-          required: true
-          description: The ID of the spot.
-          schema:
-            type: string
-      responses:
-        "200":
-          description: List of photos URLs for the spot.
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  photos:
-                    type: array
-                    items:
-                      type: string
-                      format: uri
-                    description: List of URLs to the uploaded photos.
-        "400":
-          description: Invalid parameters 
-        "404":
-          description: Spot not found
-        default:
-          description: Unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Error"
-    ##################################################################################
-    put:
-      tags:
-        - photo
-      summary: Add photos to a spot.
-      description: Add up to three photos to an existing spot.
-      parameters:
-        - name: id
-          in: path
-          required: true
-          description: The ID of the spot to which photos are added.
-          schema:
-            type: string
-      requestBody:
-        content:
-          multipart/form-data:
-            schema:
-              type: object
-              properties:
-                photos:
-                  type: array
-                  items:
-                    type: string
-                    format: binary
-                  maxItems: 3
-      responses:
-        "200":
-          description: Successfully added photos to the spot.
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  photos:
-                    type: array
-                    items:
-                      type: string
-                      format: uri
-                    description: List of URLs to the uploaded photos.
-        "400":
-          description: Invalid parameters 
-        "404":
-          description: Spot not found
-        default:
-          description: Unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Error"
-    ##################################################################################
-    delete:
-      tags:
-        - photo
-      summary: Delete photos from a spot.
-      description: Deletes specified photos from the spot. If no query parameters get passed, all of the photos get deleted.
-      parameters:
-        - name: id
-          in: path
-          required: true
-          description: The ID of the spot of which photos get deleted.
-          schema:
-            type: string
-        - name: photoId
-          in: query
-          required: false
-          description: If specified, deletes only this photo. If omitted, deletes all photos for the given spot.
-          schema:
-            type: string
-      responses:
-        "200":
-          description: Successfully deleted the photos.
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    id:
-                      type: string
-                      description: ID of the deleted photo.
-        "400":
-          description: Invalid parameters 
-        "404":
-          description: Spot not found
-        default:
-          description: Unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Error"
-  ##################################################################################
   /spot/{id}/review:
     post:
       tags:
         - review
       summary: Add a review for a spot.
-      description: Add a new review for a specific spot.
+      description: Add a new review for a specific spot. Requires a JWT Token.
+      security:
+      - bearerAuth: []
       parameters:
         - name: id
           in: path
@@ -425,7 +302,9 @@ paths:
       tags:
         - review
       summary: Delete all reviews for a specific spot
-      description: Deletes a of the reviews posted for specified spot.
+      description: Deletes a of the reviews posted for specified spot. Requires a JWT admin token.
+      security:
+      - bearerAuth: []
       parameters:
         - name: spotId
           in: path
@@ -470,7 +349,9 @@ paths:
       tags:
         - review
       summary: Update an existing review.
-      description: Update an existing review by its Id.
+      description: Update an existing review by its Id. Requires a JWT Token an admin / owner of the review to edit.
+      security:
+      - bearerAuth: []
       parameters:
         - name: spotId
           in: path
@@ -548,7 +429,9 @@ paths:
       tags:
         - review
       summary: Delete a review.
-      description: Deletes a specific review by its ID.
+      description: Deletes a specific review by its ID. Requires a JWT Token an admin / owner of the review.
+      security:
+      - bearerAuth: []
       parameters:
         - name: id
           in: path
@@ -641,7 +524,10 @@ paths:
       tags:
         - user
       summary: Delete user.
-      description: Delete specified user. Requires JWT token with exact same user ID, or admin role.
+      description: Delete specified user. Requires JWT token with exact same user ID, or admin role. Requires a JWT Token an admin / user to delete.
+      security:
+      - bearerAuth: []
+      
       responses:
         "204":
           description: User successfully deleted (no content)
@@ -661,6 +547,11 @@ paths:
                 $ref: "#/components/schemas/Error"
   ##################################################################################
 components:
+  securitySchemes:
+      bearerAuth:
+        type: http
+        scheme: bearer
+        bearerFormat: JWT
   schemas:
     ##################################################################################
     Spot:
@@ -736,6 +627,48 @@ components:
         - longitude
         - category
     ##################################################################################
+    Review:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "rev_abc123"
+        spotId:
+          type: string
+          example: "spot_001"
+        rating:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 5
+          example: 4.5
+        content:
+          type: string
+          example: "Wonderfull place!"
+        addedBy:
+          type: string
+          example: "user_42"
+        createdAt:
+          type: string
+          format: date-time
+          example: "2025-04-23T12:00:00Z"
+    ##################################################################################
+    NewReview:
+      type: object
+      required:
+        - rating
+        - comment
+      properties:
+        rating:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 5
+          example: 4.0
+        content:
+          type: string
+          example: "Worth visiting!"
+    ##################################################################################
     User:
       type: object
       properties:
@@ -795,49 +728,7 @@ components:
       required:
         - email
         - password
-    ##################################################################################
-    Review:
-      type: object
-      properties:
-        id:
-          type: string
-          example: "rev_abc123"
-        spotId:
-          type: string
-          example: "spot_001"
-        rating:
-          type: number
-          format: float
-          minimum: 0
-          maximum: 5
-          example: 4.5
-        content:
-          type: string
-          example: "Wonderfull place!"
-        addedBy:
-          type: string
-          example: "user_42"
-        createdAt:
-          type: string
-          format: date-time
-          example: "2025-04-23T12:00:00Z"
-    ##################################################################################
-    NewReview:
-      type: object
-      required:
-        - rating
-        - comment
-      properties:
-        rating:
-          type: number
-          format: float
-          minimum: 0
-          maximum: 5
-          example: 4.0
-        content:
-          type: string
-          example: "Worth visiting!"
-    ##################################################################################
+    ##################################################################################    
     Error:
       type: object
       properties:
